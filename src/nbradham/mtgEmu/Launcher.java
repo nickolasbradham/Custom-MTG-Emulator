@@ -8,6 +8,8 @@ import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 
+import nbradham.mtgEmu.controls.UserControls;
+
 final class Launcher {
 
 	private final JFrame frame = new JFrame("Custom MTG Emulator");
@@ -18,7 +20,7 @@ final class Launcher {
 			frame.setLayout(new BoxLayout(frame.getContentPane(), BoxLayout.PAGE_AXIS));
 
 			addButton("Singlplayer", e -> {
-				new EmuClient().start();
+				new UserControls(new Game()).start();
 				frame.dispose();
 			});
 
@@ -34,7 +36,7 @@ final class Launcher {
 			});
 
 			addButton("Build Deck", e -> {
-				JOptionPane.showMessageDialog(frame, "Not implemented yet.");
+				//TODO
 			});
 
 			frame.pack();
