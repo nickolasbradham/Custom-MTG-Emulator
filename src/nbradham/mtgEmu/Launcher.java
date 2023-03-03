@@ -8,7 +8,7 @@ import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 
-import nbradham.mtgEmu.controls.UserControls;
+import nbradham.mtgEmu.players.LocalPlayer;
 
 final class Launcher {
 
@@ -20,7 +20,7 @@ final class Launcher {
 			frame.setLayout(new BoxLayout(frame.getContentPane(), BoxLayout.PAGE_AXIS));
 
 			addButton("Singlplayer", e -> {
-				new UserControls(new Game()).start();
+				new LocalPlayer().start();
 				frame.dispose();
 			});
 
@@ -36,7 +36,7 @@ final class Launcher {
 			});
 
 			addButton("Build Deck", e -> {
-				//TODO
+				JOptionPane.showMessageDialog(frame, "Not implemented yet.");
 			});
 
 			frame.pack();
