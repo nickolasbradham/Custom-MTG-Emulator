@@ -1,12 +1,18 @@
 package nbradham.mtgEmu;
 
 import java.awt.event.ActionListener;
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
 
+import javax.imageio.ImageIO;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
+import javax.swing.filechooser.FileNameExtensionFilter;
 
 import nbradham.mtgEmu.players.LocalPlayer;
 
@@ -36,7 +42,18 @@ final class Launcher {
 			});
 
 			addButton("Build Deck", e -> {
-				JOptionPane.showMessageDialog(frame, "Not implemented yet.");
+				ArrayList<BuildCard> cards = new ArrayList<>();
+				JFileChooser chooser = new JFileChooser();
+				chooser.setDialogTitle("Select Commander Image(s)");
+				chooser.setMultiSelectionEnabled(true);
+				chooser.setFileFilter(new FileNameExtensionFilter("Image Files","jpg","png"));
+				try {
+				if (chooser.showOpenDialog(frame) == JFileChooser.APPROVE_OPTION)
+					for (File f : chooser.getSelectedFiles())
+						cards.add(new BuildCard(ImageIO.read(f)));
+				}catch(IOException ex) {
+					JOptionPane.showMessageDialog(frame, ex);
+				}
 			});
 
 			frame.pack();
