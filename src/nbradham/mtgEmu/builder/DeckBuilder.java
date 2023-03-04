@@ -1,10 +1,11 @@
 package nbradham.mtgEmu.builder;
 
+import java.awt.Graphics;
+import java.awt.Point;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
@@ -21,7 +22,7 @@ public final class DeckBuilder {
 	private final JFileChooser chooser = new JFileChooser();
 	private final JFrame parent;
 	private int commanders, dupes, singles, tokens;
-	private byte id = -1;
+	private byte id = -1, smallest = 0;
 
 	public DeckBuilder(JFrame parentFrame) {
 		parent = parentFrame;
@@ -46,8 +47,35 @@ public final class DeckBuilder {
 			});
 			singles = promptCards("Select remaining Library card(s). Cancel to skip.", f -> 1);
 			tokens = promptCards("Select Token/Special card(s). Cancel to skip.", f -> 1);
+
+			Card smallCard = cards.get(smallest);
+			int w = smallCard.getWidth(), h = smallCard.getHeight(), x = 0, y = h;
+			byte moveID = 0;
+
+			while (moveID < cards.size()) {
+				while (x + w <= y + h && moveID < cards.size()) {
+					for (short py = 0; py < y && moveID < cards.size(); py += h)
+						cards.get(moveID++).loc().setLocation(x, py);
+					x += w;
+				}
+				while (y + h <= x + w && moveID < cards.size()) {
+					for (short px = 0; px < x && moveID < cards.size(); px += w)
+						cards.get(moveID++).loc().setLocation(px, y);
+					y += h;
+				}
+			}
+
+			BufferedImage stitched = new BufferedImage(x, y, BufferedImage.TYPE_INT_ARGB_PRE);
+			Graphics stitchG = stitched.createGraphics();
+			cards.forEach(c -> {
+				Point loc = c.loc();
+				stitchG.drawImage(c.img(), loc.x, loc.y, loc.x + w, loc.y + h, 0, 0, c.getWidth(), c.getHeight(), null);
+			});
+			
+			ImageIO.write(stitched, "png", new File("Stitched.png"));
+
 		} catch (IOException ex) {
-			JOptionPane.showMessageDialog(parent, ex);
+			ex.printStackTrace();
 		}
 	}
 
@@ -56,8 +84,11 @@ public final class DeckBuilder {
 		if (chooser.showOpenDialog(parent) == JFileChooser.APPROVE_OPTION) {
 			File[] fs = chooser.getSelectedFiles();
 			BufferedImage buf;
-			for (File f : fs)
-				cards.add(new Card(++id, buf = ImageIO.read(f), ccg.getCount(buf)));
+			Card c;
+			for (File f : fs) {
+				cards.add(c = new Card(++id, buf = ImageIO.read(f), ccg.getCount(buf)));
+				smallest = c.getWidth() < cards.get(smallest).getWidth() ? id : smallest;
+			}
 			return fs.length;
 		}
 		return 0;
