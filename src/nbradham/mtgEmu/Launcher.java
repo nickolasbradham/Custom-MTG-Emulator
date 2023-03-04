@@ -14,6 +14,7 @@ import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
+import nbradham.mtgEmu.builder.DeckBuilder;
 import nbradham.mtgEmu.players.LocalPlayer;
 
 final class Launcher {
@@ -42,18 +43,7 @@ final class Launcher {
 			});
 
 			addButton("Build Deck", e -> {
-				ArrayList<BuildCard> cards = new ArrayList<>();
-				JFileChooser chooser = new JFileChooser();
-				chooser.setDialogTitle("Select Commander Image(s)");
-				chooser.setMultiSelectionEnabled(true);
-				chooser.setFileFilter(new FileNameExtensionFilter("Image Files","jpg","png"));
-				try {
-				if (chooser.showOpenDialog(frame) == JFileChooser.APPROVE_OPTION)
-					for (File f : chooser.getSelectedFiles())
-						cards.add(new BuildCard(ImageIO.read(f)));
-				}catch(IOException ex) {
-					JOptionPane.showMessageDialog(frame, ex);
-				}
+				new DeckBuilder(frame).start();
 			});
 
 			frame.pack();
