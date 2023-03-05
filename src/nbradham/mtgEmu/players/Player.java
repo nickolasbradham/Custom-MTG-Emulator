@@ -1,5 +1,8 @@
 package nbradham.mtgEmu.players;
 
+import java.awt.Graphics;
+
 public abstract class Player {
-	protected abstract void start();
+
+	public abstract void drawGame(Graphics g);
 }
