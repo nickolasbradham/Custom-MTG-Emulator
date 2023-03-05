@@ -8,11 +8,11 @@ record Card(int id, BufferedImage img, byte count, Point loc) {
 	Card(int id, BufferedImage img, byte count) {
 		this(id, img, count, new Point());
 	}
-	
+
 	int getWidth() {
 		return img.getWidth();
 	}
-	
+
 	int getHeight() {
 		return img.getHeight();
 	}
