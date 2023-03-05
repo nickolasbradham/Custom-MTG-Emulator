@@ -19,6 +19,12 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
+/**
+ * Handles the deck compilation process.
+ * 
+ * @author Nickolas S. Bradham
+ *
+ */
 public final class DeckBuilder {
 
 	private static short L_IMG_W = 200;
@@ -29,12 +35,20 @@ public final class DeckBuilder {
 	private int commanders, dupes, singles, tokens;
 	private byte id = -1, smallest = 0;
 
+	/**
+	 * Constructs a new DeckBuilder instance.
+	 * 
+	 * @param parentFrame The parent JFrame this is linked to.
+	 */
 	public DeckBuilder(JFrame parentFrame) {
 		parent = parentFrame;
 		chooser.setMultiSelectionEnabled(true);
 		chooser.setFileFilter(new FileNameExtensionFilter("Image Files", "jpg", "png"));
 	}
 
+	/**
+	 * Handles prompting the user for deck images and details and saves to a file.
+	 */
 	public void start() {
 		try {
 			commanders = promptCards("Select Commander card(s). Cancel to skip.", f -> 1);
@@ -116,6 +130,14 @@ public final class DeckBuilder {
 		}
 	}
 
+	/**
+	 * Prompts the user to select card images and adds them to the deck.
+	 * 
+	 * @param prompt The prompt text.
+	 * @param ccg    The CardCountGetter instance to get number of cards.
+	 * @return Returns how many cards were loaded.
+	 * @throws IOException Thrown by {@link ImageIO#read(File)}.
+	 */
 	private int promptCards(String prompt, CardCountGetter ccg) throws IOException {
 		chooser.setDialogTitle(prompt);
 		if (chooser.showOpenDialog(parent) == JFileChooser.APPROVE_OPTION) {
@@ -131,6 +153,15 @@ public final class DeckBuilder {
 		return 0;
 	}
 
+	/**
+	 * Writes {@code numCards} number of cards to {@code dos} starting at
+	 * {@code id}.
+	 * 
+	 * @param dos      The DataOutputStream to write to.
+	 * @param numCards The number of cards to write.
+	 * @throws IOException Thrown by {@link DataOutputStream#writeByte(int)} and
+	 *                     {@link DataOutputStream#writeShort(int)}.
+	 */
 	private void writeCards(DataOutputStream dos, int numCards) throws IOException {
 		dos.writeByte(numCards);
 		Point cLoc;

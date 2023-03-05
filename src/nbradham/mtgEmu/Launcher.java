@@ -9,10 +9,19 @@ import javax.swing.SwingUtilities;
 import nbradham.mtgEmu.builder.DeckBuilder;
 import nbradham.mtgEmu.players.LocalPlayer;
 
+/**
+ * Handles main menu GUI.
+ * 
+ * @author Nickolas S. Bradham
+ *
+ */
 final class Launcher {
 
 	private final JFrame frame = new JFrame("Custom MTG Emulator");
 
+	/**
+	 * Creates and shows the GUI on the AWT thread.
+	 */
 	private void createGUI() {
 		SwingUtilities.invokeLater(() -> {
 			frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -43,6 +52,12 @@ final class Launcher {
 		});
 	}
 
+	/**
+	 * Adds a {@link JButton} with set text and listener to the {@link JFrame}
+	 * 
+	 * @param text     The button text.
+	 * @param listener The listener for on click.
+	 */
 	private void addButton(String text, ActionListener listener) {
 		JButton button = new JButton(text);
 		button.addActionListener(listener);
@@ -50,6 +65,11 @@ final class Launcher {
 		frame.add(button);
 	}
 
+	/**
+	 * Constructs and starts a new Launcher instance.
+	 * 
+	 * @param args Ignored.
+	 */
 	public static void main(String[] args) {
 		new Launcher().createGUI();
 	}
