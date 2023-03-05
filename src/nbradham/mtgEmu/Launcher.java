@@ -1,19 +1,11 @@
 package nbradham.mtgEmu;
 
 import java.awt.event.ActionListener;
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-
-import javax.imageio.ImageIO;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
-import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
-import javax.swing.filechooser.FileNameExtensionFilter;
-
 import nbradham.mtgEmu.builder.DeckBuilder;
 import nbradham.mtgEmu.players.LocalPlayer;
 

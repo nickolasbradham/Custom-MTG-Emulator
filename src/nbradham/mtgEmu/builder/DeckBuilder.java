@@ -3,9 +3,14 @@ package nbradham.mtgEmu.builder;
 import java.awt.Graphics;
 import java.awt.Point;
 import java.awt.image.BufferedImage;
+import java.io.DataOutputStream;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
+
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
@@ -71,9 +76,41 @@ public final class DeckBuilder {
 				Point loc = c.loc();
 				stitchG.drawImage(c.img(), loc.x, loc.y, loc.x + w, loc.y + h, 0, 0, c.getWidth(), c.getHeight(), null);
 			});
-			
-			ImageIO.write(stitched, "png", new File("Stitched.png"));
 
+			chooser.setDialogTitle("Select where to save deck.");
+			chooser.resetChoosableFileFilters();
+			chooser.setFileFilter(new FileNameExtensionFilter("Custom Deck Format File", "cdf"));
+			chooser.setSelectedFile(new File("Deck.cdf"));
+
+			if (chooser.showSaveDialog(parent) == JFileChooser.APPROVE_OPTION) {
+				ZipOutputStream zipOut = new ZipOutputStream(new FileOutputStream(chooser.getSelectedFile()));
+
+				zipOut.putNextEntry(new ZipEntry("cards.png"));
+				ImageIO.write(stitched, "png", zipOut);
+				zipOut.closeEntry();
+
+				zipOut.putNextEntry(new ZipEntry("info.bin"));
+				DataOutputStream dos = new DataOutputStream(zipOut);
+				dos.writeShort(w);
+				dos.writeShort(h);
+				id = -1;
+				writeCards(dos, commanders);
+
+				dos.writeByte(dupes);
+				Card c;
+				Point cLoc;
+				for (byte n = 0; n < dupes; n++) {
+					cLoc = (c = cards.get(++id)).loc();
+					dos.writeByte(c.count());
+					dos.writeShort(cLoc.x);
+					dos.writeShort(cLoc.y);
+				}
+
+				writeCards(dos, singles);
+				writeCards(dos, tokens);
+
+				zipOut.close();
+			}
 		} catch (IOException ex) {
 			ex.printStackTrace();
 		}
@@ -92,5 +129,15 @@ public final class DeckBuilder {
 			return fs.length;
 		}
 		return 0;
+	}
+
+	private void writeCards(DataOutputStream dos, int numCards) throws IOException {
+		dos.writeByte(numCards);
+		Point cLoc;
+		for (byte n = 0; n < numCards; n++) {
+			cLoc = cards.get(++id).loc();
+			dos.writeShort(cLoc.x);
+			dos.writeShort(cLoc.y);
+		}
 	}
 }
