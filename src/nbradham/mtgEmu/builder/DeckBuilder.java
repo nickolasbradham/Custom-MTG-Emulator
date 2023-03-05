@@ -27,6 +27,7 @@ import javax.swing.filechooser.FileNameExtensionFilter;
  */
 public final class DeckBuilder {
 
+	private static final String PRMPT_BACK = "Select card back image. Cancel to use default.";
 	private static short L_IMG_W = 200;
 
 	private final ArrayList<Card> cards = new ArrayList<>();
@@ -42,7 +43,6 @@ public final class DeckBuilder {
 	 */
 	public DeckBuilder(JFrame parentFrame) {
 		parent = parentFrame;
-		chooser.setMultiSelectionEnabled(true);
 		chooser.setFileFilter(new FileNameExtensionFilter("Image Files", "jpg", "png"));
 	}
 
@@ -51,6 +51,8 @@ public final class DeckBuilder {
 	 */
 	public void start() {
 		try {
+			promptCards(PRMPT_BACK, f -> 1);
+			chooser.setMultiSelectionEnabled(true);
 			commanders = promptCards("Select Commander card(s). Cancel to skip.", f -> 1);
 			dupes = promptCards("Select Library card(s) with duplicates (ex: Basic Lands). Cancel to skip.", img -> {
 				JLabel label = new JLabel("quantity (>0)?", new ImageIcon(img.getScaledInstance(L_IMG_W,
@@ -107,7 +109,7 @@ public final class DeckBuilder {
 				DataOutputStream dos = new DataOutputStream(zipOut);
 				dos.writeShort(w);
 				dos.writeShort(h);
-				id = -1;
+				id = 0;
 				writeCards(dos, commanders);
 
 				dos.writeByte(dupes);
@@ -142,15 +144,21 @@ public final class DeckBuilder {
 		chooser.setDialogTitle(prompt);
 		if (chooser.showOpenDialog(parent) == JFileChooser.APPROVE_OPTION) {
 			File[] fs = chooser.getSelectedFiles();
-			BufferedImage buf;
-			Card c;
-			for (File f : fs) {
-				cards.add(c = new Card(++id, buf = ImageIO.read(f), ccg.getCount(buf)));
-				smallest = c.getWidth() < cards.get(smallest).getWidth() ? id : smallest;
-			}
+			for (File f : fs)
+				addCard(ImageIO.read(f), ccg);
 			return fs.length;
 		}
+		if (prompt == PRMPT_BACK) {
+			addCard(ImageIO.read(DeckBuilder.class.getResource("/back.png")), ccg);
+			return 1;
+		}
 		return 0;
+	}
+
+	private void addCard(BufferedImage buf, CardCountGetter ccg) throws IOException {
+		Card c = new Card(++id, buf, ccg.getCount(buf));
+		cards.add(c);
+		smallest = c.getWidth() < cards.get(smallest).getWidth() ? id : smallest;
 	}
 
 	/**
