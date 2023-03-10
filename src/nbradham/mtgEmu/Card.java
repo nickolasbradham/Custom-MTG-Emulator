@@ -1,7 +1,7 @@
 package nbradham.mtgEmu;
 
-public final class Card {
-	static enum CardType {
+public final class Card extends GameObject {
+	public static enum CardType {
 		COMMANDER, LIBRARY, TOKEN
 	};
 
@@ -11,5 +11,9 @@ public final class Card {
 	public Card(CardType cardType, byte imageID) {
 		type = cardType;
 		iID = imageID;
+	}
+
+	public CardType getType() {
+		return type;
 	}
 }

@@ -18,8 +18,9 @@ import nbradham.mtgEmu.CardManager;
 
 public final class LocalPlayer extends Player {
 
+	private final GPanel gameView = new GPanel(this);
 	private final CardManager cardMan;
-	private final CardZone commandZone = new CardZone(0, 700, 200, -300);
+	private final CardZone commandZone = new CardZone(0, 700, 200, -300), handZone = new CardZone(200, 700, 1100, -300);
 	private final int id;
 
 	public LocalPlayer(CardManager cardManager, int playerID) {
@@ -43,8 +44,17 @@ public final class LocalPlayer extends Player {
 			loadItem.addActionListener(e -> {
 				if (chooser.showOpenDialog(frame) == JFileChooser.APPROVE_OPTION) {
 					try {
-						for(Card c : cardMan.load(id, chooser.getSelectedFile()));
-							//TODO distribute cards.
+						for (Card c : cardMan.load(id, chooser.getSelectedFile()))
+							switch (c.getType()) {
+							case COMMANDER:
+								commandZone.add(c);
+								break;
+							case LIBRARY:
+								// TODO add to library.
+								break;
+							case TOKEN:
+								// TODO add to tokens.
+							}
 					} catch (IOException e1) {
 						e1.printStackTrace();
 					}
@@ -55,7 +65,6 @@ public final class LocalPlayer extends Player {
 			bar.add(gameMenu);
 			frame.setJMenuBar(bar);
 
-			GPanel gameView = new GPanel(this);
 			gameView.setPreferredSize(new Dimension(1366, 750));
 			frame.setContentPane(gameView);
 			frame.pack();
