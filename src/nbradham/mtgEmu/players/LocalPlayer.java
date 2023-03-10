@@ -13,7 +13,6 @@ import javax.swing.SwingUtilities;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
 import nbradham.mtgEmu.GPanel;
-import nbradham.mtgEmu.Card;
 import nbradham.mtgEmu.CardManager;
 
 public final class LocalPlayer extends Player {
@@ -43,7 +42,7 @@ public final class LocalPlayer extends Player {
 				if (chooser.showOpenDialog(frame) == JFileChooser.APPROVE_OPTION) {
 					try {
 						cardMan.load(id, chooser.getSelectedFile());
-						//TODO continue load.
+						// TODO continue load.
 					} catch (IOException e1) {
 						e1.printStackTrace();
 					}
