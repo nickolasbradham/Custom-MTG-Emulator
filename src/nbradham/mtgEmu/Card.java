@@ -1,6 +1,6 @@
 package nbradham.mtgEmu;
 
-final class Card {
+public final class Card {
 	static enum CardType {
 		COMMANDER, LIBRARY, TOKEN
 	};

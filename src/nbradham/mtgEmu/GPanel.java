@@ -12,6 +12,7 @@ public final class GPanel extends JPanel {
 	private final Player player;
 
 	public GPanel(Player setPlayer) {
+		super();
 		player = setPlayer;
 	}
 

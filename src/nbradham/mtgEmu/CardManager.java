@@ -18,17 +18,16 @@ public final class CardManager {
 
 	private static final double PI_2 = Math.PI / 2;
 
-	private final ArrayList<CardUVs> cardUVs = new ArrayList<>();
-
-	private BufferedImage cardImgs;
+	private ArrayList<CardUVs> cardUVs = new ArrayList<>();
+	private BufferedImage imageMap;
 	private byte id = -1;
 
-	public void load(int player, File deckFile) throws ZipException, IOException {
+	public Card[] load(int player, File deckFile) throws ZipException, IOException {
 		ZipFile zFile = new ZipFile(deckFile);
 
 		BufferedImage img = ImageIO.read(zFile.getInputStream(zFile.getEntry("cards.png")));
-		int w = img.getWidth(), h = img.getHeight();
-		BufferedImage loadedImages = new BufferedImage(w + h, Math.max(h, w), BufferedImage.TYPE_INT_ARGB_PRE);
+		int w = img.getWidth(), h = img.getHeight(), mw = w + h, mh = Math.max(h, w);
+		BufferedImage loadedImages = new BufferedImage(mw, mh, BufferedImage.TYPE_INT_ARGB_PRE);
 		Graphics2D g = loadedImages.createGraphics();
 
 		g.drawImage(img, 0, 0, null);
@@ -57,7 +56,7 @@ public final class CardManager {
 		zFile.close();
 
 		ArrayList<CardUVs> newCardUVs = new ArrayList<>(cardUVs);
-		CardUVs newSet = new CardUVs(w, h, cw, ch, uvOrigins.toArray(new short[0][]));
+		CardUVs newSet = new CardUVs(mw, mh, cw, ch, uvOrigins.toArray(new short[0][]));
 		if (player < newCardUVs.size())
 			newCardUVs.set(player, newSet);
 		else
@@ -83,9 +82,12 @@ public final class CardManager {
 			if (i == player)
 				newG.drawImage(loadedImages, 0, newSet.getOffset(), null);
 			else
-				newG.drawImage(cardImgs, 0, newOff = (cur = newCardUVs.get(i)).getOffset(), cur.getMapWidth(),
+				newG.drawImage(imageMap, 0, newOff = (cur = newCardUVs.get(i)).getOffset(), cur.getMapWidth(),
 						newOff + cur.getMapHeight(), 0, lastOff = (last = newCardUVs.get(i)).getOffset(),
 						last.getMapWidth(), lastOff + last.getMapHeight(), null);
+		imageMap = newImageMap;
+		cardUVs = newCardUVs;
+		return gameCards.toArray(new Card[0]);
 	}
 
 	private void addCards(DataInputStream inStream, ArrayList<Card> gameCards, ArrayList<short[]> uvOrigins,
