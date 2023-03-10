@@ -13,11 +13,13 @@ import javax.swing.SwingUtilities;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
 import nbradham.mtgEmu.GPanel;
+import nbradham.mtgEmu.Card;
 import nbradham.mtgEmu.CardManager;
 
 public final class LocalPlayer extends Player {
 
 	private final CardManager cardMan;
+	private final CardZone commandZone = new CardZone(0, 700, 200, -300);
 	private final int id;
 
 	public LocalPlayer(CardManager cardManager, int playerID) {
@@ -41,8 +43,8 @@ public final class LocalPlayer extends Player {
 			loadItem.addActionListener(e -> {
 				if (chooser.showOpenDialog(frame) == JFileChooser.APPROVE_OPTION) {
 					try {
-						cardMan.load(id, chooser.getSelectedFile());
-						// TODO continue load.
+						for(Card c : cardMan.load(id, chooser.getSelectedFile()));
+							//TODO distribute cards.
 					} catch (IOException e1) {
 						e1.printStackTrace();
 					}
