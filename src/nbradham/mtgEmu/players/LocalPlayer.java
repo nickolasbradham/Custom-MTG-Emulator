@@ -3,7 +3,12 @@ package nbradham.mtgEmu.players;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.event.KeyEvent;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.awt.event.MouseMotionListener;
 import java.io.IOException;
+import java.util.ArrayList;
+
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
@@ -13,19 +18,27 @@ import javax.swing.SwingUtilities;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
 import nbradham.mtgEmu.GPanel;
-import nbradham.mtgEmu.Card;
+import nbradham.mtgEmu.gameObjects.Card;
+import nbradham.mtgEmu.gameObjects.CardZone;
+import nbradham.mtgEmu.gameObjects.GameObject;
+import nbradham.mtgEmu.gameObjects.Library;
 import nbradham.mtgEmu.CardManager;
 
 public final class LocalPlayer extends Player {
 
 	private final GPanel gameView = new GPanel(this);
+	private final ArrayList<GameObject> objects = new ArrayList<>();
 	private final CardManager cardMan;
 	private final CardZone commandZone = new CardZone(0, 700, 200, -300), handZone = new CardZone(200, 700, 1100, -300);
+	private final Library lib = new Library();
 	private final int id;
 
 	public LocalPlayer(CardManager cardManager, int playerID) {
 		cardMan = cardManager;
 		id = playerID;
+		objects.add(commandZone);
+		objects.add(handZone);
+		objects.add(lib);
 	}
 
 	public void start() {
@@ -47,10 +60,11 @@ public final class LocalPlayer extends Player {
 						for (Card c : cardMan.load(id, chooser.getSelectedFile()))
 							switch (c.getType()) {
 							case COMMANDER:
+								objects.add(c);
 								commandZone.add(c);
 								break;
 							case LIBRARY:
-								// TODO add to library.
+								lib.putOnTop(c);
 								break;
 							case TOKEN:
 								// TODO add to tokens.

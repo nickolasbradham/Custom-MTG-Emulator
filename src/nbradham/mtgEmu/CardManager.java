@@ -12,7 +12,8 @@ import java.util.zip.ZipFile;
 
 import javax.imageio.ImageIO;
 
-import nbradham.mtgEmu.Card.CardType;
+import nbradham.mtgEmu.gameObjects.Card;
+import nbradham.mtgEmu.gameObjects.Card.CardType;
 
 public final class CardManager {
 
@@ -20,7 +21,7 @@ public final class CardManager {
 
 	private ArrayList<CardUVs> cardUVs = new ArrayList<>();
 	private BufferedImage imageMap;
-	private byte id = -1;
+	private byte cardID = -1, imgID = -1;
 
 	public Card[] load(int player, File deckFile) throws ZipException, IOException {
 		ZipFile zFile = new ZipFile(deckFile);
@@ -46,9 +47,9 @@ public final class CardManager {
 			byte dupes = info.readByte();
 			short[] tuv = new short[] { info.readShort(), info.readShort() };
 			uvOrigins.add(tuv);
-			++id;
+			++imgID;
 			for (byte n = 0; n < dupes; ++n)
-				gameCards.add(new Card(CardType.LIBRARY, id));
+				gameCards.add(new Card(++cardID, CardType.LIBRARY, imgID));
 		}
 		addCards(info, gameCards, uvOrigins, CardType.LIBRARY);
 		addCards(info, gameCards, uvOrigins, CardType.TOKEN);
@@ -94,7 +95,7 @@ public final class CardManager {
 			CardType cardType) throws IOException {
 		byte count = inStream.readByte();
 		for (byte i = 0; i < count; ++i) {
-			gameCards.add(new Card(cardType, ++id));
+			gameCards.add(new Card(++cardID, cardType, ++imgID));
 			uvOrigins.add(new short[] { inStream.readShort(), inStream.readShort() });
 		}
 	}

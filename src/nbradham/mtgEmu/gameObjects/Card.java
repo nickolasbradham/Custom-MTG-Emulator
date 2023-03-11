@@ -1,4 +1,4 @@
-package nbradham.mtgEmu;
+package nbradham.mtgEmu.gameObjects;
 
 public final class Card extends GameObject {
 	public static enum CardType {
@@ -6,9 +6,10 @@ public final class Card extends GameObject {
 	};
 
 	private final CardType type;
-	private final byte iID;
+	private final byte cID, iID;
 
-	public Card(CardType cardType, byte imageID) {
+	public Card(byte cardID, CardType cardType, byte imageID) {
+		cID = cardID;
 		type = cardType;
 		iID = imageID;
 	}

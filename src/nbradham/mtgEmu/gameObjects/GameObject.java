@@ -1,4 +1,4 @@
-package nbradham.mtgEmu;
+package nbradham.mtgEmu.gameObjects;
 
 public class GameObject {
 	protected int x, y;
