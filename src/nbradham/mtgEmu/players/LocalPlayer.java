@@ -3,9 +3,6 @@ package nbradham.mtgEmu.players;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.event.KeyEvent;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-import java.awt.event.MouseMotionListener;
 import java.io.IOException;
 import java.util.ArrayList;
 
@@ -25,6 +22,10 @@ import nbradham.mtgEmu.gameObjects.Library;
 import nbradham.mtgEmu.CardManager;
 
 public final class LocalPlayer extends Player {
+
+	public static enum Layer {
+		BATTLEFIELD, GUI
+	}
 
 	private final GPanel gameView = new GPanel(this);
 	private final ArrayList<GameObject> objects = new ArrayList<>();
