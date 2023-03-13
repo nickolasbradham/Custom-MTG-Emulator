@@ -3,6 +3,7 @@ package nbradham.mtgEmu.players;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.event.KeyEvent;
+import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.ArrayList;
 
@@ -28,6 +29,10 @@ public final class LocalPlayer extends Player {
 	}
 
 	private final GPanel gameView = new GPanel(this);
+	private final BufferedImage fieldImg = new BufferedImage(gameView.getWidth(), gameView.getHeight(),
+			BufferedImage.TYPE_4BYTE_ABGR_PRE),
+			guiImg = new BufferedImage(gameView.getWidth(), gameView.getHeight(), BufferedImage.TYPE_4BYTE_ABGR_PRE);
+	private final Graphics fieldG = fieldImg.createGraphics(), guiG = guiImg.createGraphics();
 	private final ArrayList<GameObject> objects = new ArrayList<>();
 	private final CardManager cardMan;
 	private final CardZone commandZone = new CardZone(0, 700, 200, -300), handZone = new CardZone(200, 700, 1100, -300);
