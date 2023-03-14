@@ -1,5 +1,6 @@
 package nbradham.mtgEmu.gameObjects;
 
+import java.awt.Graphics;
 import java.util.ArrayList;
 
 import nbradham.mtgEmu.players.LocalPlayer.Layer;
@@ -7,9 +8,9 @@ import nbradham.mtgEmu.players.LocalPlayer.Layer;
 public class GameObject {
 
 	protected final ArrayList<GameObject> children = new ArrayList<>();
-	protected int x, y;
 
 	private Layer layer = Layer.BATTLEFIELD;
+	private int x, y;
 
 	public final void setPos(int newX, int newY) {
 		int dx = newX - x, dy = newY - y;
@@ -18,8 +19,23 @@ public class GameObject {
 		children.forEach(c -> c.translate(dx, dy));
 	}
 
+	public void draw(Graphics g) {
+	}
+
+	public Layer getLayer() {
+		return layer;
+	}
+
 	protected final void setLayer(Layer newLayer) {
 		layer = newLayer;
+	}
+
+	protected final int getX() {
+		return x;
+	}
+
+	protected final int getY() {
+		return y;
 	}
 
 	private void translate(int dx, int dy) {

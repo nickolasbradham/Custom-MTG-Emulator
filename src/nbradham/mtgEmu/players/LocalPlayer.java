@@ -35,9 +35,11 @@ public final class LocalPlayer extends Player {
 	private final Graphics fieldG = fieldImg.createGraphics(), guiG = guiImg.createGraphics();
 	private final ArrayList<GameObject> objects = new ArrayList<>();
 	private final CardManager cardMan;
-	private final CardZone commandZone = new CardZone(0, 700, 200, -300), handZone = new CardZone(200, 700, 1100, -300);
+	private final CardZone commandZone = new CardZone(0, 700, 200), handZone = new CardZone(200, 700, 900);
 	private final Library lib = new Library();
 	private final int id;
+	private GameObject drag;
+	private boolean redrawField = true, redrawGui = true;
 
 	public LocalPlayer(CardManager cardManager, int playerID) {
 		cardMan = cardManager;
@@ -94,6 +96,13 @@ public final class LocalPlayer extends Player {
 
 	@Override
 	public void drawGame(Graphics g) {
-		// TODO draw the field
+		objects.forEach(o -> {
+			if (o != drag)
+				o.draw(o.getLayer() == Layer.BATTLEFIELD ? fieldG : guiG);
+		});
+		g.drawImage(fieldImg, 0, 0, gameView);
+		g.drawImage(guiImg, 0, 0, gameView);
+		if (drag != null)
+			drag.draw(g);
 	}
 }
