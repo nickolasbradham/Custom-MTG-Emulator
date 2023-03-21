@@ -1,6 +1,5 @@
 package nbradham.mtgEmu.players;
 
-import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
@@ -29,9 +28,9 @@ public final class LocalPlayer extends Player {
 	}
 
 	private final GPanel gameView = new GPanel(this);
-	private final BufferedImage fieldImg = new BufferedImage(gameView.getWidth(), gameView.getHeight(),
+	private final BufferedImage fieldImg = new BufferedImage(GPanel.WIDTH, GPanel.HEIGHT,
 			BufferedImage.TYPE_4BYTE_ABGR_PRE),
-			guiImg = new BufferedImage(gameView.getWidth(), gameView.getHeight(), BufferedImage.TYPE_4BYTE_ABGR_PRE);
+			guiImg = new BufferedImage(GPanel.WIDTH, GPanel.HEIGHT, BufferedImage.TYPE_4BYTE_ABGR_PRE);
 	private final Graphics fieldG = fieldImg.createGraphics(), guiG = guiImg.createGraphics();
 	private final ArrayList<GameObject> objects = new ArrayList<>();
 	private final CardManager cardMan;
@@ -86,8 +85,6 @@ public final class LocalPlayer extends Player {
 
 			bar.add(gameMenu);
 			frame.setJMenuBar(bar);
-
-			gameView.setPreferredSize(new Dimension(1366, 750));
 			frame.setContentPane(gameView);
 			frame.pack();
 			frame.setVisible(true);
