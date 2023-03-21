@@ -4,6 +4,8 @@ public final class Card extends GameObject {
 	public static enum CardType {
 		COMMANDER, LIBRARY, TOKEN
 	};
+	
+	static final short SM_HEIGHT = 300;
 
 	private final CardType type;
 	private final byte cID, iID;
