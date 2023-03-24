@@ -21,6 +21,12 @@ import nbradham.mtgEmu.gameObjects.GameCard;
 import nbradham.mtgEmu.gameObjects.GameObject;
 import nbradham.mtgEmu.gameObjects.Library;
 
+/**
+ * Holds code shared by local and remote players.
+ * 
+ * @author Nickolas S. Bradham
+ *
+ */
 public abstract class Player {
 
 	private final BufferedImage bufImg = new BufferedImage(GPanel.WIDTH, GPanel.HEIGHT, BufferedImage.TYPE_4BYTE_ABGR);
@@ -33,8 +39,13 @@ public abstract class Player {
 
 	private GameObject drag;
 	private byte fieldEnd;
-	private boolean redrawField = true;
+	private boolean redrawFlag = true;
 
+	/**
+	 * Creates a new Player instance.
+	 * 
+	 * @param playerID The ID of the player.
+	 */
 	protected Player(int playerID) {
 		id = playerID;
 		moveToGUI(commandZone);
@@ -42,6 +53,9 @@ public abstract class Player {
 		moveToGUI(lib);
 	}
 
+	/**
+	 * Starts the player and builds the GUI.
+	 */
 	public void start() {
 		SwingUtilities.invokeLater(() -> {
 			JFrame frame = new JFrame("Custom MTG Emulator");
@@ -85,41 +99,64 @@ public abstract class Player {
 		});
 	}
 
+	/**
+	 * Draws game elements.
+	 * 
+	 * @param g The Graphics to draw to.
+	 */
 	public final void drawGame(Graphics g) {
-		if (redrawField) {
+		if (redrawFlag) {
 			bufG.clearRect(0, 0, GPanel.WIDTH, GPanel.HEIGHT);
 			objects.forEach(o -> {
 				if (o != drag)
 					o.draw(bufG);
 			});
-			redrawField = false;
+			redrawFlag = false;
 		}
 		g.drawImage(bufImg, 0, 0, null);
 		if (drag != null)
 			drag.draw(g);
 	}
 
-	public final void moveToGUI(GameObject o) {
-		remove(o);
-		o.setIndex(objects.size());
-		objects.add(o);
+	/**
+	 * Moves a GameObject to the GUI layer.
+	 * 
+	 * @param obj The object to move.
+	 */
+	public final void moveToGUI(GameObject obj) {
+		remove(obj);
+		obj.setIndex(objects.size());
+		objects.add(obj);
 	}
 
-	public final void remove(GameObject o) {
-		int i = o.getIndex();
+	/**
+	 * Removes a GameObject from the view.
+	 * 
+	 * @param obj The object to remove.
+	 */
+	public final void remove(GameObject obj) {
+		int i = obj.getIndex();
 		if (i > -1) {
-			if (i < fieldEnd && objects.contains(o))
+			if (i < fieldEnd && objects.contains(obj))
 				--fieldEnd;
 			objects.remove(i);
 		}
 	}
 
+	/**
+	 * Retrieves the ID of this player.
+	 * 
+	 * @return The numeric player ID.
+	 */
 	public final int getID() {
 		return id;
 	}
 
+	/**
+	 * Schedules a game redraw.
+	 */
 	protected final void redraw() {
-		redrawField = true;
+		redrawFlag = true;
 		gameView.repaint();
 	}
 }

@@ -8,6 +8,12 @@ import javax.swing.JPanel;
 
 import nbradham.mtgEmu.players.Player;
 
+/**
+ * The GUI view to draw game elements to.
+ * 
+ * @author Nickolas S. Bradham
+ *
+ */
 public final class GPanel extends JPanel {
 	private static final long serialVersionUID = 1L;
 
@@ -15,6 +21,11 @@ public final class GPanel extends JPanel {
 
 	private final Player player;
 
+	/**
+	 * Creates a new GPanel instance assigned to {@code setPlayer}.
+	 * 
+	 * @param setPlayer
+	 */
 	public GPanel(Player setPlayer) {
 		super();
 		player = setPlayer;

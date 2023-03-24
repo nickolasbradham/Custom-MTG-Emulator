@@ -15,6 +15,12 @@ import javax.imageio.ImageIO;
 import nbradham.mtgEmu.gameObjects.GameCard;
 import nbradham.mtgEmu.gameObjects.GameCard.CardType;
 
+/**
+ * Handles card textures.
+ * 
+ * @author Nickolas S. Bradham
+ *
+ */
 public final class CardManager {
 
 	private static final double PI_2 = Math.PI / 2;
@@ -23,6 +29,20 @@ public final class CardManager {
 	private BufferedImage imageMap;
 	private byte cardID = -1, imgID = -1;
 
+	/**
+	 * Loads a deck file into the texture map and generates the game deck.
+	 * 
+	 * @param player   The player ID to tie this deck to.
+	 * @param deckFile The file to load.
+	 * @return An array holding all the cards.
+	 * @throws ZipException Thrown by {@link ZipFile#ZipFile(File)}.
+	 * @throws IOException  Thrown by {@link ZipFile#ZipFile(File)},
+	 *                      {@link ImageIO#read(java.io.InputStream)},
+	 *                      {@link ZipFile#getInputStream(java.util.zip.ZipEntry)},
+	 *                      {@link DataInputStream#readShort()},
+	 *                      {@link #addCards(DataInputStream, int, ArrayList, ArrayList, CardType)},
+	 *                      and {@link DataInputStream#readByte()}.
+	 */
 	public GameCard[] load(int player, File deckFile) throws ZipException, IOException {
 		ZipFile zFile = new ZipFile(deckFile);
 
@@ -91,6 +111,18 @@ public final class CardManager {
 		return gameCards.toArray(new GameCard[0]);
 	}
 
+	/**
+	 * Reads the next category of cards from {@code inStream}. Stores game info in
+	 * {@code gameCards} and UV info in {@code uvOrigins}.
+	 * 
+	 * @param inStream  The DataInputStream to read from.
+	 * @param player    The id of the player to assign the cards to.
+	 * @param gameCards The ArrayList to add the {@link GameCard}s to.
+	 * @param uvOrigins The ArrayList to add the UV origins to.
+	 * @param cardType  The type of card to assign.
+	 * @throws IOException Thrown by {@link DataInputStream#readByte()} and
+	 *                     {@link DataInputStream#readShort()}.
+	 */
 	private void addCards(DataInputStream inStream, int player, ArrayList<GameCard> gameCards,
 			ArrayList<short[]> uvOrigins, CardType cardType) throws IOException {
 		byte count = inStream.readByte();
@@ -100,6 +132,16 @@ public final class CardManager {
 		}
 	}
 
+	/**
+	 * Draws card image {@code iID} from player {@code pID} to Graphics {@code g} at
+	 * point ({@code x},{@code y}).
+	 * 
+	 * @param g   The Graphics to draw to.
+	 * @param pID The player ID of the card.
+	 * @param iID The image ID of the card.
+	 * @param x   The x coordinate of the card.
+	 * @param y   The y coordinate of the card.
+	 */
 	public void drawCard(Graphics g, int pID, byte iID, int x, int y) {
 		CardUVs uvs = cardUVs.get(pID);
 		short w = uvs.getWidth(), h = uvs.getHeight();
@@ -107,6 +149,15 @@ public final class CardManager {
 		g.drawImage(imageMap, x, y, x + w, y + h, uvxy[0], uvxy[1], uvxy[0] + w, uvxy[1] + h, null);
 	}
 
+	/**
+	 * Draws card back from player {@code pID} to Graphics {@code g} at point
+	 * ({@code x},{@code y}).
+	 * 
+	 * @param g   The Graphics to draw to.
+	 * @param pID The player ID of the card back.
+	 * @param x   The x coordinate of the card.
+	 * @param y   The y coordinate of the card.
+	 */
 	public void drawBack(Graphics g, int pID, int x, int y) {
 		if (pID < cardUVs.size()) {
 			CardUVs uvs = cardUVs.get(pID);

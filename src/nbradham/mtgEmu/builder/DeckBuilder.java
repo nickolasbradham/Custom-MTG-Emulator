@@ -163,7 +163,14 @@ public final class DeckBuilder {
 		return 0;
 	}
 
-	private void addCard(BufferedImage buf, CardCountGetter ccg) throws IOException {
+	/**
+	 * Adds a new {@link BuildCard} to the card list and updates {@code smallest} if
+	 * applicable.
+	 * 
+	 * @param buf The card image.
+	 * @param ccg The CardCountGetter for this card.
+	 */
+	private void addCard(BufferedImage buf, CardCountGetter ccg) {
 		BuildCard c = new BuildCard(++id, buf, ccg.getCount(buf));
 		cards.add(c);
 		smallest = c.getWidth() < cards.get(smallest).getWidth() ? id : smallest;
