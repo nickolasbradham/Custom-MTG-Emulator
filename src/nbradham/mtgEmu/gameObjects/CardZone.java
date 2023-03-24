@@ -6,15 +6,15 @@ import nbradham.mtgEmu.players.LocalPlayer.Layer;
 
 public final class CardZone extends GameObject {
 
-	private final ArrayList<Card> cards = new ArrayList<>();
+	private final ArrayList<GameCard> cards = new ArrayList<>();
 
 	public CardZone(int objX, int objY, int width) {
 		setLayer(Layer.GUI);
 		setPos(objX, objY);
-		setWH(width, Card.SM_HEIGHT);
+		setWH(width, GameCard.SM_HEIGHT);
 	}
 
-	public void add(Card card) {
+	public void add(GameCard card) {
 		cards.add(card);
 		children.add(card);
 		int div = getWidth() / (cards.size() + 2), x = getX(), y = getY();

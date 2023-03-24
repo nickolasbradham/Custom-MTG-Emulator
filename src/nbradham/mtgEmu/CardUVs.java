@@ -30,4 +30,16 @@ final class CardUVs {
 	int getMapHeight() {
 		return mapH;
 	}
+
+	short getWidth() {
+		return w;
+	}
+
+	short getHeight() {
+		return h;
+	}
+
+	short[] getUV(byte iID) {
+		return uvs[iID];
+	}
 }

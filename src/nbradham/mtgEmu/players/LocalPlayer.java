@@ -1,6 +1,8 @@
 package nbradham.mtgEmu.players;
 
+import java.awt.AlphaComposite;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
@@ -15,11 +17,11 @@ import javax.swing.SwingUtilities;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
 import nbradham.mtgEmu.GPanel;
-import nbradham.mtgEmu.gameObjects.Card;
+import nbradham.mtgEmu.Main;
+import nbradham.mtgEmu.gameObjects.GameCard;
 import nbradham.mtgEmu.gameObjects.CardZone;
 import nbradham.mtgEmu.gameObjects.GameObject;
 import nbradham.mtgEmu.gameObjects.Library;
-import nbradham.mtgEmu.CardManager;
 
 public final class LocalPlayer extends Player {
 
@@ -29,19 +31,17 @@ public final class LocalPlayer extends Player {
 
 	private final GPanel gameView = new GPanel(this);
 	private final BufferedImage fieldImg = new BufferedImage(GPanel.WIDTH, GPanel.HEIGHT,
-			BufferedImage.TYPE_4BYTE_ABGR_PRE),
-			guiImg = new BufferedImage(GPanel.WIDTH, GPanel.HEIGHT, BufferedImage.TYPE_4BYTE_ABGR_PRE);
-	private final Graphics fieldG = fieldImg.createGraphics(), guiG = guiImg.createGraphics();
+			BufferedImage.TYPE_4BYTE_ABGR),
+			guiImg = new BufferedImage(GPanel.WIDTH, GPanel.HEIGHT, BufferedImage.TYPE_4BYTE_ABGR);
+	private final Graphics2D fieldG = fieldImg.createGraphics(), guiG = guiImg.createGraphics();
 	private final ArrayList<GameObject> objects = new ArrayList<>();
-	private final CardManager cardMan;
 	private final CardZone commandZone = new CardZone(0, 700, 200), handZone = new CardZone(200, 700, 900);
 	private final Library lib = new Library();
 	private final int id;
 	private GameObject drag;
 	private boolean redrawField = true, redrawGui = true;
 
-	public LocalPlayer(CardManager cardManager, int playerID) {
-		cardMan = cardManager;
+	public LocalPlayer(int playerID) {
 		id = playerID;
 		objects.add(commandZone);
 		objects.add(handZone);
@@ -64,7 +64,7 @@ public final class LocalPlayer extends Player {
 			loadItem.addActionListener(e -> {
 				if (chooser.showOpenDialog(frame) == JFileChooser.APPROVE_OPTION) {
 					try {
-						for (Card c : cardMan.load(id, chooser.getSelectedFile()))
+						for (GameCard c : Main.CARD_MANAGER.load(id, chooser.getSelectedFile()))
 							switch (c.getType()) {
 							case COMMANDER:
 								objects.add(c);
@@ -76,6 +76,8 @@ public final class LocalPlayer extends Player {
 							case TOKEN:
 								// TODO add to tokens.
 							}
+						redrawField = redrawGui = true;
+						gameView.repaint();
 					} catch (IOException e1) {
 						e1.printStackTrace();
 					}
@@ -93,13 +95,25 @@ public final class LocalPlayer extends Player {
 
 	@Override
 	public void drawGame(Graphics g) {
-		objects.forEach(o -> {
-			if (o != drag)
-				o.draw(o.getLayer() == Layer.BATTLEFIELD ? fieldG : guiG);
-		});
-		g.drawImage(fieldImg, 0, 0, gameView);
-		g.drawImage(guiImg, 0, 0, gameView);
+		redrawLayer(redrawField, fieldG, Layer.BATTLEFIELD, g, fieldImg);
+		redrawField = false;
+		//redrawLayer(redrawGui, guiG, Layer.GUI, g, guiImg);
+		redrawGui = false;
 		if (drag != null)
 			drag.draw(g);
+	}
+
+	private void redrawLayer(boolean flag, Graphics2D bufG, Layer layer, Graphics viewG, BufferedImage buf) {
+		if (flag) {
+			//bufG.setComposite(AlphaComposite.Clear);
+			bufG.fillRect(0, 0, GPanel.WIDTH, GPanel.HEIGHT);
+			//bufG.setComposite(AlphaComposite.Src);
+			objects.forEach(o -> {
+				if (o.getLayer() == layer && o != drag)
+					o.draw(bufG);
+			});
+			flag = false;
+		}
+		viewG.drawImage(buf, 0, 0, null);
 	}
 }

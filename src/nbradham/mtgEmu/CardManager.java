@@ -1,5 +1,6 @@
 package nbradham.mtgEmu;
 
+import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
@@ -12,8 +13,8 @@ import java.util.zip.ZipFile;
 
 import javax.imageio.ImageIO;
 
-import nbradham.mtgEmu.gameObjects.Card;
-import nbradham.mtgEmu.gameObjects.Card.CardType;
+import nbradham.mtgEmu.gameObjects.GameCard;
+import nbradham.mtgEmu.gameObjects.GameCard.CardType;
 
 public final class CardManager {
 
@@ -23,7 +24,7 @@ public final class CardManager {
 	private BufferedImage imageMap;
 	private byte cardID = -1, imgID = -1;
 
-	public Card[] load(int player, File deckFile) throws ZipException, IOException {
+	public GameCard[] load(int player, File deckFile) throws ZipException, IOException {
 		ZipFile zFile = new ZipFile(deckFile);
 
 		BufferedImage img = ImageIO.read(zFile.getInputStream(zFile.getEntry("cards.png")));
@@ -38,10 +39,10 @@ public final class CardManager {
 
 		DataInputStream info = new DataInputStream(zFile.getInputStream(zFile.getEntry("info.bin")));
 		short cw = info.readShort(), ch = info.readShort();
-		ArrayList<Card> gameCards = new ArrayList<>();
+		ArrayList<GameCard> gameCards = new ArrayList<>();
 		ArrayList<short[]> uvOrigins = new ArrayList<>();
 
-		addCards(info, gameCards, uvOrigins, CardType.COMMANDER);
+		addCards(info, player, gameCards, uvOrigins, CardType.COMMANDER);
 		byte count = info.readByte();
 		for (byte i = 0; i < count; ++i) {
 			byte dupes = info.readByte();
@@ -49,10 +50,10 @@ public final class CardManager {
 			uvOrigins.add(tuv);
 			++imgID;
 			for (byte n = 0; n < dupes; ++n)
-				gameCards.add(new Card(++cardID, CardType.LIBRARY, imgID));
+				gameCards.add(new GameCard(player, ++cardID, CardType.LIBRARY, imgID));
 		}
-		addCards(info, gameCards, uvOrigins, CardType.LIBRARY);
-		addCards(info, gameCards, uvOrigins, CardType.TOKEN);
+		addCards(info, player, gameCards, uvOrigins, CardType.LIBRARY);
+		addCards(info, player, gameCards, uvOrigins, CardType.TOKEN);
 
 		zFile.close();
 
@@ -86,17 +87,25 @@ public final class CardManager {
 				newG.drawImage(imageMap, 0, newOff = (cur = newCardUVs.get(i)).getOffset(), cur.getMapWidth(),
 						newOff + cur.getMapHeight(), 0, lastOff = (last = newCardUVs.get(i)).getOffset(),
 						last.getMapWidth(), lastOff + last.getMapHeight(), null);
-		imageMap = newImageMap;
 		cardUVs = newCardUVs;
-		return gameCards.toArray(new Card[0]);
+		return gameCards.toArray(new GameCard[0]);
 	}
 
-	private void addCards(DataInputStream inStream, ArrayList<Card> gameCards, ArrayList<short[]> uvOrigins,
-			CardType cardType) throws IOException {
+	private void addCards(DataInputStream inStream, int player, ArrayList<GameCard> gameCards,
+			ArrayList<short[]> uvOrigins, CardType cardType) throws IOException {
 		byte count = inStream.readByte();
 		for (byte i = 0; i < count; ++i) {
-			gameCards.add(new Card(++cardID, cardType, ++imgID));
+			gameCards.add(new GameCard(player, ++cardID, cardType, ++imgID));
 			uvOrigins.add(new short[] { inStream.readShort(), inStream.readShort() });
 		}
+	}
+
+	public void drawCard(Graphics g, int pID, byte iID, int x, int y) {
+		CardUVs uvs = cardUVs.get(pID);
+		short w = uvs.getWidth(), h = uvs.getHeight();
+		short[] uvxy = uvs.getUV(iID);
+		System.out.printf("Drawing [(%d, %d), (%d, %d)] to [(%d, %d), (%d, %d)]%n", uvxy[0], uvxy[1], uvxy[0] + w,
+				uvxy[1] + h, x, y, x + w, y + h);
+		g.drawImage(imageMap, x, y, x + w, y + h, uvxy[0], uvxy[1], uvxy[0] + w, uvxy[1] + h, null);
 	}
 }

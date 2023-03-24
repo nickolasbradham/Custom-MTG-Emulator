@@ -4,13 +4,13 @@ import java.util.Stack;
 
 public final class Library extends GameObject {
 
-	private final Stack<Card> stack = new Stack<>();
+	private final Stack<GameCard> stack = new Stack<>();
 
 	public Library() {
 		setPos(1100, 700);
 	}
 
-	public final void putOnTop(Card c) {
+	public final void putOnTop(GameCard c) {
 		stack.push(c);
 	}
 }

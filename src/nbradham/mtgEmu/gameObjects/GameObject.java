@@ -1,6 +1,5 @@
 package nbradham.mtgEmu.gameObjects;
 
-import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Rectangle;
 import java.util.ArrayList;
@@ -26,7 +25,6 @@ public class GameObject {
 	}
 
 	public void draw(Graphics g) {
-		g.setColor(Color.BLACK);
 		g.drawRect(space.x, space.y, space.width, space.height);
 	}
 

@@ -30,7 +30,7 @@ public final class DeckBuilder {
 	private static final String PRMPT_BACK = "Select card back image. Cancel to use default.";
 	private static short L_IMG_W = 200;
 
-	private final ArrayList<Card> cards = new ArrayList<>();
+	private final ArrayList<BuildCard> cards = new ArrayList<>();
 	private final JFileChooser chooser = new JFileChooser();
 	private final JFrame parent;
 	private int commanders, dupes, singles, tokens;
@@ -69,7 +69,7 @@ public final class DeckBuilder {
 			singles = promptCards("Select remaining Library card(s). Cancel to skip.", f -> 1);
 			tokens = promptCards("Select Token/Special card(s). Cancel to skip.", f -> 1);
 
-			Card smallCard = cards.get(smallest);
+			BuildCard smallCard = cards.get(smallest);
 			int w = smallCard.getWidth(), h = smallCard.getHeight(), x = 0, y = h;
 			byte moveID = 0;
 
@@ -113,7 +113,7 @@ public final class DeckBuilder {
 				writeCards(dos, commanders);
 
 				dos.writeByte(dupes);
-				Card c;
+				BuildCard c;
 				Point cLoc;
 				for (byte n = 0; n < dupes; n++) {
 					cLoc = (c = cards.get(++id)).loc();
@@ -156,7 +156,7 @@ public final class DeckBuilder {
 	}
 
 	private void addCard(BufferedImage buf, CardCountGetter ccg) throws IOException {
-		Card c = new Card(++id, buf, ccg.getCount(buf));
+		BuildCard c = new BuildCard(++id, buf, ccg.getCount(buf));
 		cards.add(c);
 		smallest = c.getWidth() < cards.get(smallest).getWidth() ? id : smallest;
 	}

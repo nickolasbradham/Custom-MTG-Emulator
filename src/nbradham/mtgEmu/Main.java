@@ -15,10 +15,11 @@ import nbradham.mtgEmu.players.LocalPlayer;
  * @author Nickolas S. Bradham
  *
  */
-final class Main {
+public final class Main {
+
+	public static final CardManager CARD_MANAGER = new CardManager();
 
 	private final JFrame frame = new JFrame("Custom MTG Emulator");
-	private final CardManager texManager = new CardManager();
 
 	/**
 	 * Creates and shows the GUI on the AWT thread.
@@ -29,7 +30,7 @@ final class Main {
 			frame.setLayout(new BoxLayout(frame.getContentPane(), BoxLayout.PAGE_AXIS));
 
 			addButton("Singlplayer", e -> {
-				new LocalPlayer(texManager, 0).start();
+				new LocalPlayer(0).start();
 				frame.dispose();
 			});
 
