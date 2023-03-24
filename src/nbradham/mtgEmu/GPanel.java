@@ -2,6 +2,7 @@ package nbradham.mtgEmu;
 
 import java.awt.Dimension;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
 
 import javax.swing.JPanel;
 
@@ -23,6 +24,6 @@ public final class GPanel extends JPanel {
 	@Override
 	public final void paint(Graphics g) {
 		super.paint(g);
-		player.drawGame(g);
+		player.drawGame((Graphics2D) g);
 	}
 }

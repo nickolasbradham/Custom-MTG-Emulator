@@ -1,6 +1,5 @@
 package nbradham.mtgEmu;
 
-import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
@@ -87,6 +86,7 @@ public final class CardManager {
 				newG.drawImage(imageMap, 0, newOff = (cur = newCardUVs.get(i)).getOffset(), cur.getMapWidth(),
 						newOff + cur.getMapHeight(), 0, lastOff = (last = newCardUVs.get(i)).getOffset(),
 						last.getMapWidth(), lastOff + last.getMapHeight(), null);
+		imageMap = newImageMap;
 		cardUVs = newCardUVs;
 		return gameCards.toArray(new GameCard[0]);
 	}
@@ -104,8 +104,6 @@ public final class CardManager {
 		CardUVs uvs = cardUVs.get(pID);
 		short w = uvs.getWidth(), h = uvs.getHeight();
 		short[] uvxy = uvs.getUV(iID);
-		System.out.printf("Drawing [(%d, %d), (%d, %d)] to [(%d, %d), (%d, %d)]%n", uvxy[0], uvxy[1], uvxy[0] + w,
-				uvxy[1] + h, x, y, x + w, y + h);
 		g.drawImage(imageMap, x, y, x + w, y + h, uvxy[0], uvxy[1], uvxy[0] + w, uvxy[1] + h, null);
 	}
 }

@@ -18,8 +18,8 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 
 import nbradham.mtgEmu.GPanel;
 import nbradham.mtgEmu.Main;
-import nbradham.mtgEmu.gameObjects.GameCard;
 import nbradham.mtgEmu.gameObjects.CardZone;
+import nbradham.mtgEmu.gameObjects.GameCard;
 import nbradham.mtgEmu.gameObjects.GameObject;
 import nbradham.mtgEmu.gameObjects.Library;
 
@@ -33,7 +33,7 @@ public final class LocalPlayer extends Player {
 	private final BufferedImage fieldImg = new BufferedImage(GPanel.WIDTH, GPanel.HEIGHT,
 			BufferedImage.TYPE_4BYTE_ABGR),
 			guiImg = new BufferedImage(GPanel.WIDTH, GPanel.HEIGHT, BufferedImage.TYPE_4BYTE_ABGR);
-	private final Graphics2D fieldG = fieldImg.createGraphics(), guiG = guiImg.createGraphics();
+	private final Graphics fieldG = fieldImg.createGraphics(), guiG = guiImg.createGraphics();
 	private final ArrayList<GameObject> objects = new ArrayList<>();
 	private final CardZone commandZone = new CardZone(0, 700, 200), handZone = new CardZone(200, 700, 900);
 	private final Library lib = new Library();
@@ -94,10 +94,10 @@ public final class LocalPlayer extends Player {
 	}
 
 	@Override
-	public void drawGame(Graphics g) {
-		redrawLayer(redrawField, fieldG, Layer.BATTLEFIELD, g, fieldImg);
+	public void drawGame(Graphics2D g) {
+		redrawLayer(redrawField, (Graphics2D) fieldG, Layer.BATTLEFIELD, g, fieldImg);
 		redrawField = false;
-		//redrawLayer(redrawGui, guiG, Layer.GUI, g, guiImg);
+		redrawLayer(redrawGui, (Graphics2D) guiG, Layer.GUI, g, guiImg);
 		redrawGui = false;
 		if (drag != null)
 			drag.draw(g);
@@ -105,9 +105,9 @@ public final class LocalPlayer extends Player {
 
 	private void redrawLayer(boolean flag, Graphics2D bufG, Layer layer, Graphics viewG, BufferedImage buf) {
 		if (flag) {
-			//bufG.setComposite(AlphaComposite.Clear);
+			bufG.setComposite(AlphaComposite.Clear);
 			bufG.fillRect(0, 0, GPanel.WIDTH, GPanel.HEIGHT);
-			//bufG.setComposite(AlphaComposite.Src);
+			bufG.setComposite(AlphaComposite.Src);
 			objects.forEach(o -> {
 				if (o.getLayer() == layer && o != drag)
 					o.draw(bufG);
