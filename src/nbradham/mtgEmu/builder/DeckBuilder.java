@@ -1,7 +1,8 @@
 package nbradham.mtgEmu.builder;
 
-import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.Point;
+import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
 import java.io.DataOutputStream;
 import java.io.File;
@@ -52,6 +53,7 @@ public final class DeckBuilder {
 	public void start() {
 		try {
 			promptCards(PRMPT_BACK, f -> 1);
+			id = -1;
 			chooser.setMultiSelectionEnabled(true);
 			commanders = promptCards("Select Commander card(s). Cancel to skip.", f -> 1);
 			dupes = promptCards("Select Library card(s) with duplicates (ex: Basic Lands). Cancel to skip.", img -> {
@@ -68,6 +70,11 @@ public final class DeckBuilder {
 			});
 			singles = promptCards("Select remaining Library card(s). Cancel to skip.", f -> 1);
 			tokens = promptCards("Select Token/Special card(s). Cancel to skip.", f -> 1);
+
+			if (cards.size() <= 1) {
+				JOptionPane.showMessageDialog(parent, "No cards selected.", "Build Error", JOptionPane.ERROR_MESSAGE);
+				return;
+			}
 
 			BuildCard smallCard = cards.get(smallest);
 			int w = smallCard.getWidth(), h = smallCard.getHeight(), x = 0, y = h;
@@ -86,8 +93,9 @@ public final class DeckBuilder {
 				}
 			}
 
-			BufferedImage stitched = new BufferedImage(x, y, BufferedImage.TYPE_INT_ARGB_PRE);
-			Graphics stitchG = stitched.createGraphics();
+			BufferedImage stitched = new BufferedImage(x, y, BufferedImage.TYPE_INT_ARGB);
+			Graphics2D stitchG = stitched.createGraphics();
+			stitchG.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
 			cards.forEach(c -> {
 				Point loc = c.loc();
 				stitchG.drawImage(c.img(), loc.x, loc.y, loc.x + w, loc.y + h, 0, 0, c.getWidth(), c.getHeight(), null);

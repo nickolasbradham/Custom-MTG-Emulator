@@ -15,11 +15,11 @@ final class CardUVs {
 		uvs = cardUVs;
 	}
 
-	int getOffset() {
+	int getMapOffset() {
 		return offset;
 	}
 
-	void setOffset(int newOffset) {
+	void setMapOffset(int newOffset) {
 		offset = newOffset;
 	}
 

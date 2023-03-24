@@ -70,21 +70,21 @@ public final class CardManager {
 		CardUVs last = newCardUVs.get(0), cur;
 		int end = newCardUVs.size();
 		for (byte i = 1; i < end; ++i) {
-			(cur = newCardUVs.get(i)).setOffset(last.getOffset() + last.getMapHeight());
+			(cur = newCardUVs.get(i)).setMapOffset(last.getMapOffset() + last.getMapHeight());
 			last = cur;
 		}
 
-		BufferedImage newImageMap = new BufferedImage(widest, last.getOffset() + last.getMapHeight(),
+		BufferedImage newImageMap = new BufferedImage(widest, last.getMapOffset() + last.getMapHeight(),
 				BufferedImage.TYPE_4BYTE_ABGR_PRE);
 		Graphics newG = newImageMap.createGraphics();
 
 		int newOff, lastOff;
 		for (byte i = 0; i < end; i++)
 			if (i == player)
-				newG.drawImage(loadedImages, 0, newSet.getOffset(), null);
+				newG.drawImage(loadedImages, 0, newSet.getMapOffset(), null);
 			else
-				newG.drawImage(imageMap, 0, newOff = (cur = newCardUVs.get(i)).getOffset(), cur.getMapWidth(),
-						newOff + cur.getMapHeight(), 0, lastOff = (last = newCardUVs.get(i)).getOffset(),
+				newG.drawImage(imageMap, 0, newOff = (cur = newCardUVs.get(i)).getMapOffset(), cur.getMapWidth(),
+						newOff + cur.getMapHeight(), 0, lastOff = (last = newCardUVs.get(i)).getMapOffset(),
 						last.getMapWidth(), lastOff + last.getMapHeight(), null);
 		imageMap = newImageMap;
 		cardUVs = newCardUVs;
