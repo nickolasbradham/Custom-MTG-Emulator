@@ -15,7 +15,7 @@ public final class GameCard extends GameObject {
 		COMMANDER, LIBRARY, TOKEN
 	};
 
-	public static final short SM_HEIGHT = 200, LG_HEIGHT = 400;
+	public static final short SM_HEIGHT = 200, LG_HEIGHT = 350;
 
 	private final CardType type;
 	private final int pID;

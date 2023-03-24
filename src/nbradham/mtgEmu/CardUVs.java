@@ -79,10 +79,20 @@ final class CardUVs {
 		return w;
 	}
 
+	/**
+	 * Retrieves the width of the small card form.
+	 * 
+	 * @return The small width of cards.
+	 */
 	int getSmallWidth() {
 		return smallW;
 	}
 
+	/**
+	 * Retrieves the width of the large card form.
+	 * 
+	 * @return The large width of cards.
+	 */
 	int getLargeWidth() {
 		return largeW;
 	}
@@ -107,6 +117,15 @@ final class CardUVs {
 		return uvs[iID];
 	}
 
+	/**
+	 * Calculates the scaled width of a card ({@code startW} *
+	 * {@code targetScaleHeight} / {@code startH}).
+	 * 
+	 * @param startW            The initial card width.
+	 * @param targetScaleHeight The height of the card to scale to.
+	 * @param startH            The initial card height.
+	 * @return The calculated scaled width.
+	 */
 	public static int scaleWidth(short startW, short targetScaleHeight, short startH) {
 		return startW * targetScaleHeight / startH;
 	}

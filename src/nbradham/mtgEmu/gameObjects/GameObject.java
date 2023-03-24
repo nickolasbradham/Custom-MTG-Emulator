@@ -103,6 +103,11 @@ public class GameObject {
 		return space.width;
 	}
 
+	/**
+	 * Adds a child to this object.
+	 * 
+	 * @param child The child to add.
+	 */
 	protected final void addChild(GameObject child) {
 		children.add(child);
 	}

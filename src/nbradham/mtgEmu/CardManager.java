@@ -170,8 +170,4 @@ public final class CardManager {
 					uvs.getHeight(), null);
 		}
 	}
-
-	public int getSmallCardWidth(int pID) {
-		return cardUVs.get(pID).getSmallWidth();
-	}
 }
