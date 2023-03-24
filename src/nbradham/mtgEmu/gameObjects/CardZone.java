@@ -38,7 +38,7 @@ public final class CardZone extends GameObject {
 	public void add(GameCard card) {
 		play.moveToGUI(card);
 		cards.add(card);
-		children.add(card);
+		addChild(card);
 		int div = getWidth() / (cards.size() + 2), x = getX(), y = getY();
 		for (byte i = 0; i < cards.size(); i++)
 			cards.get(i).setPos(x + (i + 1) * div, y);

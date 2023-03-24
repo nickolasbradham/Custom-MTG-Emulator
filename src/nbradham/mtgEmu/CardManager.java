@@ -60,8 +60,9 @@ public final class CardManager {
 		short cw = info.readShort(), ch = info.readShort();
 		ArrayList<GameCard> gameCards = new ArrayList<>();
 		ArrayList<short[]> uvOrigins = new ArrayList<>();
+		int scaleW = CardUVs.scaleWidth(cw, GameCard.SM_HEIGHT, ch);
 
-		addCards(info, player, gameCards, uvOrigins, CardType.COMMANDER);
+		addCards(info, player, gameCards, uvOrigins, CardType.COMMANDER, scaleW);
 		byte count = info.readByte();
 		for (byte i = 0; i < count; ++i) {
 			byte dupes = info.readByte();
@@ -69,15 +70,15 @@ public final class CardManager {
 			uvOrigins.add(tuv);
 			++imgID;
 			for (byte n = 0; n < dupes; ++n)
-				gameCards.add(new GameCard(player, ++cardID, CardType.LIBRARY, imgID));
+				gameCards.add(new GameCard(player, ++cardID, CardType.LIBRARY, imgID, scaleW));
 		}
-		addCards(info, player, gameCards, uvOrigins, CardType.LIBRARY);
-		addCards(info, player, gameCards, uvOrigins, CardType.TOKEN);
+		addCards(info, player, gameCards, uvOrigins, CardType.LIBRARY, scaleW);
+		addCards(info, player, gameCards, uvOrigins, CardType.TOKEN, scaleW);
 
 		zFile.close();
 
 		ArrayList<CardUVs> newCardUVs = new ArrayList<>(cardUVs);
-		CardUVs newSet = new CardUVs(mw, mh, cw, ch, uvOrigins.toArray(new short[0][]));
+		CardUVs newSet = new CardUVs(mw, mh, cw, ch, uvOrigins.toArray(new short[0][]), scaleW);
 		if (player < newCardUVs.size())
 			newCardUVs.set(player, newSet);
 		else
@@ -124,10 +125,10 @@ public final class CardManager {
 	 *                     {@link DataInputStream#readShort()}.
 	 */
 	private void addCards(DataInputStream inStream, int player, ArrayList<GameCard> gameCards,
-			ArrayList<short[]> uvOrigins, CardType cardType) throws IOException {
+			ArrayList<short[]> uvOrigins, CardType cardType, int scaleW) throws IOException {
 		byte count = inStream.readByte();
 		for (byte i = 0; i < count; ++i) {
-			gameCards.add(new GameCard(player, ++cardID, cardType, ++imgID));
+			gameCards.add(new GameCard(player, ++cardID, cardType, ++imgID, scaleW));
 			uvOrigins.add(new short[] { inStream.readShort(), inStream.readShort() });
 		}
 	}
@@ -142,11 +143,15 @@ public final class CardManager {
 	 * @param x   The x coordinate of the card.
 	 * @param y   The y coordinate of the card.
 	 */
-	public void drawCard(Graphics g, int pID, byte iID, int x, int y) {
+	public void drawCard(Graphics g, int pID, byte iID, int x, int y, boolean fullClamp) {
 		CardUVs uvs = cardUVs.get(pID);
-		short w = uvs.getWidth(), h = uvs.getHeight();
 		short[] uvxy = uvs.getUV(iID);
-		g.drawImage(imageMap, x, y, x + w, y + h, uvxy[0], uvxy[1], uvxy[0] + w, uvxy[1] + h, null);
+		int lgW = uvs.getLargeWidth();
+		int dx = fullClamp ? Math.max(0, Math.min(x, GPanel.WIDTH - lgW)) : x,
+				dy = fullClamp ? Math.max(0, Math.min(y, GPanel.HEIGHT - GameCard.LG_HEIGHT)) : y;
+		g.drawImage(imageMap, dx, dy, dx + (fullClamp ? lgW : uvs.getSmallWidth()),
+				dy + (fullClamp ? GameCard.LG_HEIGHT : GameCard.SM_HEIGHT), uvxy[0], uvxy[1], uvxy[0] + uvs.getWidth(),
+				uvxy[1] + uvs.getHeight(), null);
 	}
 
 	/**
@@ -161,8 +166,12 @@ public final class CardManager {
 	public void drawBack(Graphics g, int pID, int x, int y) {
 		if (pID < cardUVs.size()) {
 			CardUVs uvs = cardUVs.get(pID);
-			short w = uvs.getWidth(), h = uvs.getHeight();
-			g.drawImage(imageMap, x, y, x + w, y + h, 0, 0, w, h, null);
+			g.drawImage(imageMap, x, y, x + uvs.getSmallWidth(), y + GameCard.SM_HEIGHT, 0, 0, uvs.getWidth(),
+					uvs.getHeight(), null);
 		}
+	}
+
+	public int getSmallCardWidth(int pID) {
+		return cardUVs.get(pID).getSmallWidth();
 	}
 }

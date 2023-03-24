@@ -15,7 +15,7 @@ public final class GameCard extends GameObject {
 		COMMANDER, LIBRARY, TOKEN
 	};
 
-	static final short SM_HEIGHT = 300;
+	public static final short SM_HEIGHT = 200, LG_HEIGHT = 400;
 
 	private final CardType type;
 	private final int pID;
@@ -30,11 +30,12 @@ public final class GameCard extends GameObject {
 	 * @param cardType The CardType of this card.
 	 * @param imageID  The image ID of this card.
 	 */
-	public GameCard(int playerID, byte cardID, CardType cardType, byte imageID) {
+	public GameCard(int playerID, byte cardID, CardType cardType, byte imageID, int objW) {
 		pID = playerID;
 		cID = cardID;
 		type = cardType;
 		iID = imageID;
+		setSize(objW, SM_HEIGHT);
 	}
 
 	/**
@@ -48,6 +49,6 @@ public final class GameCard extends GameObject {
 
 	@Override
 	public void draw(Graphics g) {
-		Main.CARD_MANAGER.drawCard(g, pID, iID, getX(), getY());
+		Main.CARD_MANAGER.drawCard(g, pID, iID, getX(), getY(), false);
 	}
 }

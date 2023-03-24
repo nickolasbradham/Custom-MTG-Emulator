@@ -12,8 +12,7 @@ import java.util.ArrayList;
  */
 public class GameObject {
 
-	protected final ArrayList<GameObject> children = new ArrayList<>();
-
+	private final ArrayList<GameObject> children = new ArrayList<>();
 	private final Rectangle space = new Rectangle();
 
 	private int index = -1;
@@ -102,5 +101,9 @@ public class GameObject {
 	 */
 	protected final int getWidth() {
 		return space.width;
+	}
+
+	protected final void addChild(GameObject child) {
+		children.add(child);
 	}
 }

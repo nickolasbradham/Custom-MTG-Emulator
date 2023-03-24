@@ -1,5 +1,7 @@
 package nbradham.mtgEmu;
 
+import nbradham.mtgEmu.gameObjects.GameCard;
+
 /**
  * Holds card UV information.
  * 
@@ -8,7 +10,7 @@ package nbradham.mtgEmu;
  */
 final class CardUVs {
 
-	private final int mapW, mapH;
+	private final int mapW, mapH, smallW, largeW;
 	private final short w, h;
 	private final short[][] uvs;
 	private int offset = 0;
@@ -22,11 +24,13 @@ final class CardUVs {
 	 * @param height    The height of each card.
 	 * @param cardUVs   A 2D array containing all the origin points of cards.
 	 */
-	CardUVs(int mapWidth, int mapHeight, short width, short height, short[][] cardUVs) {
+	CardUVs(int mapWidth, int mapHeight, short width, short height, short[][] cardUVs, int scaleW) {
 		mapW = mapWidth;
 		mapH = mapHeight;
 		w = width;
 		h = height;
+		smallW = scaleW;
+		largeW = scaleWidth(w, GameCard.LG_HEIGHT, h);
 		uvs = cardUVs;
 	}
 
@@ -75,6 +79,14 @@ final class CardUVs {
 		return w;
 	}
 
+	int getSmallWidth() {
+		return smallW;
+	}
+
+	int getLargeWidth() {
+		return largeW;
+	}
+
 	/**
 	 * Gets the height of cards in this map.
 	 * 
@@ -93,5 +105,9 @@ final class CardUVs {
 	 */
 	short[] getUV(byte iID) {
 		return uvs[iID];
+	}
+
+	public static int scaleWidth(short startW, short targetScaleHeight, short startH) {
+		return startW * targetScaleHeight / startH;
 	}
 }
