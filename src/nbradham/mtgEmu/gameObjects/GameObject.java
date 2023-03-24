@@ -4,15 +4,13 @@ import java.awt.Graphics;
 import java.awt.Rectangle;
 import java.util.ArrayList;
 
-import nbradham.mtgEmu.players.LocalPlayer.Layer;
-
 public class GameObject {
 
 	protected final ArrayList<GameObject> children = new ArrayList<>();
 
 	private final Rectangle space = new Rectangle();
 
-	private Layer layer = Layer.BATTLEFIELD;
+	private int index = -1;
 
 	public final void setPos(int newX, int newY) {
 		int dx = newX - space.x, dy = newY - space.y;
@@ -24,16 +22,21 @@ public class GameObject {
 		space.setSize(width, height);
 	}
 
+	private void translate(int dx, int dy) {
+		space.translate(dx, dy);
+		children.forEach(c -> c.translate(dx, dy));
+	}
+
 	public void draw(Graphics g) {
 		g.drawRect(space.x, space.y, space.width, space.height);
 	}
 
-	public Layer getLayer() {
-		return layer;
+	public final void setIndex(int newIndex) {
+		index = newIndex;
 	}
 
-	protected final void setLayer(Layer newLayer) {
-		layer = newLayer;
+	public final int getIndex() {
+		return index;
 	}
 
 	protected final int getX() {
@@ -46,10 +49,5 @@ public class GameObject {
 
 	protected final int getWidth() {
 		return space.width;
-	}
-
-	private void translate(int dx, int dy) {
-		space.translate(dx, dy);
-		children.forEach(c -> c.translate(dx, dy));
 	}
 }

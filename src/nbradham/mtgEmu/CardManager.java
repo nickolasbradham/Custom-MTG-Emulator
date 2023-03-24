@@ -106,4 +106,12 @@ public final class CardManager {
 		short[] uvxy = uvs.getUV(iID);
 		g.drawImage(imageMap, x, y, x + w, y + h, uvxy[0], uvxy[1], uvxy[0] + w, uvxy[1] + h, null);
 	}
+
+	public void drawBack(Graphics g, int pID, int x, int y) {
+		if (pID < cardUVs.size()) {
+			CardUVs uvs = cardUVs.get(pID);
+			short w = uvs.getWidth(), h = uvs.getHeight();
+			g.drawImage(imageMap, x, y, x + w, y + h, 0, 0, w, h, null);
+		}
+	}
 }
