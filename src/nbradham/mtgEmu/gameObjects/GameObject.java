@@ -147,6 +147,9 @@ public class GameObject {
 	public void onMouseOverTop() {
 	}
 
+	public void onMouseExitTop() {
+	}
+
 	/**
 	 * Handles when the mouse is hovering over this object in any capacity.
 	 */

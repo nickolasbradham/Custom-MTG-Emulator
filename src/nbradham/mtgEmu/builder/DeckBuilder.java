@@ -29,7 +29,8 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 public final class DeckBuilder {
 
 	private static final String PRMPT_BACK = "Select card back image. Cancel to use default.";
-	private static short L_IMG_W = 200;
+	private static final short L_IMG_W = 200;
+	private static final byte F_CANCEL = -1;
 
 	private final ArrayList<BuildCard> cards = new ArrayList<>();
 	private final JFileChooser chooser = new JFileChooser();
@@ -56,18 +57,26 @@ public final class DeckBuilder {
 			id = -1;
 			chooser.setMultiSelectionEnabled(true);
 			commanders = promptCards("Select Commander card(s). Cancel to skip.", f -> 1);
-			dupes = promptCards("Select Library card(s) with duplicates (ex: Basic Lands). Cancel to skip.", img -> {
-				JLabel label = new JLabel("quantity (>0)?", new ImageIcon(img.getScaledInstance(L_IMG_W,
-						L_IMG_W * img.getHeight() / img.getWidth(), BufferedImage.SCALE_SMOOTH)), JLabel.LEFT);
-				byte count = 0;
-				while (count < 1)
-					try {
-						count = Byte.parseByte(JOptionPane.showInputDialog(label));
-					} catch (NumberFormatException e) {
-						JOptionPane.showMessageDialog(parent, "Must enter a number.");
-					}
-				return count;
-			});
+			if ((dupes = promptCards("Select Library card(s) with duplicates (ex: Basic Lands). Cancel to skip.",
+					img -> {
+						JLabel label = new JLabel(
+								"quantity (>0)?", new ImageIcon(img.getScaledInstance(L_IMG_W,
+										L_IMG_W * img.getHeight() / img.getWidth(), BufferedImage.SCALE_SMOOTH)),
+								JLabel.LEFT);
+						byte count = 0;
+						String response;
+						while (count < 1)
+							try {
+								response = JOptionPane.showInputDialog(label);
+								if (response == null)
+									return F_CANCEL;
+								count = Byte.parseByte(response);
+							} catch (NumberFormatException e) {
+								JOptionPane.showMessageDialog(parent, "Must enter a number.");
+							}
+						return count;
+					})) == F_CANCEL)
+				return;
 			singles = promptCards("Select remaining Library card(s). Cancel to skip.", f -> 1);
 			tokens = promptCards("Select Token/Special card(s). Cancel to skip.", f -> 1);
 

@@ -31,7 +31,7 @@ public abstract class Player {
 	private final GPanel gameView = new GPanel(this);
 	private final int id;
 
-	private GameObject drag;
+	private GameObject drag, hoverTop;
 	private byte fieldEnd;
 	private boolean redrawFlag = true;
 
@@ -143,17 +143,26 @@ public abstract class Player {
 			if (!(test = hovering.get(i)).isUnder(loc)) {
 				hovering.remove(i--);
 				test.onMouseExit();
+				if (test == hoverTop)
+					test.onMouseExitTop();
 			}
 
 		boolean first = true;
 		for (int i = objects.size() - 1; i > -1; --i) {
-			if ((test = objects.get(i)).isUnder(loc) && !hovering.contains(test)) {
+			if ((test = objects.get(i)).isUnder(loc)) {
 				if (first) {
+					if (test != hoverTop) {
+						if (hoverTop != null)
+							hoverTop.onMouseExitTop();
+						hoverTop = test;
+					}
 					test.onMouseOverTop();
 					first = false;
 				}
-				test.onMouseOver();
-				hovering.add(test);
+				if (!hovering.contains(test)) {
+					test.onMouseOver();
+					hovering.add(test);
+				}
 			}
 		}
 	}

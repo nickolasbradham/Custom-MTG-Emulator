@@ -83,7 +83,7 @@ public final class GameCard extends GameObject {
 	}
 
 	@Override
-	public void onMouseExit() {
+	public void onMouseExitTop() {
 		hovering = false;
 		control.redrawBuffer();
 	}
