@@ -12,6 +12,7 @@ import javax.swing.JMenuItem;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
 import nbradham.mtgEmu.Main;
+import nbradham.mtgEmu.ObjectFoundHandler;
 import nbradham.mtgEmu.gameObjects.GameObject;
 
 /**
@@ -33,13 +34,7 @@ public final class LocalPlayer extends Player {
 
 	@Override
 	public void mousePressed(MouseEvent e) {
-		GameObject clickedObj;
-		Point loc = e.getPoint();
-		for (int i = objects.size() - 1; i > -1; --i)
-			if ((clickedObj = objects.get(i)).isUnder(loc)) {
-				clickedObj.onPressed(e);
-				break;
-			}
+		handleFirstUnder(e.getPoint(), o -> o.onPressed(e));
 	}
 
 	@Override
@@ -96,5 +91,27 @@ public final class LocalPlayer extends Player {
 			drag.onMouseDragged(loc);
 			gameView.repaint();
 		}
+	}
+
+	@Override
+	public final void mouseClicked(MouseEvent e) {
+		super.mouseClicked(e);
+		handleFirstUnder(e.getPoint(), o -> o.onClicked(e));
+	}
+
+	/**
+	 * Finds the first {@link GameObject} under {@code loc} and calls
+	 * {@link ObjectFoundHandler#handle(GameObject)} on it.
+	 * 
+	 * @param loc The location to check.
+	 * @param h   The ObjectFoundHandler to call.
+	 */
+	private final void handleFirstUnder(Point loc, ObjectFoundHandler h) {
+		GameObject clickedObj;
+		for (int i = objects.size() - 1; i > -1; --i)
+			if ((clickedObj = objects.get(i)).isUnder(loc)) {
+				h.handle(clickedObj);
+				return;
+			}
 	}
 }

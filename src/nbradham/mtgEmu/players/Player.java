@@ -120,7 +120,7 @@ public abstract class Player {
 	public final void remove(GameObject obj) {
 		int i = objects.indexOf(obj);
 		if (i > -1) {
-			if (i < fieldEnd && objects.contains(obj))
+			if (i < fieldEnd)
 				--fieldEnd;
 			objects.remove(i);
 		}
@@ -215,6 +215,14 @@ public abstract class Player {
 	 * @param e The MouseEvent to process.
 	 */
 	public void mouseReleased(MouseEvent e) {
+	}
+
+	/**
+	 * Handles when a mouse button is clicked.
+	 * 
+	 * @param e The MouseEvent to process.
+	 */
+	public void mouseClicked(MouseEvent e) {
 	}
 
 	/**

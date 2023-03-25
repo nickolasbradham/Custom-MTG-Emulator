@@ -140,21 +140,42 @@ public final class CardManager {
 	 * Draws card image {@code iID} from player {@code pID} to Graphics {@code g} at
 	 * point ({@code x},{@code y}).
 	 * 
-	 * @param g   The Graphics to draw to.
-	 * @param pID The player ID of the card.
-	 * @param iID The image ID of the card.
-	 * @param x   The x coordinate of the card.
-	 * @param y   The y coordinate of the card.
+	 * @param g         The Graphics to draw to.
+	 * @param pID       The player ID of the card.
+	 * @param iID       The image ID of the card.
+	 * @param x         The x coordinate of the card.
+	 * @param y         The y coordinate of the card.
+	 * @param fullClamp If the image should be large and clamped to the screen
+	 *                  dimensions.
 	 */
 	public void drawCard(Graphics g, int pID, byte iID, int x, int y, boolean fullClamp) {
+		drawCard(g, pID, iID, x, y, fullClamp, false);
+	}
+
+	/**
+	 * Draws card image {@code iID} from player {@code pID} to Graphics {@code g} at
+	 * point ({@code x},{@code y}).
+	 * 
+	 * @param g         The Graphics to draw to.
+	 * @param pID       The player ID of the card.
+	 * @param iID       The image ID of the card.
+	 * @param x         The x coordinate of the card.
+	 * @param y         The y coordinate of the card.
+	 * @param fullClamp If the image should be large and clamped to the screen
+	 *                  dimensions.
+	 * @param tapped    If the card is tapped.
+	 */
+	public void drawCard(Graphics g, int pID, byte iID, int x, int y, boolean fullClamp, boolean tapped) {
 		CardUVs uvs = cardUVs.get(pID);
 		short[] uvxy = uvs.getUV(iID);
-		int lgW = uvs.getLargeWidth();
-		int dx = fullClamp ? Math.max(0, Math.min(x, GPanel.WIDTH - lgW)) : x,
-				dy = fullClamp ? Math.max(0, Math.min(y, GPanel.HEIGHT - GameCard.LG_HEIGHT)) : y;
-		g.drawImage(imageMap, dx, dy, dx + (fullClamp ? lgW : uvs.getSmallWidth()),
-				dy + (fullClamp ? GameCard.LG_HEIGHT : GameCard.SM_HEIGHT), uvxy[0], uvxy[1], uvxy[0] + uvs.getWidth(),
-				uvxy[1] + uvs.getHeight(), null);
+		short uvch = uvs.getHeight(), uvcw = uvs.getWidth(), sy1 = tapped ? uvxy[0] : uvxy[1],
+				dch = fullClamp ? GameCard.LG_HEIGHT : GameCard.SM_HEIGHT;
+		int sx1 = tapped ? uvs.getMapWidth() - uvxy[1] - uvch : uvxy[0],
+				dcw = fullClamp ? uvs.getLargeWidth() : uvs.getSmallWidth(),
+				dx1 = fullClamp ? Math.max(0, Math.min(x, GPanel.WIDTH - (tapped ? dch : dcw))) : x,
+				dy1 = fullClamp ? Math.max(0, Math.min(y, GPanel.HEIGHT - (tapped ? dcw : dch))) : y;
+		g.drawImage(imageMap, dx1, dy1, dx1 + (tapped ? dch : dcw), dy1 + (tapped ? dcw : dch), sx1, sy1,
+				sx1 + (tapped ? uvch : uvcw), sy1 + (tapped ? uvcw : uvch), null);
 	}
 
 	/**

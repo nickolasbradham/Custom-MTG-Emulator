@@ -54,6 +54,11 @@ public final class GPanel extends JPanel {
 			public final void mouseReleased(MouseEvent e) {
 				player.mouseReleased(e);
 			}
+
+			@Override
+			public final void mouseClicked(MouseEvent e) {
+				player.mouseClicked(e);
+			}
 		});
 	}
 

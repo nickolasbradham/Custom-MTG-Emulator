@@ -25,6 +25,8 @@ public final class GameCard extends GameObject {
 	private final int ownID;
 	private final byte cID, iID;
 
+	private boolean tapped;
+
 	/**
 	 * Constructs a new GameCard assigned to player {@code playerID} with id
 	 * {@code cardID}, type {@code cardType}, and image ID {@code imageID}.
@@ -69,14 +71,14 @@ public final class GameCard extends GameObject {
 	@Override
 	public void draw(Graphics g) {
 		super.draw(g);
-		Main.CARD_MANAGER.drawCard(g, ownID, iID, getX(), getY(), false);
+		Main.CARD_MANAGER.drawCard(g, ownID, iID, getX(), getY(), false, tapped);
 	}
 
 	@Override
 	public void drawLate(Graphics g) {
 		super.drawLate(g);
 		if (isTopHovering() && control.getDragging() != this)
-			Main.CARD_MANAGER.drawCard(g, ownID, iID, getX(), getY(), true);
+			Main.CARD_MANAGER.drawCard(g, ownID, iID, getX(), getY(), true, tapped);
 	}
 
 	@Override
@@ -109,5 +111,15 @@ public final class GameCard extends GameObject {
 	public void onMouseDragged(Point loc) {
 		super.onMouseDragged(loc);
 		setPos(loc.x - getWidth() / 2, loc.y - getHeight() / 2);
+	}
+
+	@Override
+	public void onClicked(MouseEvent e) {
+		if (e.getButton() == MouseEvent.BUTTON3) {
+			tapped = !tapped;
+			setSize(getHeight(), getWidth());
+			control.mouseMoved(e.getPoint());
+			control.redrawBuffer();
+		}
 	}
 }

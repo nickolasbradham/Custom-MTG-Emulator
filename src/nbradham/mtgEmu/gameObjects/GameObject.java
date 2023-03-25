@@ -42,6 +42,16 @@ public class GameObject {
 	}
 
 	/**
+	 * Determines if {@code loc} is over this object.
+	 * 
+	 * @param loc The Point to check.
+	 * @return True if {@code loc} is above this object.
+	 */
+	public final boolean isUnder(Point loc) {
+		return space.contains(loc);
+	}
+
+	/**
 	 * Handles when the mouse is hovering over this object in any capacity.
 	 */
 	public void onMouseOver() {
@@ -70,16 +80,6 @@ public class GameObject {
 	 */
 	public void onMouseExitTop() {
 		topHovering = false;
-	}
-
-	/**
-	 * Determines if {@code loc} is over this object.
-	 * 
-	 * @param loc The Point to check.
-	 * @return True if {@code loc} is above this object.
-	 */
-	public final boolean isUnder(Point loc) {
-		return space.contains(loc);
 	}
 
 	/**
@@ -128,6 +128,14 @@ public class GameObject {
 	 * @param loc Location of the mouse cursor.
 	 */
 	public void onMouseDragged(Point loc) {
+	}
+
+	/**
+	 * Handles when the mouse is clicked on this object.
+	 * 
+	 * @param loc Location of the mouse cursor.
+	 */
+	public void onClicked(MouseEvent e) {
 	}
 
 	/**
@@ -220,4 +228,5 @@ public class GameObject {
 		space.translate(dx, dy);
 		children.forEach(c -> c.translate(dx, dy));
 	}
+
 }
