@@ -67,23 +67,27 @@ public final class GameCard extends GameObject {
 
 	@Override
 	public void draw(Graphics g) {
+		super.draw(g);
 		Main.CARD_MANAGER.drawCard(g, ownID, iID, getX(), getY(), false);
 	}
 
 	@Override
 	public void drawLate(Graphics g) {
+		super.drawLate(g);
 		if (hovering)
 			Main.CARD_MANAGER.drawCard(g, ownID, iID, getX(), getY(), true);
 	}
 
 	@Override
 	public void onMouseOverTop() {
+		super.onMouseOverTop();
 		hovering = true;
 		control.redrawBuffer();
 	}
 
 	@Override
 	public void onMouseExitTop() {
+		super.onMouseExitTop();
 		hovering = false;
 		control.redrawBuffer();
 	}

@@ -4,10 +4,12 @@ import java.awt.Graphics;
 import java.awt.Point;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
+import java.util.Stack;
 
 import javax.swing.JFrame;
 import javax.swing.JMenuBar;
 import javax.swing.SwingUtilities;
+
 import nbradham.mtgEmu.GPanel;
 import nbradham.mtgEmu.gameObjects.CardZone;
 import nbradham.mtgEmu.gameObjects.GameObject;
@@ -27,7 +29,8 @@ public abstract class Player {
 
 	private final BufferedImage bufImg = new BufferedImage(GPanel.WIDTH, GPanel.HEIGHT, BufferedImage.TYPE_4BYTE_ABGR);
 	private final Graphics bufG = bufImg.createGraphics();
-	private final ArrayList<GameObject> objects = new ArrayList<>(), hovering = new ArrayList<>();
+	private final Stack<GameObject> hovering = new Stack<>();
+	private final ArrayList<GameObject> objects = new ArrayList<>();
 	private final GPanel gameView = new GPanel(this);
 	private final int id;
 
@@ -64,6 +67,12 @@ public abstract class Player {
 		});
 	}
 
+	/**
+	 * Used during GUI creation to add extra elements to the JMenuBar.
+	 * 
+	 * @param frame The parent JFrame.
+	 * @param bar   The JMenuBar to add to.
+	 */
 	protected void addMenuBarItems(JFrame frame, JMenuBar bar) {
 	}
 
@@ -138,32 +147,38 @@ public abstract class Player {
 	 * @param loc The location of the mouse.
 	 */
 	public final void mouseMoved(Point loc) {
-		GameObject test;
-		for (byte i = 0; i < hovering.size(); ++i)
-			if (!(test = hovering.get(i)).isUnder(loc)) {
-				hovering.remove(i--);
-				test.onMouseExit();
-				if (test == hoverTop)
-					test.onMouseExitTop();
-			}
 
-		boolean first = true;
-		for (int i = objects.size() - 1; i > -1; --i) {
-			if ((test = objects.get(i)).isUnder(loc)) {
-				if (first) {
-					if (test != hoverTop) {
-						if (hoverTop != null)
-							hoverTop.onMouseExitTop();
-						hoverTop = test;
-					}
-					test.onMouseOverTop();
-					first = false;
-				}
-				if (!hovering.contains(test)) {
-					test.onMouseOver();
-					hovering.add(test);
-				}
+		while (!hovering.isEmpty() && !hovering.peek().isUnder(loc))
+			hovering.pop().onMouseExit();
+
+		for (byte i = 0; i < hovering.size(); ++i)
+			if (!hovering.get(i).isUnder(loc))
+				hovering.remove(i).onMouseExit();
+
+		objects.forEach(o -> {
+			if (o.isUnder(loc) && !hovering.contains(o)) {
+				o.onMouseOver();
+				hovering.push(o);
+			}
+		});
+
+		if (hovering.isEmpty()) {
+			exitHoverTop();
+			hoverTop = null;
+		} else {
+			GameObject tmp = hovering.peek();
+			if (tmp != hoverTop) {
+				exitHoverTop();
+				(hoverTop = tmp).onMouseOverTop();
 			}
 		}
+	}
+
+	/**
+	 * Fires {@link GameObject#onMouseExitTop()} on {@code hoverTop}.
+	 */
+	private void exitHoverTop() {
+		if (hoverTop != null)
+			hoverTop.onMouseExitTop();
 	}
 }

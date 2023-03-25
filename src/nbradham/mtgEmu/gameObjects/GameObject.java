@@ -57,6 +57,7 @@ public class GameObject {
 	 * @param g The Graphics to draw to.
 	 */
 	public void draw(Graphics g) {
+		System.out.println("Draw");
 	}
 
 	/**
@@ -65,6 +66,7 @@ public class GameObject {
 	 * @param g The Graphics to draw to.
 	 */
 	public void drawLate(Graphics g) {
+		System.out.println("Draw Late");
 	}
 
 	/**
@@ -147,6 +149,10 @@ public class GameObject {
 	public void onMouseOverTop() {
 	}
 
+	/**
+	 * Handles when the mouse is leaves the area over this object and this object is
+	 * top most.
+	 */
 	public void onMouseExitTop() {
 	}
 

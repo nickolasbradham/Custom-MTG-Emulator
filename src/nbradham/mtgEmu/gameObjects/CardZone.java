@@ -51,17 +51,20 @@ public final class CardZone extends GameObject {
 
 	@Override
 	public void draw(Graphics g) {
+		super.draw(g);
 		g.drawRect(getX(), getY(), getWidth(), getHeight());
 	}
 
 	@Override
 	public void onMouseOver() {
+		super.onMouseOver();
 		setPos(getX(), GPanel.HEIGHT - getHeight());
 		play.redrawBuffer();
 	}
 
 	@Override
 	public void onMouseExit() {
+		super.onMouseExit();
 		setPos(getX(), originY);
 		play.redrawBuffer();
 	}
