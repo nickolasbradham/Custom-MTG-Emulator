@@ -1,8 +1,6 @@
 package nbradham.mtgEmu.players;
 
 import java.awt.event.KeyEvent;
-import java.io.IOException;
-
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
@@ -11,7 +9,6 @@ import javax.swing.JMenuItem;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
 import nbradham.mtgEmu.Main;
-import nbradham.mtgEmu.gameObjects.GameCard;
 
 /**
  * Handles IO from the player that is on this computer.
@@ -40,24 +37,8 @@ public final class LocalPlayer extends Player {
 		chooser.setDialogTitle("Select Deck File");
 
 		loadItem.addActionListener(e -> {
-			if (chooser.showOpenDialog(frame) == JFileChooser.APPROVE_OPTION) {
-				try {
-					for (GameCard c : Main.CARD_MANAGER.load(this, chooser.getSelectedFile()))
-						switch (c.getType()) {
-						case COMMANDER:
-							commandZone.add(c);
-							break;
-						case LIBRARY:
-							lib.putOnTop(c);
-							break;
-						case TOKEN:
-							// TODO add to tokens.
-						}
-					redrawBuffer();
-				} catch (IOException e1) {
-					e1.printStackTrace();
-				}
-			}
+			if (chooser.showOpenDialog(frame) == JFileChooser.APPROVE_OPTION)
+				loadDeck(chooser.getSelectedFile());
 		});
 		gameMenu.add(loadItem);
 

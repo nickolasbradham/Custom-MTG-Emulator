@@ -28,7 +28,7 @@ public final class CardManager {
 
 	private ArrayList<CardUVs> cardUVs = new ArrayList<>();
 	private BufferedImage imageMap;
-	private byte cardID = -1, imgID = -1;
+	private byte cardID, imgID;
 
 	/**
 	 * Loads a deck file into the texture map and generates the game deck.
@@ -62,6 +62,8 @@ public final class CardManager {
 		ArrayList<GameCard> gameCards = new ArrayList<>();
 		ArrayList<short[]> uvOrigins = new ArrayList<>();
 		int scaleW = CardUVs.scaleWidth(cw, GameCard.SM_HEIGHT, ch), pID = player.getID();
+		cardID = -1;
+		imgID = -1;
 
 		addCards(info, player, gameCards, uvOrigins, CardType.COMMANDER, scaleW);
 		byte count = info.readByte();

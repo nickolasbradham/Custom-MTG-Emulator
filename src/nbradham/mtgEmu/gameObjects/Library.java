@@ -32,13 +32,21 @@ public final class Library extends GameObject {
 	 * 
 	 * @param c The GameCard to put on top.
 	 */
-	public final void putOnTop(GameCard c) {
+	public void putOnTop(GameCard c) {
 		play.remove(c);
 		stack.push(c);
 	}
 
+	/**
+	 * Removes all cards and children from this object.
+	 */
+	public void clear() {
+		stack.clear();
+		clearChildren();
+	}
+
 	@Override
-	public final void draw(Graphics g) {
+	public void draw(Graphics g) {
 		Main.CARD_MANAGER.drawBack(g, play.getID(), getX(), getY());
 	}
 }

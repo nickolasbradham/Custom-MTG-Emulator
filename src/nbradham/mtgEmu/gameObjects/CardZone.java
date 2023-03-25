@@ -48,6 +48,14 @@ public final class CardZone extends GameObject {
 			(c = cards.get(i)).setPos(x + (i + 1) * div - c.getWidth() / 2, y);
 		}
 	}
+	
+	/**
+	 * removes all cards and children from this zone.
+	 */
+	public void clear() {
+		cards.clear();
+		clearChildren();
+	}
 
 	@Override
 	public void draw(Graphics g) {

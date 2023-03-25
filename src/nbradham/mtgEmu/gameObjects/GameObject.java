@@ -16,8 +16,6 @@ public class GameObject {
 	private final ArrayList<GameObject> children = new ArrayList<>();
 	private final Rectangle space = new Rectangle();
 
-	private int index = -1;
-
 	/**
 	 * Sets the position of this object.
 	 * 
@@ -49,42 +47,6 @@ public class GameObject {
 	private void translate(int dx, int dy) {
 		space.translate(dx, dy);
 		children.forEach(c -> c.translate(dx, dy));
-	}
-
-	/**
-	 * Handles the main draw phase for this object.
-	 * 
-	 * @param g The Graphics to draw to.
-	 */
-	public void draw(Graphics g) {
-		System.out.println("Draw");
-	}
-
-	/**
-	 * Handles drawing this object after the main draw phase.
-	 * 
-	 * @param g The Graphics to draw to.
-	 */
-	public void drawLate(Graphics g) {
-		System.out.println("Draw Late");
-	}
-
-	/**
-	 * Sets the index of this object.
-	 * 
-	 * @param newIndex The new index.
-	 */
-	public final void setIndex(int newIndex) {
-		index = newIndex;
-	}
-
-	/**
-	 * Retrieves the index of this object.
-	 * 
-	 * @return The index of this object.
-	 */
-	public final int getIndex() {
-		return index;
 	}
 
 	/**
@@ -133,6 +95,13 @@ public class GameObject {
 	}
 
 	/**
+	 * Removes all children from this instance.
+	 */
+	protected final void clearChildren() {
+		children.clear();
+	}
+
+	/**
 	 * Determines if {@code loc} is over this object.
 	 * 
 	 * @param loc The Point to check.
@@ -140,6 +109,22 @@ public class GameObject {
 	 */
 	public final boolean isUnder(Point loc) {
 		return space.contains(loc);
+	}
+
+	/**
+	 * Handles the main draw phase for this object.
+	 * 
+	 * @param g The Graphics to draw to.
+	 */
+	public void draw(Graphics g) {
+	}
+
+	/**
+	 * Handles drawing this object after the main draw phase.
+	 * 
+	 * @param g The Graphics to draw to.
+	 */
+	public void drawLate(Graphics g) {
 	}
 
 	/**

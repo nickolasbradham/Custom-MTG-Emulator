@@ -3,6 +3,8 @@ package nbradham.mtgEmu.players;
 import java.awt.Graphics;
 import java.awt.Point;
 import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Stack;
 
@@ -11,7 +13,9 @@ import javax.swing.JMenuBar;
 import javax.swing.SwingUtilities;
 
 import nbradham.mtgEmu.GPanel;
+import nbradham.mtgEmu.Main;
 import nbradham.mtgEmu.gameObjects.CardZone;
+import nbradham.mtgEmu.gameObjects.GameCard;
 import nbradham.mtgEmu.gameObjects.GameObject;
 import nbradham.mtgEmu.gameObjects.Library;
 
@@ -68,15 +72,6 @@ public abstract class Player {
 	}
 
 	/**
-	 * Used during GUI creation to add extra elements to the JMenuBar.
-	 * 
-	 * @param frame The parent JFrame.
-	 * @param bar   The JMenuBar to add to.
-	 */
-	protected void addMenuBarItems(JFrame frame, JMenuBar bar) {
-	}
-
-	/**
 	 * Draws game elements.
 	 * 
 	 * @param g The Graphics to draw to.
@@ -106,7 +101,6 @@ public abstract class Player {
 	 */
 	public final void moveToGUI(GameObject obj) {
 		remove(obj);
-		obj.setIndex(objects.size());
 		objects.add(obj);
 	}
 
@@ -116,7 +110,7 @@ public abstract class Player {
 	 * @param obj The object to remove.
 	 */
 	public final void remove(GameObject obj) {
-		int i = obj.getIndex();
+		int i = objects.indexOf(obj);
 		if (i > -1) {
 			if (i < fieldEnd && objects.contains(obj))
 				--fieldEnd;
@@ -172,6 +166,50 @@ public abstract class Player {
 				(hoverTop = tmp).onMouseOverTop();
 			}
 		}
+	}
+
+	/**
+	 * Clears the player state and loads a new deck file.
+	 * 
+	 * @param file The file to load.
+	 */
+	protected final void loadDeck(File file) {
+		commandZone.clear();
+		handZone.clear();
+		lib.clear();
+
+		GameObject o;
+		for (byte i = 0; i < objects.size(); i++)
+			if (!((o = objects.get(i)) instanceof CardZone) && !(o instanceof Library)) {
+				remove(o);
+				--i;
+			}
+
+		try {
+			for (GameCard c : Main.CARD_MANAGER.load(this, file))
+				switch (c.getType()) {
+				case COMMANDER:
+					commandZone.add(c);
+					break;
+				case LIBRARY:
+					lib.putOnTop(c);
+					break;
+				case TOKEN:
+					// TODO add to tokens.
+				}
+			redrawBuffer();
+		} catch (IOException e1) {
+			e1.printStackTrace();
+		}
+	}
+
+	/**
+	 * Used during GUI creation to add extra elements to the JMenuBar.
+	 * 
+	 * @param frame The parent JFrame.
+	 * @param bar   The JMenuBar to add to.
+	 */
+	protected void addMenuBarItems(JFrame frame, JMenuBar bar) {
 	}
 
 	/**
