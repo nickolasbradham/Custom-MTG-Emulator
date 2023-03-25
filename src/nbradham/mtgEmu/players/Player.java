@@ -246,6 +246,7 @@ public abstract class Player {
 				case TOKEN:
 					// TODO add to tokens.
 				}
+			lib.updateSize();
 			redrawBuffer();
 		} catch (IOException e1) {
 			e1.printStackTrace();

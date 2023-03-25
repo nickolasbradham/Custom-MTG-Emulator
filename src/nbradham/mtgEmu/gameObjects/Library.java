@@ -1,6 +1,7 @@
 package nbradham.mtgEmu.gameObjects;
 
 import java.awt.Graphics;
+import java.awt.event.MouseEvent;
 import java.util.Stack;
 
 import nbradham.mtgEmu.Main;
@@ -45,8 +46,22 @@ public final class Library extends GameObject {
 		clearChildren();
 	}
 
+	public void updateSize() {
+		GameCard c = stack.peek();
+		setSize(c.getWidth(), c.getHeight());
+	}
+
 	@Override
 	public void draw(Graphics g) {
 		Main.CARD_MANAGER.drawBack(g, play.getID(), getX(), getY());
+	}
+
+	@Override
+	public void onPressed(MouseEvent e) {
+		if (e.getButton() == MouseEvent.BUTTON1) {
+			GameCard c = stack.pop();
+			c.onPressed(e);
+			c.onMouseDragged(e.getPoint());
+		}
 	}
 }
