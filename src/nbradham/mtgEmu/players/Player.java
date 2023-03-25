@@ -28,8 +28,8 @@ import nbradham.mtgEmu.gameObjects.Library;
  */
 public abstract class Player {
 
-	protected final CardZone commandZone = new CardZone(this, 0, 700, 200),
-			handZone = new CardZone(this, 200, 700, 900);
+	protected final CardZone commandZone = new CardZone(this, 0, 700, 200, "Command Zone"),
+			handZone = new CardZone(this, 200, 700, 900, "Hand");
 	protected final Library lib = new Library(this);
 	protected final ArrayList<GameObject> objects = new ArrayList<>();
 	protected final Stack<GameObject> hovering = new Stack<>();

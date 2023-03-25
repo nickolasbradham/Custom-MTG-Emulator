@@ -16,6 +16,7 @@ public final class CardZone extends GameObject {
 
 	private final ArrayList<GameCard> cards = new ArrayList<>();
 	private final Player play;
+	private final String text;
 	private final int originY;
 
 	/**
@@ -27,8 +28,9 @@ public final class CardZone extends GameObject {
 	 * @param objY   The Y coordinate of this zone.
 	 * @param width  The width of this zone.
 	 */
-	public CardZone(Player player, int objX, int objY, int width) {
+	public CardZone(Player player, int objX, int objY, int width, String label) {
 		play = player;
+		text = label;
 		setPos(objX, originY = objY);
 		setSize(width, GameCard.SM_HEIGHT);
 	}
@@ -57,6 +59,8 @@ public final class CardZone extends GameObject {
 	public void draw(Graphics g) {
 		super.draw(g);
 		g.drawRect(getX(), getY(), getWidth(), getHeight());
+		if (isHovering())
+			g.drawString(text, getX() + 3, getY() + g.getFontMetrics().getMaxAscent());
 	}
 
 	@Override

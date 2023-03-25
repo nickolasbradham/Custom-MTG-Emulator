@@ -24,7 +24,6 @@ public final class GameCard extends GameObject {
 	private final CardType type;
 	private final int ownID;
 	private final byte cID, iID;
-	private boolean hovering;
 
 	/**
 	 * Constructs a new GameCard assigned to player {@code playerID} with id
@@ -76,21 +75,19 @@ public final class GameCard extends GameObject {
 	@Override
 	public void drawLate(Graphics g) {
 		super.drawLate(g);
-		if (hovering && control.getDragging() != this)
+		if (isTopHovering() && control.getDragging() != this)
 			Main.CARD_MANAGER.drawCard(g, ownID, iID, getX(), getY(), true);
 	}
 
 	@Override
 	public void onMouseOverTop() {
 		super.onMouseOverTop();
-		hovering = true;
 		control.redrawBuffer();
 	}
 
 	@Override
 	public void onMouseExitTop() {
 		super.onMouseExitTop();
-		hovering = false;
 		control.redrawBuffer();
 	}
 

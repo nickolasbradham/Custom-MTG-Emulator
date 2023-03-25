@@ -17,6 +17,8 @@ public class GameObject {
 	private final ArrayList<GameObject> children = new ArrayList<>();
 	private final Rectangle space = new Rectangle();
 
+	private boolean hovering, topHovering;
+
 	/**
 	 * Sets the position of this object.
 	 * 
@@ -40,14 +42,92 @@ public class GameObject {
 	}
 
 	/**
-	 * Translates this object by ({@code dx}, {@code dy}).
-	 * 
-	 * @param dx The difference in X.
-	 * @param dy The difference in Y.
+	 * Handles when the mouse is hovering over this object in any capacity.
 	 */
-	private void translate(int dx, int dy) {
-		space.translate(dx, dy);
-		children.forEach(c -> c.translate(dx, dy));
+	public void onMouseOver() {
+		hovering = true;
+	}
+
+	/**
+	 * Handles when the mouse leaves the area above this object.
+	 */
+	public void onMouseExit() {
+		hovering = false;
+	}
+
+	/**
+	 * Handles when the mouse is hovering over this object and this object is top
+	 * most.
+	 */
+	public void onMouseOverTop() {
+		hovering = true;
+		topHovering = true;
+	}
+
+	/**
+	 * Handles when the mouse is leaves the area over this object and this object is
+	 * top most.
+	 */
+	public void onMouseExitTop() {
+		topHovering = false;
+	}
+
+	/**
+	 * Determines if {@code loc} is over this object.
+	 * 
+	 * @param loc The Point to check.
+	 * @return True if {@code loc} is above this object.
+	 */
+	public final boolean isUnder(Point loc) {
+		return space.contains(loc);
+	}
+
+	/**
+	 * Handles the main draw phase for this object.
+	 * 
+	 * @param g The Graphics to draw to.
+	 */
+	public void draw(Graphics g) {
+	}
+
+	/**
+	 * Handles drawing this object after the main draw phase.
+	 * 
+	 * @param g The Graphics to draw to.
+	 */
+	public void drawLate(Graphics g) {
+	}
+
+	/**
+	 * Handles when the mouse is pressed on this object.
+	 * 
+	 * @param e Mouse event to process.
+	 */
+	public void onPressed(MouseEvent e) {
+	}
+
+	/**
+	 * Handles when the mouse is released on this object.
+	 * 
+	 * @param e Mouse event to process.
+	 */
+	public void onReleased(MouseEvent e) {
+	}
+
+	/**
+	 * Handles when an object is dropped on this object.
+	 * 
+	 * @param o The object being dropped.
+	 */
+	public void onObjectDropped(GameObject o) {
+	}
+
+	/**
+	 * Handles when the mouse is dragged on this object.
+	 * 
+	 * @param loc Location of the mouse cursor.
+	 */
+	public void onMouseDragged(Point loc) {
 	}
 
 	/**
@@ -112,86 +192,32 @@ public class GameObject {
 	}
 
 	/**
-	 * Determines if {@code loc} is over this object.
+	 * Retrieves if the cursor is hovering over this object.
 	 * 
-	 * @param loc The Point to check.
-	 * @return True if {@code loc} is above this object.
+	 * @return True if the cursor is over this object.
 	 */
-	public final boolean isUnder(Point loc) {
-		return space.contains(loc);
+	protected final boolean isHovering() {
+		return hovering;
 	}
 
 	/**
-	 * Handles the main draw phase for this object.
+	 * Retrieves if the cursor is hovering over this object and it is the top-most
+	 * object.
 	 * 
-	 * @param g The Graphics to draw to.
+	 * @return True if the cursor is over this object and it is the top-most object.
 	 */
-	public void draw(Graphics g) {
+	protected final boolean isTopHovering() {
+		return topHovering;
 	}
 
 	/**
-	 * Handles drawing this object after the main draw phase.
+	 * Translates this object by ({@code dx}, {@code dy}).
 	 * 
-	 * @param g The Graphics to draw to.
+	 * @param dx The difference in X.
+	 * @param dy The difference in Y.
 	 */
-	public void drawLate(Graphics g) {
-	}
-
-	/**
-	 * Handles when the mouse is hovering over this object and this object is top
-	 * most.
-	 */
-	public void onMouseOverTop() {
-	}
-
-	/**
-	 * Handles when the mouse is leaves the area over this object and this object is
-	 * top most.
-	 */
-	public void onMouseExitTop() {
-	}
-
-	/**
-	 * Handles when the mouse is hovering over this object in any capacity.
-	 */
-	public void onMouseOver() {
-	}
-
-	/**
-	 * Handles when the mouse leaves the area above this object.
-	 */
-	public void onMouseExit() {
-	}
-
-	/**
-	 * Handles when the mouse is pressed on this object.
-	 * 
-	 * @param e Mouse event to process.
-	 */
-	public void onPressed(MouseEvent e) {
-	}
-
-	/**
-	 * Handles when the mouse is released on this object.
-	 * 
-	 * @param e Mouse event to process.
-	 */
-	public void onReleased(MouseEvent e) {
-	}
-
-	/**
-	 * Handles when an object is dropped on this object.
-	 * 
-	 * @param o The object being dropped.
-	 */
-	public void onObjectDropped(GameObject o) {
-	}
-
-	/**
-	 * Handles when the mouse is dragged on this object.
-	 * 
-	 * @param loc Location of the mouse cursor.
-	 */
-	public void onMouseDragged(Point loc) {
+	private void translate(int dx, int dy) {
+		space.translate(dx, dy);
+		children.forEach(c -> c.translate(dx, dy));
 	}
 }
