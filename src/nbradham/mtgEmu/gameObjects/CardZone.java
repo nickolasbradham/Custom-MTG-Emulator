@@ -1,7 +1,9 @@
 package nbradham.mtgEmu.gameObjects;
 
+import java.awt.Graphics;
 import java.util.ArrayList;
 
+import nbradham.mtgEmu.GPanel;
 import nbradham.mtgEmu.players.Player;
 
 /**
@@ -14,6 +16,7 @@ public final class CardZone extends GameObject {
 
 	private final ArrayList<GameCard> cards = new ArrayList<>();
 	private final Player play;
+	private final int originY;
 
 	/**
 	 * Constructs a new CardZone instance assigned to {@code player} at location
@@ -26,7 +29,7 @@ public final class CardZone extends GameObject {
 	 */
 	public CardZone(Player player, int objX, int objY, int width) {
 		play = player;
-		setPos(objX, objY);
+		setPos(objX, originY = objY);
 		setSize(width, GameCard.SM_HEIGHT);
 	}
 
@@ -39,8 +42,27 @@ public final class CardZone extends GameObject {
 		play.moveToGUI(card);
 		cards.add(card);
 		addChild(card);
-		int div = getWidth() / (cards.size() + 2), x = getX(), y = getY();
-		for (byte i = 0; i < cards.size(); i++)
-			cards.get(i).setPos(x + (i + 1) * div, y);
+		int div = getWidth() / (cards.size() + 1), x = getX(), y = getY();
+		GameCard c;
+		for (byte i = 0; i < cards.size(); i++) {
+			(c = cards.get(i)).setPos(x + (i + 1) * div - c.getWidth() / 2, y);
+		}
+	}
+
+	@Override
+	public void draw(Graphics g) {
+		g.drawRect(getX(), getY(), getWidth(), getHeight());
+	}
+
+	@Override
+	public void onMouseOver() {
+		setPos(getX(), GPanel.HEIGHT - getHeight());
+		play.redrawBuffer();
+	}
+
+	@Override
+	public void onMouseExit() {
+		setPos(getX(), originY);
+		play.redrawBuffer();
 	}
 }

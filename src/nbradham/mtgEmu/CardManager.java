@@ -14,6 +14,7 @@ import javax.imageio.ImageIO;
 
 import nbradham.mtgEmu.gameObjects.GameCard;
 import nbradham.mtgEmu.gameObjects.GameCard.CardType;
+import nbradham.mtgEmu.players.Player;
 
 /**
  * Handles card textures.
@@ -32,7 +33,7 @@ public final class CardManager {
 	/**
 	 * Loads a deck file into the texture map and generates the game deck.
 	 * 
-	 * @param player   The player ID to tie this deck to.
+	 * @param player   The player to tie this deck to.
 	 * @param deckFile The file to load.
 	 * @return An array holding all the cards.
 	 * @throws ZipException Thrown by {@link ZipFile#ZipFile(File)}.
@@ -43,7 +44,7 @@ public final class CardManager {
 	 *                      {@link #addCards(DataInputStream, int, ArrayList, ArrayList, CardType)},
 	 *                      and {@link DataInputStream#readByte()}.
 	 */
-	public GameCard[] load(int player, File deckFile) throws ZipException, IOException {
+	public GameCard[] load(Player player, File deckFile) throws ZipException, IOException {
 		ZipFile zFile = new ZipFile(deckFile);
 
 		BufferedImage img = ImageIO.read(zFile.getInputStream(zFile.getEntry("cards.png")));
@@ -60,7 +61,7 @@ public final class CardManager {
 		short cw = info.readShort(), ch = info.readShort();
 		ArrayList<GameCard> gameCards = new ArrayList<>();
 		ArrayList<short[]> uvOrigins = new ArrayList<>();
-		int scaleW = CardUVs.scaleWidth(cw, GameCard.SM_HEIGHT, ch);
+		int scaleW = CardUVs.scaleWidth(cw, GameCard.SM_HEIGHT, ch), pID = player.getID();
 
 		addCards(info, player, gameCards, uvOrigins, CardType.COMMANDER, scaleW);
 		byte count = info.readByte();
@@ -79,8 +80,8 @@ public final class CardManager {
 
 		ArrayList<CardUVs> newCardUVs = new ArrayList<>(cardUVs);
 		CardUVs newSet = new CardUVs(mw, mh, cw, ch, uvOrigins.toArray(new short[0][]), scaleW);
-		if (player < newCardUVs.size())
-			newCardUVs.set(player, newSet);
+		if (pID < newCardUVs.size())
+			newCardUVs.set(pID, newSet);
 		else
 			newCardUVs.add(newSet);
 
@@ -101,7 +102,7 @@ public final class CardManager {
 
 		int newOff, lastOff;
 		for (byte i = 0; i < end; i++)
-			if (i == player)
+			if (i == pID)
 				newG.drawImage(loadedImages, 0, newSet.getMapOffset(), null);
 			else
 				newG.drawImage(imageMap, 0, newOff = (cur = newCardUVs.get(i)).getMapOffset(), cur.getMapWidth(),
@@ -117,14 +118,14 @@ public final class CardManager {
 	 * {@code gameCards} and UV info in {@code uvOrigins}.
 	 * 
 	 * @param inStream  The DataInputStream to read from.
-	 * @param player    The id of the player to assign the cards to.
+	 * @param player    The player to assign the cards to.
 	 * @param gameCards The ArrayList to add the {@link GameCard}s to.
 	 * @param uvOrigins The ArrayList to add the UV origins to.
 	 * @param cardType  The type of card to assign.
 	 * @throws IOException Thrown by {@link DataInputStream#readByte()} and
 	 *                     {@link DataInputStream#readShort()}.
 	 */
-	private void addCards(DataInputStream inStream, int player, ArrayList<GameCard> gameCards,
+	private void addCards(DataInputStream inStream, Player player, ArrayList<GameCard> gameCards,
 			ArrayList<short[]> uvOrigins, CardType cardType, int scaleW) throws IOException {
 		byte count = inStream.readByte();
 		for (byte i = 0; i < count; ++i) {

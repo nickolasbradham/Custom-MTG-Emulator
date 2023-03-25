@@ -1,6 +1,7 @@
 package nbradham.mtgEmu.gameObjects;
 
 import java.awt.Graphics;
+import java.awt.Point;
 import java.awt.Rectangle;
 import java.util.ArrayList;
 
@@ -51,11 +52,19 @@ public class GameObject {
 	}
 
 	/**
-	 * Default draw code. Should be overrided by subclasses with visible elements.
+	 * Handles the main draw phase for this object.
 	 * 
 	 * @param g The Graphics to draw to.
 	 */
 	public void draw(Graphics g) {
+	}
+
+	/**
+	 * Handles drawing this object after the main draw phase.
+	 * 
+	 * @param g The Graphics to draw to.
+	 */
+	public void drawLate(Graphics g) {
 	}
 
 	/**
@@ -95,12 +104,21 @@ public class GameObject {
 	}
 
 	/**
-	 * Retrieves the width coordinate of this object.
+	 * Retrieves the width of this object.
 	 * 
-	 * @return The width coordinate of this object.
+	 * @return The width of this object.
 	 */
 	protected final int getWidth() {
 		return space.width;
+	}
+
+	/**
+	 * Retrieves the height of this object.
+	 * 
+	 * @return The height of this object.
+	 */
+	protected final int getHeight() {
+		return space.height;
 	}
 
 	/**
@@ -110,5 +128,34 @@ public class GameObject {
 	 */
 	protected final void addChild(GameObject child) {
 		children.add(child);
+	}
+
+	/**
+	 * Determines if {@code loc} is over this object.
+	 * 
+	 * @param loc The Point to check.
+	 * @return True if {@code loc} is above this object.
+	 */
+	public final boolean isUnder(Point loc) {
+		return space.contains(loc);
+	}
+
+	/**
+	 * Handles when the mouse is hovering over this object and this object is top
+	 * most.
+	 */
+	public void onMouseOverTop() {
+	}
+
+	/**
+	 * Handles when the mouse is hovering over this object in any capacity.
+	 */
+	public void onMouseOver() {
+	}
+
+	/**
+	 * Handles when the mouse leaves the area above this object.
+	 */
+	public void onMouseExit() {
 	}
 }

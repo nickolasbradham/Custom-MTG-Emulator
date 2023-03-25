@@ -3,6 +3,8 @@ package nbradham.mtgEmu;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseMotionAdapter;
 
 import javax.swing.JPanel;
 
@@ -30,6 +32,12 @@ public final class GPanel extends JPanel {
 		super();
 		player = setPlayer;
 		setPreferredSize(new Dimension(1366, 750));
+		addMouseMotionListener(new MouseMotionAdapter() {
+			@Override
+			public final void mouseMoved(MouseEvent e) {
+				player.mouseMoved(e.getPoint());
+			}
+		});
 	}
 
 	@Override

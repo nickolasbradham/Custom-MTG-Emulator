@@ -1,6 +1,7 @@
 package nbradham.mtgEmu.players;
 
 import java.awt.Graphics;
+import java.awt.Point;
 import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
@@ -31,7 +32,7 @@ public abstract class Player {
 
 	private final BufferedImage bufImg = new BufferedImage(GPanel.WIDTH, GPanel.HEIGHT, BufferedImage.TYPE_4BYTE_ABGR);
 	private final Graphics bufG = bufImg.createGraphics();
-	private final ArrayList<GameObject> objects = new ArrayList<>();
+	private final ArrayList<GameObject> objects = new ArrayList<>(), hovering = new ArrayList<>();
 	private final GPanel gameView = new GPanel(this);
 	private final CardZone commandZone = new CardZone(this, 0, 700, 200), handZone = new CardZone(this, 200, 700, 900);
 	private final Library lib = new Library(this);
@@ -72,7 +73,7 @@ public abstract class Player {
 			loadItem.addActionListener(e -> {
 				if (chooser.showOpenDialog(frame) == JFileChooser.APPROVE_OPTION) {
 					try {
-						for (GameCard c : Main.CARD_MANAGER.load(id, chooser.getSelectedFile()))
+						for (GameCard c : Main.CARD_MANAGER.load(this, chooser.getSelectedFile()))
 							switch (c.getType()) {
 							case COMMANDER:
 								commandZone.add(c);
@@ -83,7 +84,7 @@ public abstract class Player {
 							case TOKEN:
 								// TODO add to tokens.
 							}
-						redraw();
+						redrawBuffer();
 					} catch (IOException e1) {
 						e1.printStackTrace();
 					}
@@ -110,6 +111,10 @@ public abstract class Player {
 			objects.forEach(o -> {
 				if (o != drag)
 					o.draw(bufG);
+			});
+			objects.forEach(o -> {
+				if (o != drag)
+					o.drawLate(bufG);
 			});
 			redrawFlag = false;
 		}
@@ -155,8 +160,34 @@ public abstract class Player {
 	/**
 	 * Schedules a game redraw.
 	 */
-	protected final void redraw() {
+	public final void redrawBuffer() {
 		redrawFlag = true;
 		gameView.repaint();
+	}
+
+	/**
+	 * Handles when the mouse is moved on the game view.
+	 * 
+	 * @param loc The location of the mouse.
+	 */
+	public final void mouseMoved(Point loc) {
+		GameObject test;
+		for (byte i = 0; i < hovering.size(); ++i)
+			if (!(test = hovering.get(i)).isUnder(loc)) {
+				hovering.remove(i--);
+				test.onMouseExit();
+			}
+
+		boolean first = true;
+		for (int i = objects.size() - 1; i > -1; --i) {
+			if ((test = objects.get(i)).isUnder(loc) && !hovering.contains(test)) {
+				if (first) {
+					test.onMouseOverTop();
+					first = false;
+				}
+				test.onMouseOver();
+				hovering.add(test);
+			}
+		}
 	}
 }
