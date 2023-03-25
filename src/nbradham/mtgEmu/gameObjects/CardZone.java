@@ -42,13 +42,9 @@ public final class CardZone extends GameObject {
 		play.moveToGUI(card);
 		cards.add(card);
 		addChild(card);
-		int div = getWidth() / (cards.size() + 1), x = getX(), y = getY();
-		GameCard c;
-		for (byte i = 0; i < cards.size(); i++) {
-			(c = cards.get(i)).setPos(x + (i + 1) * div - c.getWidth() / 2, y);
-		}
+		distributeCards();
 	}
-	
+
 	/**
 	 * removes all cards and children from this zone.
 	 */
@@ -74,6 +70,38 @@ public final class CardZone extends GameObject {
 	public void onMouseExit() {
 		super.onMouseExit();
 		setPos(getX(), originY);
+		GameObject o;
+		if (cards.contains(o = play.getDragging()))
+			remove((GameCard) o);
 		play.redrawBuffer();
+	}
+
+	@Override
+	public void onObjectDropped(GameObject o) {
+		super.onObjectDropped(o);
+		if (o instanceof GameCard)
+			add((GameCard) o);
+	}
+
+	/**
+	 * Removes {@code c} from this zone.
+	 * 
+	 * @param c The GameCard to remove.
+	 */
+	private void remove(GameCard c) {
+		cards.remove(c);
+		removeChild(c);
+		distributeCards();
+	}
+
+	/**
+	 * Updates the position of all cards in this zone.
+	 */
+	private void distributeCards() {
+		int div = getWidth() / (cards.size() + 1), x = getX(), y = getY();
+		GameCard c;
+		for (byte i = 0; i < cards.size(); i++) {
+			(c = cards.get(i)).setPos(x + (i + 1) * div - c.getWidth() / 2, y);
+		}
 	}
 }

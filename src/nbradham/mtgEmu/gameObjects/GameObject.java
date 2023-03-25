@@ -3,6 +3,7 @@ package nbradham.mtgEmu.gameObjects;
 import java.awt.Graphics;
 import java.awt.Point;
 import java.awt.Rectangle;
+import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 
 /**
@@ -95,6 +96,15 @@ public class GameObject {
 	}
 
 	/**
+	 * Removes a child from this object.
+	 * 
+	 * @param child The child to remove.
+	 */
+	protected final void removeChild(GameObject child) {
+		children.remove(child);
+	}
+
+	/**
 	 * Removes all children from this instance.
 	 */
 	protected final void clearChildren() {
@@ -151,5 +161,37 @@ public class GameObject {
 	 * Handles when the mouse leaves the area above this object.
 	 */
 	public void onMouseExit() {
+	}
+
+	/**
+	 * Handles when the mouse is pressed on this object.
+	 * 
+	 * @param e Mouse event to process.
+	 */
+	public void onPressed(MouseEvent e) {
+	}
+
+	/**
+	 * Handles when the mouse is released on this object.
+	 * 
+	 * @param e Mouse event to process.
+	 */
+	public void onReleased(MouseEvent e) {
+	}
+
+	/**
+	 * Handles when an object is dropped on this object.
+	 * 
+	 * @param o The object being dropped.
+	 */
+	public void onObjectDropped(GameObject o) {
+	}
+
+	/**
+	 * Handles when the mouse is dragged on this object.
+	 * 
+	 * @param loc Location of the mouse cursor.
+	 */
+	public void onMouseDragged(Point loc) {
 	}
 }

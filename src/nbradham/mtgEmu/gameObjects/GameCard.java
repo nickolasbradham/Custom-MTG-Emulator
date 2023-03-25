@@ -1,6 +1,8 @@
 package nbradham.mtgEmu.gameObjects;
 
 import java.awt.Graphics;
+import java.awt.Point;
+import java.awt.event.MouseEvent;
 
 import nbradham.mtgEmu.Main;
 import nbradham.mtgEmu.players.Player;
@@ -74,7 +76,7 @@ public final class GameCard extends GameObject {
 	@Override
 	public void drawLate(Graphics g) {
 		super.drawLate(g);
-		if (hovering)
+		if (hovering && control.getDragging() != this)
 			Main.CARD_MANAGER.drawCard(g, ownID, iID, getX(), getY(), true);
 	}
 
@@ -90,5 +92,25 @@ public final class GameCard extends GameObject {
 		super.onMouseExitTop();
 		hovering = false;
 		control.redrawBuffer();
+	}
+
+	@Override
+	public void onPressed(MouseEvent e) {
+		super.onPressed(e);
+		if (e.getButton() == MouseEvent.BUTTON1)
+			control.startDragging(this);
+	}
+
+	@Override
+	public void onReleased(MouseEvent e) {
+		super.onReleased(e);
+		if (e.getButton() == MouseEvent.BUTTON1 && control.getDragging() == this)
+			control.stopDragging(e.getPoint());
+	}
+
+	@Override
+	public void onMouseDragged(Point loc) {
+		super.onMouseDragged(loc);
+		setPos(loc.x - getWidth() / 2, loc.y - getHeight() / 2);
 	}
 }

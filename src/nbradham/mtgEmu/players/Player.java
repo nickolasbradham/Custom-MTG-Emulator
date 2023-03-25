@@ -2,6 +2,7 @@ package nbradham.mtgEmu.players;
 
 import java.awt.Graphics;
 import java.awt.Point;
+import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -30,15 +31,17 @@ public abstract class Player {
 	protected final CardZone commandZone = new CardZone(this, 0, 700, 200),
 			handZone = new CardZone(this, 200, 700, 900);
 	protected final Library lib = new Library(this);
+	protected final ArrayList<GameObject> objects = new ArrayList<>();
+	protected final Stack<GameObject> hovering = new Stack<>();
+	protected final GPanel gameView = new GPanel(this);
 
 	private final BufferedImage bufImg = new BufferedImage(GPanel.WIDTH, GPanel.HEIGHT, BufferedImage.TYPE_4BYTE_ABGR);
 	private final Graphics bufG = bufImg.createGraphics();
-	private final Stack<GameObject> hovering = new Stack<>();
-	private final ArrayList<GameObject> objects = new ArrayList<>();
-	private final GPanel gameView = new GPanel(this);
 	private final int id;
 
-	private GameObject drag, hoverTop;
+	protected GameObject drag;
+
+	private GameObject hoverTop;
 	private byte fieldEnd;
 	private boolean redrawFlag = true;
 
@@ -67,6 +70,7 @@ public abstract class Player {
 			frame.setJMenuBar(bar);
 			frame.setContentPane(gameView);
 			frame.pack();
+			frame.setResizable(false);
 			frame.setVisible(true);
 		});
 	}
@@ -79,14 +83,8 @@ public abstract class Player {
 	public final void drawGame(Graphics g) {
 		if (redrawFlag) {
 			bufG.clearRect(0, 0, GPanel.WIDTH, GPanel.HEIGHT);
-			objects.forEach(o -> {
-				if (o != drag)
-					o.draw(bufG);
-			});
-			objects.forEach(o -> {
-				if (o != drag)
-					o.drawLate(bufG);
-			});
+			objects.forEach(o -> o.draw(bufG));
+			objects.forEach(o -> o.drawLate(bufG));
 			redrawFlag = false;
 		}
 		g.drawImage(bufImg, 0, 0, null);
@@ -102,6 +100,16 @@ public abstract class Player {
 	public final void moveToGUI(GameObject obj) {
 		remove(obj);
 		objects.add(obj);
+	}
+
+	/**
+	 * Moves a GameObject to the field layer.
+	 * 
+	 * @param obj The object to move.
+	 */
+	public final void moveToField(GameObject obj) {
+		remove(obj);
+		objects.add(fieldEnd++, obj);
 	}
 
 	/**
@@ -140,7 +148,7 @@ public abstract class Player {
 	 * 
 	 * @param loc The location of the mouse.
 	 */
-	public final void mouseMoved(Point loc) {
+	public void mouseMoved(Point loc) {
 
 		while (!hovering.isEmpty() && !hovering.peek().isUnder(loc))
 			hovering.pop().onMouseExit();
@@ -166,6 +174,47 @@ public abstract class Player {
 				(hoverTop = tmp).onMouseOverTop();
 			}
 		}
+	}
+
+	/**
+	 * Retrieves the object being held by the cursor.
+	 * 
+	 * @return The object being dragged.
+	 */
+	public final GameObject getDragging() {
+		return drag;
+	}
+
+	/**
+	 * Handles when a object wants to start being dragged.
+	 * 
+	 * @param o The object to drag.
+	 */
+	public void startDragging(GameObject o) {
+	}
+
+	/**
+	 * Handles when a object wants to stop being dragged.
+	 * 
+	 * @param o The object to stop dragging.
+	 */
+	public void stopDragging(Point dropLoc) {
+	}
+
+	/**
+	 * Handles when a mouse button is pressed.
+	 * 
+	 * @param e The MouseEvent to process.
+	 */
+	public void mousePressed(MouseEvent e) {
+	}
+
+	/**
+	 * Handles when a mouse button is released.
+	 * 
+	 * @param e The MouseEvent to process.
+	 */
+	public void mouseReleased(MouseEvent e) {
 	}
 
 	/**
@@ -215,7 +264,7 @@ public abstract class Player {
 	/**
 	 * Fires {@link GameObject#onMouseExitTop()} on {@code hoverTop}.
 	 */
-	private void exitHoverTop() {
+	private final void exitHoverTop() {
 		if (hoverTop != null)
 			hoverTop.onMouseExitTop();
 	}
