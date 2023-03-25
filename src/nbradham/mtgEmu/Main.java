@@ -38,12 +38,12 @@ public final class Main {
 				new EmuServer().start();
 				new EmuClient("localhost").start();
 				frame.dispose();
-			});
+			}).setEnabled(false);
 
 			addButton("Join Game", e -> {
 				new EmuClient(JOptionPane.showInputDialog("Enter host address:")).start();
 				frame.dispose();
-			});
+			}).setEnabled(false);
 
 			addButton("Build Deck", e -> {
 				new DeckBuilder(frame).start();
@@ -59,12 +59,14 @@ public final class Main {
 	 * 
 	 * @param text     The button text.
 	 * @param listener The listener for on click.
+	 * @return The newly create JButton.
 	 */
-	private void addButton(String text, ActionListener listener) {
+	private JButton addButton(String text, ActionListener listener) {
 		JButton button = new JButton(text);
 		button.addActionListener(listener);
 		button.setAlignmentX(.5f);
 		frame.add(button);
+		return button;
 	}
 
 	/**
