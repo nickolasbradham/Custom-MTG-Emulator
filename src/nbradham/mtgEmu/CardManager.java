@@ -172,8 +172,8 @@ public final class CardManager {
 				dch = fullClamp ? GameCard.LG_HEIGHT : GameCard.SM_HEIGHT;
 		int sx1 = tapped ? uvs.getMapWidth() - uvxy[1] - uvch : uvxy[0],
 				dcw = fullClamp ? uvs.getLargeWidth() : uvs.getSmallWidth(),
-				dx1 = fullClamp ? Math.max(0, Math.min(x, GPanel.WIDTH - (tapped ? dch : dcw))) : x,
-				dy1 = fullClamp ? Math.max(0, Math.min(y, GPanel.HEIGHT - (tapped ? dcw : dch))) : y;
+				dx1 = fullClamp ? clamp(0, GPanel.WIDTH - (tapped ? dch : dcw), x) : x,
+				dy1 = fullClamp ? clamp(0, GPanel.HEIGHT - (tapped ? dcw : dch), y) : y;
 		g.drawImage(imageMap, dx1, dy1, dx1 + (tapped ? dch : dcw), dy1 + (tapped ? dcw : dch), sx1, sy1,
 				sx1 + (tapped ? uvch : uvcw), sy1 + (tapped ? uvcw : uvch), null);
 	}
@@ -193,5 +193,17 @@ public final class CardManager {
 			g.drawImage(imageMap, x, y, x + uvs.getSmallWidth(), y + GameCard.SM_HEIGHT, 0, 0, uvs.getWidth(),
 					uvs.getHeight(), null);
 		}
+	}
+
+	/**
+	 * Clamps {@code val} between {@code min} and {@code max} inclusive.
+	 * 
+	 * @param min The minimum value.
+	 * @param max The maximum value.
+	 * @param val The value to clamp.
+	 * @return The value closest to {@code val} in range [{@code min}, {@code max}].
+	 */
+	private static final int clamp(int min, int max, int val) {
+		return Math.max(min, Math.min(max, val));
 	}
 }
