@@ -32,16 +32,15 @@ public abstract class Player {
 			handZone = new CardZone(this, 200, 700, 900, "Hand");
 	protected final Library lib = new Library(this);
 	protected final ArrayList<GameObject> objects = new ArrayList<>();
-	protected final Stack<GameObject> hovering = new Stack<>();
 	protected final GPanel gameView = new GPanel(this);
 
 	private final BufferedImage bufImg = new BufferedImage(GPanel.WIDTH, GPanel.HEIGHT, BufferedImage.TYPE_4BYTE_ABGR);
 	private final Graphics bufG = bufImg.createGraphics();
 	private final int id;
 
+	protected Stack<GameObject> hovering = new Stack<>();
 	protected GameObject drag;
 
-	private GameObject hoverTop;
 	private byte fieldEnd;
 	private boolean redrawFlag = true;
 
@@ -149,31 +148,34 @@ public abstract class Player {
 	 * @param loc The location of the mouse.
 	 */
 	public void mouseMoved(Point loc) {
-
-		while (!hovering.isEmpty() && !hovering.peek().isUnder(loc))
-			hovering.pop().onMouseExit();
-
-		for (byte i = 0; i < hovering.size(); ++i)
-			if (!hovering.get(i).isUnder(loc))
-				hovering.remove(i).onMouseExit();
-
+		Stack<GameObject> newHover = new Stack<>();
 		objects.forEach(o -> {
-			if (o.isUnder(loc) && !hovering.contains(o)) {
-				o.onMouseOver();
-				hovering.push(o);
+			if (o.isUnder(loc)) {
+				if (!hovering.contains(o))
+					o.onMouseOver();
+				newHover.push(o);
 			}
 		});
-
-		if (hovering.isEmpty()) {
-			exitHoverTop();
-			hoverTop = null;
-		} else {
-			GameObject tmp = hovering.peek();
-			if (tmp != hoverTop) {
-				exitHoverTop();
-				(hoverTop = tmp).onMouseOverTop();
+		if (!newHover.isEmpty()) {
+			GameObject o = newHover.peek(), last = null;
+			if (hovering.isEmpty() || (last = hovering.peek()) != o) {
+				if (last != null)
+					last.onMouseExitTop();
+				o.onMouseOverTop();
 			}
 		}
+
+		GameObject o;
+		boolean first = true;
+		while (!hovering.isEmpty())
+			if (!newHover.contains(o = hovering.pop())) {
+				if (first) {
+					o.onMouseExitTop();
+					first = false;
+				}
+				o.onMouseExit();
+			}
+		hovering = newHover;
 	}
 
 	/**
@@ -268,13 +270,5 @@ public abstract class Player {
 	 * @param bar   The JMenuBar to add to.
 	 */
 	protected void addMenuBarItems(JFrame frame, JMenuBar bar) {
-	}
-
-	/**
-	 * Fires {@link GameObject#onMouseExitTop()} on {@code hoverTop}.
-	 */
-	private final void exitHoverTop() {
-		if (hoverTop != null)
-			hoverTop.onMouseExitTop();
 	}
 }

@@ -71,7 +71,8 @@ public final class GameCard extends GameObject {
 	@Override
 	public void draw(Graphics g) {
 		super.draw(g);
-		Main.CARD_MANAGER.drawCard(g, ownID, iID, getX(), getY(), false, tapped);
+		if (!(isTopHovering() && control.getDragging() != this))
+			Main.CARD_MANAGER.drawCard(g, ownID, iID, getX(), getY(), false, tapped);
 	}
 
 	@Override
@@ -105,6 +106,7 @@ public final class GameCard extends GameObject {
 		super.onReleased(e);
 		if (e.getButton() == MouseEvent.BUTTON1 && control.getDragging() == this)
 			control.stopDragging(e.getPoint());
+		control.mouseMoved(e.getPoint());
 	}
 
 	@Override

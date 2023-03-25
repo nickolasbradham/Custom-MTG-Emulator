@@ -70,7 +70,6 @@ public class GameObject {
 	 * most.
 	 */
 	public void onMouseOverTop() {
-		hovering = true;
 		topHovering = true;
 	}
 
