@@ -3,7 +3,6 @@ package nbradham.mtgEmu.gameObjects;
 import java.awt.Graphics;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Stack;
 
