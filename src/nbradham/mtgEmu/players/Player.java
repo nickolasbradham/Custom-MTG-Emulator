@@ -17,6 +17,7 @@ import nbradham.mtgEmu.GPanel;
 import nbradham.mtgEmu.Main;
 import nbradham.mtgEmu.gameObjects.CardZone;
 import nbradham.mtgEmu.gameObjects.GameCard;
+import nbradham.mtgEmu.gameObjects.GameCard.CardType;
 import nbradham.mtgEmu.gameObjects.GameObject;
 import nbradham.mtgEmu.gameObjects.Library;
 
@@ -257,10 +258,43 @@ public abstract class Player {
 					// TODO add to tokens.
 				}
 			lib.updateSize();
+			lib.shuffle();
 			redrawBuffer();
 		} catch (IOException e1) {
 			e1.printStackTrace();
 		}
+	}
+
+	@SuppressWarnings("incomplete-switch")
+	protected final void reset() {
+		Stack<GameCard> tmp = new Stack<>();
+		tmp.addAll(commandZone.takeAll());
+		tmp.addAll(handZone.takeAll());
+		tmp.addAll(lib.clean());
+		GameObject o;
+		for (byte i = 0; i < objects.size(); ++i)
+			if ((o = objects.get(i)) instanceof GameCard) {
+				remove(o);
+				tmp.add((GameCard) o);
+				--i;
+			}
+		GameCard c;
+		CardType t;
+		while (!tmp.isEmpty())
+			if ((t = (c = tmp.pop()).getType()) == CardType.TOKEN || c.getOwnerID() != id)
+				continue;
+			else {
+				c.setTapped(false);
+				switch (t) {
+				case COMMANDER:
+					commandZone.add(c);
+					break;
+				case LIBRARY:
+					lib.putOnTop(c);
+				}
+			}
+		lib.shuffle();
+		redrawBuffer();
 	}
 
 	/**

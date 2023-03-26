@@ -59,6 +59,12 @@ public final class LocalPlayer extends Player {
 		});
 		gameMenu.add(loadItem);
 
+		JMenuItem reset = new JMenuItem("Reset Game", KeyEvent.VK_R);
+		reset.addActionListener(e -> {
+			reset();
+		});
+		gameMenu.add(reset);
+
 		JMenuItem exitMain = new JMenuItem("Exit to Main", KeyEvent.VK_E);
 		exitMain.addActionListener(e -> {
 			frame.dispose();

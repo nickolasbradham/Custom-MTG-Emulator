@@ -4,6 +4,7 @@ import java.awt.Graphics;
 import java.awt.Point;
 import java.awt.event.MouseEvent;
 
+import nbradham.mtgEmu.Holder;
 import nbradham.mtgEmu.Main;
 import nbradham.mtgEmu.players.Player;
 
@@ -22,9 +23,10 @@ public final class GameCard extends GameObject {
 
 	private final Player control;
 	private final CardType type;
-	private final int ownID;
+	private final int ownID, normW;
 	private final byte cID, iID;
 
+	private Holder hold;
 	private boolean tapped;
 
 	/**
@@ -56,7 +58,7 @@ public final class GameCard extends GameObject {
 		cID = cardID;
 		type = cardType;
 		iID = imageID;
-		setSize(objW, SM_HEIGHT);
+		setSize(normW = objW, SM_HEIGHT);
 	}
 
 	/**
@@ -66,6 +68,35 @@ public final class GameCard extends GameObject {
 	 */
 	public CardType getType() {
 		return type;
+	}
+
+	/**
+	 * Retrieves the ID of the owner of this GameCard.
+	 * 
+	 * @return The owner ID of this GameCard.
+	 */
+	public int getOwnerID() {
+		return ownID;
+	}
+
+	/**
+	 * Sets the Holder of this GameCard.
+	 * 
+	 * @param holder The new Holder of this GameCard.
+	 */
+	public void setHolder(Holder holder) {
+		hold = holder;
+	}
+
+	/**
+	 * Sets the tap state of this GameCard.
+	 * 
+	 * @param tap If this GameCard is tapped.
+	 */
+	public void setTapped(boolean tap) {
+		tapped = !tapped;
+		setSize(tap ? SM_HEIGHT : normW, tap ? normW : SM_HEIGHT);
+		control.redrawBuffer();
 	}
 
 	@Override
@@ -99,6 +130,10 @@ public final class GameCard extends GameObject {
 		super.onPressed(e);
 		if (e.getButton() == MouseEvent.BUTTON1)
 			control.startDragging(this);
+		if (hold != null) {
+			hold.remove(this);
+			setHolder(null);
+		}
 	}
 
 	@Override
@@ -118,10 +153,8 @@ public final class GameCard extends GameObject {
 	@Override
 	public void onClicked(MouseEvent e) {
 		if (e.getButton() == MouseEvent.BUTTON3) {
-			tapped = !tapped;
-			setSize(getHeight(), getWidth());
+			setTapped(!tapped);
 			control.mouseMoved(e.getPoint());
-			control.redrawBuffer();
 		}
 	}
 }

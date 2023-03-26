@@ -4,6 +4,7 @@ import java.awt.Graphics;
 import java.util.ArrayList;
 
 import nbradham.mtgEmu.GPanel;
+import nbradham.mtgEmu.Holder;
 import nbradham.mtgEmu.players.Player;
 
 /**
@@ -12,7 +13,7 @@ import nbradham.mtgEmu.players.Player;
  * @author Nickolas S. Bradham
  *
  */
-public final class CardZone extends GameObject {
+public final class CardZone extends GameObject implements Holder {
 
 	private final ArrayList<GameCard> cards = new ArrayList<>();
 	private final Player play;
@@ -44,6 +45,7 @@ public final class CardZone extends GameObject {
 		play.moveToGUI(card);
 		cards.add(card);
 		addChild(card);
+		card.setHolder(this);
 		distributeCards();
 	}
 
@@ -53,6 +55,29 @@ public final class CardZone extends GameObject {
 	public void clear() {
 		cards.clear();
 		clearChildren();
+	}
+
+	/**
+	 * Retrieves all GameCards from this zone.
+	 * 
+	 * @return All cards taken from the zone.
+	 */
+	public ArrayList<GameCard> takeAll() {
+		cards.forEach(c -> play.remove(c));
+		ArrayList<GameCard> arr = new ArrayList<>(cards);
+		clear();
+		return arr;
+	}
+
+	/**
+	 * Removes {@code c} from this zone.
+	 * 
+	 * @param c The GameCard to remove.
+	 */
+	public void remove(GameCard c) {
+		cards.remove(c);
+		removeChild(c);
+		distributeCards();
 	}
 
 	@Override
@@ -74,9 +99,6 @@ public final class CardZone extends GameObject {
 	public void onMouseExit() {
 		super.onMouseExit();
 		setPos(getX(), originY);
-		GameObject o;
-		if (cards.contains(o = play.getDragging()))
-			remove((GameCard) o);
 		play.redrawBuffer();
 	}
 
@@ -85,17 +107,6 @@ public final class CardZone extends GameObject {
 		super.onObjectDropped(o);
 		if (o instanceof GameCard)
 			add((GameCard) o);
-	}
-
-	/**
-	 * Removes {@code c} from this zone.
-	 * 
-	 * @param c The GameCard to remove.
-	 */
-	private void remove(GameCard c) {
-		cards.remove(c);
-		removeChild(c);
-		distributeCards();
 	}
 
 	/**
