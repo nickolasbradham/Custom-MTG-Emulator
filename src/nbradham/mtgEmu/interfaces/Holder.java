@@ -1,4 +1,4 @@
-package nbradham.mtgEmu;
+package nbradham.mtgEmu.interfaces;
 
 import nbradham.mtgEmu.gameObjects.GameCard;
 

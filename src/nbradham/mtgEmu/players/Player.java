@@ -189,6 +189,15 @@ public abstract class Player {
 	}
 
 	/**
+	 * Retrieves the GPanel game view.
+	 * 
+	 * @return The current GPanel.
+	 */
+	public GPanel getGameView() {
+		return gameView;
+	}
+
+	/**
 	 * Handles when a object wants to start being dragged.
 	 * 
 	 * @param o The object to drag.

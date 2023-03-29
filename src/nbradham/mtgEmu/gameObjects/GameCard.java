@@ -4,8 +4,8 @@ import java.awt.Graphics;
 import java.awt.Point;
 import java.awt.event.MouseEvent;
 
-import nbradham.mtgEmu.Holder;
 import nbradham.mtgEmu.Main;
+import nbradham.mtgEmu.interfaces.Holder;
 import nbradham.mtgEmu.players.Player;
 
 /**
@@ -15,6 +15,13 @@ import nbradham.mtgEmu.players.Player;
  *
  */
 public final class GameCard extends GameObject {
+
+	/**
+	 * Used to determine card return location.
+	 * 
+	 * @author Nickolas S. Bradham
+	 *
+	 */
 	public static enum CardType {
 		COMMANDER, LIBRARY, TOKEN
 	};
@@ -94,7 +101,7 @@ public final class GameCard extends GameObject {
 	 * @param tap If this GameCard is tapped.
 	 */
 	public void setTapped(boolean tap) {
-		tapped = !tapped;
+		tapped = tap;
 		setSize(tap ? SM_HEIGHT : normW, tap ? normW : SM_HEIGHT);
 		control.redrawBuffer();
 	}

@@ -12,8 +12,8 @@ import javax.swing.JMenuItem;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
 import nbradham.mtgEmu.Main;
-import nbradham.mtgEmu.ObjectFoundHandler;
 import nbradham.mtgEmu.gameObjects.GameObject;
+import nbradham.mtgEmu.interfaces.ObjectFoundHandler;
 
 /**
  * Handles IO from the player that is on this computer.

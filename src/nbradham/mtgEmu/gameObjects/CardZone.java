@@ -4,7 +4,7 @@ import java.awt.Graphics;
 import java.util.ArrayList;
 
 import nbradham.mtgEmu.GPanel;
-import nbradham.mtgEmu.Holder;
+import nbradham.mtgEmu.interfaces.Holder;
 import nbradham.mtgEmu.players.Player;
 
 /**
