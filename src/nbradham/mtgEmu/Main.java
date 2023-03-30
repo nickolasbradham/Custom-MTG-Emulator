@@ -1,11 +1,18 @@
 package nbradham.mtgEmu;
 
+import java.awt.Desktop;
 import java.awt.event.ActionListener;
+import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URL;
+
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
+
 import nbradham.mtgEmu.builder.DeckBuilder;
 import nbradham.mtgEmu.players.LocalPlayer;
 
@@ -18,6 +25,8 @@ import nbradham.mtgEmu.players.LocalPlayer;
 public final class Main {
 
 	public static final CardManager CARD_MANAGER = new CardManager();
+
+	private static final String R_VERSION = "v0.3";
 
 	private final JFrame frame = new JFrame("Custom MTG Emulator");
 
@@ -52,6 +61,21 @@ public final class Main {
 			frame.pack();
 			frame.setVisible(true);
 		});
+		try {
+			String s = new String(
+					new URL("https://api.github.com/repos/nickolasbradham/Custom-MTG-Emulator/releases/latest")
+							.openStream().readAllBytes());
+			int st = s.indexOf("\"body\":\"") + 8, e = s.indexOf('"', st), ns = s.indexOf("\"tag_name\":\"") + 12,
+					ne = s.indexOf('"', ns);
+			if (!s.substring(ns, ne).equals(R_VERSION) && JOptionPane.showConfirmDialog(frame,
+					"There is a new version released. Would you like to download it? Here are the release notes:"
+							+ System.lineSeparator() + s.substring(st, e).replace("\\r\\n", System.lineSeparator()),
+					"Update Available", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION)
+				Desktop.getDesktop()
+						.browse(new URI("https://github.com/nickolasbradham/Custom-MTG-Emulator/releases/latest"));
+		} catch (IOException | URISyntaxException e) {
+			e.printStackTrace();
+		}
 	}
 
 	/**
