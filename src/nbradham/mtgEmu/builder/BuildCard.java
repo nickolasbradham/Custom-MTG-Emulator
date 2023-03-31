@@ -9,7 +9,7 @@ import java.awt.image.BufferedImage;
  * @author Nickolas S. Bradham
  *
  */
-record BuildCard(int id, BufferedImage img, byte count, Point loc) {
+record BuildCard(BufferedImage img, byte count, Point loc) {
 
 	/**
 	 * Creates a new Card with default {@link Point}.
@@ -18,8 +18,8 @@ record BuildCard(int id, BufferedImage img, byte count, Point loc) {
 	 * @param img   The image of the card.
 	 * @param count The quantity of this card.
 	 */
-	BuildCard(int id, BufferedImage img, byte count) {
-		this(id, img, count, new Point());
+	BuildCard(BufferedImage img, byte count) {
+		this(img, count, new Point());
 	}
 
 	/**
