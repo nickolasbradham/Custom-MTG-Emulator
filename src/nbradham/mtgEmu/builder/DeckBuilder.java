@@ -56,7 +56,7 @@ public final class DeckBuilder {
 			promptCards(PRMPT_BACK, f -> 1);
 			id = -1;
 			chooser.setMultiSelectionEnabled(true);
-			commanders = promptCards("Select Commander card(s). Cancel to skip.", f -> 1);
+			commanders = promptCards("Select Commander card(s). Cancel to skip.");
 			if ((dupes = promptCards("Select Library card(s) with duplicates (ex: Basic Lands). Cancel to skip.",
 					img -> {
 						JLabel label = new JLabel(
@@ -77,8 +77,8 @@ public final class DeckBuilder {
 						return count;
 					})) == F_CANCEL)
 				return;
-			singles = promptCards("Select remaining Library card(s). Cancel to skip.", f -> 1);
-			tokens = promptCards("Select Token/Special card(s). Cancel to skip.", f -> 1);
+			singles = promptCards("Select remaining Library card(s). Cancel to skip.");
+			tokens = promptCards("Select Token/Special card(s). Cancel to skip.");
 
 			if (cards.size() <= 1) {
 				JOptionPane.showMessageDialog(parent, "No cards selected.", "Build Error", JOptionPane.ERROR_MESSAGE);
@@ -147,6 +147,17 @@ public final class DeckBuilder {
 		} catch (IOException ex) {
 			ex.printStackTrace();
 		}
+	}
+
+	/**
+	 * Prompts the user to select card images and adds them to the deck.
+	 * 
+	 * @param prompt The prompt text.
+	 * @return Returns how many cards were loaded.
+	 * @throws IOException Thrown by {@link #promptCards(String, CardCountGetter)}.
+	 */
+	private int promptCards(String prompt) throws IOException {
+		return promptCards(prompt, f -> 1);
 	}
 
 	/**
