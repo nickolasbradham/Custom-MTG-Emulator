@@ -78,7 +78,7 @@ public final class DeckBuilder {
 					})) == F_CANCEL)
 				return;
 			twoSided = promptCards("Select FRONTS of double-sided cards. Cancel to skip.", f -> {
-				// TODO Handle cards.
+				// TODO Add cards.
 			});
 			singles = promptCards("Select remaining Library card(s). Cancel to skip.");
 			tokens = promptCards("Select Token/Special card(s). Cancel to skip.");
@@ -216,6 +216,7 @@ public final class DeckBuilder {
 	private void addCard(BufferedImage buf, CardCountGetter ccg) {
 		BuildCard c = new BuildCard(buf, ccg.getCount(buf));
 		cards.add(c);
+		++id;
 		smallest = c.getWidth() < cards.get(smallest).getWidth() ? id : smallest;
 	}
 
