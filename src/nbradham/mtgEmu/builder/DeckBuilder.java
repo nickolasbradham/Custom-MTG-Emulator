@@ -35,7 +35,7 @@ public final class DeckBuilder {
 	private final ArrayList<BuildCard> cards = new ArrayList<>();
 	private final JFileChooser chooser = new JFileChooser();
 	private final JFrame parent;
-	private int commanders, dupes, singles, tokens;
+	private int commanders, dupes, twoSided, singles, tokens;
 	private byte id = -1, smallest = 0;
 
 	/**
@@ -53,7 +53,7 @@ public final class DeckBuilder {
 	 */
 	public void start() {
 		try {
-			promptCards(PRMPT_BACK, f -> 1);
+			promptCards(PRMPT_BACK);
 			id = -1;
 			chooser.setMultiSelectionEnabled(true);
 			commanders = promptCards("Select Commander card(s). Cancel to skip.");
@@ -77,10 +77,13 @@ public final class DeckBuilder {
 						return count;
 					})) == F_CANCEL)
 				return;
+			twoSided = promptCards("Select FRONTS of double-sided cards. Cancel to skip.", f -> {
+				// TODO Handle cards.
+			});
 			singles = promptCards("Select remaining Library card(s). Cancel to skip.");
 			tokens = promptCards("Select Token/Special card(s). Cancel to skip.");
 
-			if (cards.size() <= 1) {
+			if (cards.size() < 2) {
 				JOptionPane.showMessageDialog(parent, "No cards selected.", "Build Error", JOptionPane.ERROR_MESSAGE);
 				return;
 			}
@@ -169,18 +172,38 @@ public final class DeckBuilder {
 	 * @throws IOException Thrown by {@link ImageIO#read(File)}.
 	 */
 	private int promptCards(String prompt, CardCountGetter ccg) throws IOException {
-		chooser.setDialogTitle(prompt);
-		if (chooser.showOpenDialog(parent) == JFileChooser.APPROVE_OPTION) {
-			File[] fs = chooser.getSelectedFiles();
-			for (File f : fs)
+		int n;
+		if ((n = promptCards(prompt, f -> {
+			try {
 				addCard(ImageIO.read(f), ccg);
-			return fs.length;
-		}
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		})) > F_CANCEL)
+			return n;
 		if (prompt == PRMPT_BACK) {
 			addCard(ImageIO.read(DeckBuilder.class.getResource("/back.png")), ccg);
 			return 1;
 		}
 		return 0;
+	}
+
+	/**
+	 * sets prompt title and shows. If approved, handles files.
+	 * 
+	 * @param prompt  The title to set on {@code chooser}.
+	 * @param handler The BuilderFileHandler to execute on each file.
+	 * @return Number of cards processed or {@code F_CANCEL} if canceled.
+	 */
+	private int promptCards(String prompt, BuilderFileHandler handler) {
+		chooser.setDialogTitle(prompt);
+		if (chooser.showOpenDialog(parent) == JFileChooser.APPROVE_OPTION) {
+			File[] fs = chooser.getSelectedFiles();
+			for (File f : fs)
+				handler.handle(f);
+			return fs.length;
+		}
+		return F_CANCEL;
 	}
 
 	/**
