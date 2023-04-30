@@ -14,7 +14,7 @@ interface BuilderFileHandler {
 	/**
 	 * Retreives how many of this card is in the deck.
 	 * 
-	 * @param buf The image of the card.
+	 * @param f The image file of the card.
 	 * @return The quantity of the card.
 	 */
 	void handle(File f);
