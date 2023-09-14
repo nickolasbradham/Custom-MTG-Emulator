@@ -80,6 +80,17 @@ public final class CardZone extends GameObject implements Holder {
 		distributeCards();
 	}
 
+	/**
+	 * Updates the position of all cards in this zone.
+	 */
+	private void distributeCards() {
+		int div = getWidth() / (cards.size() + 1), x = getX(), y = getY();
+		GameCard c;
+		for (byte i = 0; i < cards.size(); i++) {
+			(c = cards.get(i)).setPos(x + (i + 1) * div - c.getWidth() / 2, y);
+		}
+	}
+
 	@Override
 	public void draw(Graphics g) {
 		super.draw(g);
@@ -107,16 +118,5 @@ public final class CardZone extends GameObject implements Holder {
 		super.onObjectDropped(o);
 		if (o instanceof GameCard)
 			add((GameCard) o);
-	}
-
-	/**
-	 * Updates the position of all cards in this zone.
-	 */
-	private void distributeCards() {
-		int div = getWidth() / (cards.size() + 1), x = getX(), y = getY();
-		GameCard c;
-		for (byte i = 0; i < cards.size(); i++) {
-			(c = cards.get(i)).setPos(x + (i + 1) * div - c.getWidth() / 2, y);
-		}
 	}
 }

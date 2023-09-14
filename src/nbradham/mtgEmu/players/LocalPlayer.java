@@ -32,6 +32,22 @@ public final class LocalPlayer extends Player {
 		super(playerID);
 	}
 
+	/**
+	 * Finds the first {@link GameObject} under {@code loc} and calls
+	 * {@link ObjectFoundHandler#handle(GameObject)} on it.
+	 * 
+	 * @param loc The location to check.
+	 * @param h   The ObjectFoundHandler to call.
+	 */
+	private final void handleFirstUnder(Point loc, ObjectFoundHandler h) {
+		GameObject clickedObj;
+		for (int i = objects.size() - 1; i > -1; --i)
+			if ((clickedObj = objects.get(i)).isUnder(loc)) {
+				h.handle(clickedObj);
+				return;
+			}
+	}
+
 	@Override
 	public void mousePressed(MouseEvent e) {
 		handleFirstUnder(e.getPoint(), o -> o.onPressed(e));
@@ -103,21 +119,5 @@ public final class LocalPlayer extends Player {
 	public final void mouseClicked(MouseEvent e) {
 		super.mouseClicked(e);
 		handleFirstUnder(e.getPoint(), o -> o.onClicked(e));
-	}
-
-	/**
-	 * Finds the first {@link GameObject} under {@code loc} and calls
-	 * {@link ObjectFoundHandler#handle(GameObject)} on it.
-	 * 
-	 * @param loc The location to check.
-	 * @param h   The ObjectFoundHandler to call.
-	 */
-	private final void handleFirstUnder(Point loc, ObjectFoundHandler h) {
-		GameObject clickedObj;
-		for (int i = objects.size() - 1; i > -1; --i)
-			if ((clickedObj = objects.get(i)).isUnder(loc)) {
-				h.handle(clickedObj);
-				return;
-			}
 	}
 }

@@ -5,8 +5,6 @@ import java.awt.event.ActionListener;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.net.URL;
-
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -63,7 +61,7 @@ public final class Main {
 		});
 		try {
 			String s = new String(
-					new URL("https://api.github.com/repos/nickolasbradham/Custom-MTG-Emulator/releases/latest")
+					new URI("https://api.github.com/repos/nickolasbradham/Custom-MTG-Emulator/releases/latest").toURL()
 							.openStream().readAllBytes());
 			int st = s.indexOf("\"body\":\"") + 8, e = s.indexOf('"', st), ns = s.indexOf("\"tag_name\":\"") + 12,
 					ne = s.indexOf('"', ns);

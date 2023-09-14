@@ -3,7 +3,7 @@ package nbradham.mtgEmu.builder;
 import java.io.File;
 
 /**
- * Used to get the quantity of a card.
+ * Used to handle files during the build process.
  * 
  * @author Nickolas S. Bradham
  *
@@ -12,10 +12,9 @@ import java.io.File;
 interface BuilderFileHandler {
 
 	/**
-	 * Retreives how many of this card is in the deck.
+	 * Handles target file.
 	 * 
-	 * @param f The image file of the card.
-	 * @return The quantity of the card.
+	 * @param f The file to handle.
 	 */
 	void handle(File f);
 }
