@@ -233,7 +233,7 @@ public final class DeckBuilder {
 		dos.writeByte(numCards);
 		Point cLoc;
 		for (byte n = 0; n < numCards; n++) {
-			cLoc = cards.get(++id).loc();
+			cLoc = cards.get(id++).loc();
 			dos.writeShort(cLoc.x);
 			dos.writeShort(cLoc.y);
 		}

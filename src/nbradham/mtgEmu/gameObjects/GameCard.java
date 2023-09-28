@@ -135,11 +135,12 @@ public final class GameCard extends GameObject {
 	@Override
 	public void onPressed(MouseEvent e) {
 		super.onPressed(e);
-		if (e.getButton() == MouseEvent.BUTTON1)
+		if (e.getButton() == MouseEvent.BUTTON1) {
 			control.startDragging(this);
-		if (hold != null) {
-			hold.remove(this);
-			setHolder(null);
+			if (hold != null) {
+				hold.remove(this);
+				setHolder(null);
+			}
 		}
 	}
 

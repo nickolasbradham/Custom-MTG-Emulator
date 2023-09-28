@@ -274,7 +274,6 @@ public abstract class Player {
 		}
 	}
 
-	@SuppressWarnings("incomplete-switch")
 	protected final void reset() {
 		Stack<GameCard> tmp = new Stack<>();
 		tmp.addAll(commandZone.takeAll());
@@ -300,6 +299,8 @@ public abstract class Player {
 					break;
 				case LIBRARY:
 					lib.putOnTop(c);
+				default:
+					break;
 				}
 			}
 		lib.shuffle();
