@@ -6,6 +6,8 @@ import java.util.ArrayList;
 
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.SwingUtilities;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
@@ -43,12 +45,17 @@ public final class DeckBuilder {
 		SwingUtilities.invokeLater(() -> {
 			JFrame frame = new JFrame();
 			frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-			frame.setLayout(new FlowLayout());
+			frame.setSize(1366, 750);
+			JPanel pane = new JPanel();
+			pane.setLayout(new FlowLayout());
 			BuilderCard bc;
 			for (File f : chooser.getSelectedFiles()) {
 				cards.add(bc = new BuilderCard(f));
-				frame.add(new CardEditor(bc));
+				pane.add(new CardEditor(bc));
 			}
+			frame.setContentPane(new JScrollPane(pane, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
+					JScrollPane.HORIZONTAL_SCROLLBAR_NEVER));
+			frame.setVisible(true);
 		});
 	}
 }
