@@ -50,7 +50,7 @@ public final class DeckBuilder {
 			JFrame frame = new JFrame("Deck Builder");
 			frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 			frame.setSize(1366, 750);
-			JPanel pane = new JPanel();
+			JPanel pane = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 10));
 			pane.setPreferredSize(new Dimension(-1, -1));
 			BuilderCard bc;
 			for (File f : chooser.getSelectedFiles()) {
@@ -66,8 +66,10 @@ public final class DeckBuilder {
 							+ ((FlowLayout) pane.getLayout()).getVgap() + pane.getInsets().bottom));
 				}
 			});
-			frame.setContentPane(new JScrollPane(pane, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
-					JScrollPane.HORIZONTAL_SCROLLBAR_NEVER));
+			JScrollPane jsp = new JScrollPane(pane, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
+					JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+			jsp.getVerticalScrollBar().setUnitIncrement(20);
+			frame.setContentPane(jsp);
 			frame.setVisible(true);
 		});
 	}
