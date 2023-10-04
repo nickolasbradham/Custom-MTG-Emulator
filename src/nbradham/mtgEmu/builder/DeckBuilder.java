@@ -1,6 +1,10 @@
 package nbradham.mtgEmu.builder;
 
+import java.awt.Component;
+import java.awt.Dimension;
 import java.awt.FlowLayout;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
 import java.io.File;
 import java.util.ArrayList;
 
@@ -43,17 +47,26 @@ public final class DeckBuilder {
 		if (chooser.showOpenDialog(parent) != JFileChooser.APPROVE_OPTION)
 			return;
 		SwingUtilities.invokeLater(() -> {
-			JFrame frame = new JFrame();
+			JFrame frame = new JFrame("Deck Builder");
 			frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 			frame.setSize(1366, 750);
 			JPanel pane = new JPanel();
-			pane.setLayout(new FlowLayout());
+			pane.setPreferredSize(new Dimension(-1, -1));
 			BuilderCard bc;
 			for (File f : chooser.getSelectedFiles()) {
 				cards.add(bc = new BuilderCard(f));
 				pane.add(new CardEditor(bc));
 			}
-			frame.setContentPane(new JScrollPane(pane, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
+			pane.addComponentListener(new ComponentAdapter() {
+				@Override
+				public void componentResized(ComponentEvent e) {
+					Component[] cs = pane.getComponents();
+					Component c = cs[cs.length - 1];
+					pane.setPreferredSize(new Dimension(-1, c.getY() + c.getHeight()
+							+ ((FlowLayout) pane.getLayout()).getVgap() + pane.getInsets().bottom));
+				}
+			});
+			frame.setContentPane(new JScrollPane(pane, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
 					JScrollPane.HORIZONTAL_SCROLLBAR_NEVER));
 			frame.setVisible(true);
 		});

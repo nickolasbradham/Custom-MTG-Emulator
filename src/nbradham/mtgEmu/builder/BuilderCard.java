@@ -12,7 +12,7 @@ import nbradham.mtgEmu.gameObjects.GameCard;
 final class BuilderCard {
 
 	private Image cfgA, cfgB = null;
-	private Type type = Type.LIBRARY;
+	private Type type = Type.Library;
 	private byte count = 1;
 
 	BuilderCard(File f) {
