@@ -26,7 +26,7 @@ final class CardEditor extends JPanel {
 		add(new JLabel(CFGB_SET), BorderLayout.LINE_END);
 		JPanel foot = new JPanel();
 		foot.add(new JComboBox<>(Type.values()));
-		foot.add(new JLabel("#:"));
+		foot.add(new JLabel("Qty:"));
 		foot.add(new JSpinner(new SpinnerNumberModel(1, 1, 99, 1)));
 		add(foot, BorderLayout.PAGE_END);
 	}
