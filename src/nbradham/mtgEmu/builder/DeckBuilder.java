@@ -32,6 +32,8 @@ public final class DeckBuilder {
 	private final JFileChooser chooser = new JFileChooser();
 	private final ArrayList<BuilderCard> cards = new ArrayList<>();
 	private final JPanel pane = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 10));
+	private final JScrollPane jsp = new JScrollPane(pane, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
+			JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 
 	/**
 	 * Constructs a new DeckBuilder instance.
@@ -71,27 +73,27 @@ public final class DeckBuilder {
 					chooser.setMultiSelectionEnabled(true);
 					if (chooser.showOpenDialog(parent) != JFileChooser.APPROVE_OPTION)
 						return;
+					cards.clear();
+					pane.removeAll();
 					BuilderCard bc;
 					for (File f : chooser.getSelectedFiles()) {
 						cards.add(bc = new BuilderCard(f));
 						pane.add(new CardEditor(bc));
 					}
-					pane.revalidate();
 					recalcPane();
+					pane.revalidate();
 				}
 			});
 			fileMenu.add(newDeck);
 			bar.add(fileMenu);
 			frame.setJMenuBar(bar);
-			pane.setPreferredSize(new Dimension(-1, -1));
+			pane.setPreferredSize(new Dimension(-1, 700));
 			pane.addComponentListener(new ComponentAdapter() {
 				@Override
 				public void componentResized(ComponentEvent e) {
 					recalcPane();
 				}
 			});
-			JScrollPane jsp = new JScrollPane(pane, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
-					JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 			jsp.getVerticalScrollBar().setUnitIncrement(20);
 			frame.setContentPane(jsp);
 			frame.setVisible(true);
