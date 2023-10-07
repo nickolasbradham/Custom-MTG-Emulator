@@ -28,4 +28,8 @@ final class BuilderCard {
 	Image getCfgA() {
 		return cfgA;
 	}
+
+	void setCfgA(Image i) {
+		cfgA = i;
+	}
 }

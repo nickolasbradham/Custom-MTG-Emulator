@@ -4,7 +4,7 @@ import java.awt.Graphics;
 import java.util.ArrayList;
 
 import nbradham.mtgEmu.GPanel;
-import nbradham.mtgEmu.interfaces.Holder;
+import nbradham.mtgEmu.interfaces.GameCardHandler;
 import nbradham.mtgEmu.players.Player;
 
 /**
@@ -13,7 +13,7 @@ import nbradham.mtgEmu.players.Player;
  * @author Nickolas S. Bradham
  *
  */
-public final class CardZone extends GameObject implements Holder {
+public final class CardZone extends GameObject implements GameCardHandler {
 
 	private final ArrayList<GameCard> cards = new ArrayList<>();
 	private final Player play;
@@ -74,7 +74,7 @@ public final class CardZone extends GameObject implements Holder {
 	 * 
 	 * @param c The GameCard to remove.
 	 */
-	public void remove(GameCard c) {
+	public void handle(GameCard c) {
 		cards.remove(c);
 		removeChild(c);
 		distributeCards();

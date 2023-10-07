@@ -12,8 +12,7 @@ import javax.swing.JPopupMenu;
 
 import nbradham.mtgEmu.Main;
 import nbradham.mtgEmu.gameObjects.GameCard.CardType;
-import nbradham.mtgEmu.interfaces.DropHandler;
-import nbradham.mtgEmu.interfaces.Holder;
+import nbradham.mtgEmu.interfaces.GameCardHandler;
 import nbradham.mtgEmu.players.Player;
 
 /**
@@ -22,7 +21,7 @@ import nbradham.mtgEmu.players.Player;
  * @author Nickolas S. Bradham
  *
  */
-public final class Library extends GameObject implements Holder {
+public final class Library extends GameObject implements GameCardHandler {
 
 	private final JPopupMenu menu = new JPopupMenu();
 	private final Stack<GameCard> stack = new Stack<>();
@@ -117,7 +116,7 @@ public final class Library extends GameObject implements Holder {
 	}
 
 	@Override
-	public void remove(GameCard gameCard) {
+	public void handle(GameCard gameCard) {
 		stack.remove(gameCard);
 	}
 
@@ -162,7 +161,7 @@ public final class Library extends GameObject implements Holder {
 	 * @param label   The text of the item.
 	 * @param handler The handler that moves the card to the right place.
 	 */
-	private void createDropItem(String label, DropHandler handler) {
+	private void createDropItem(String label, GameCardHandler handler) {
 		JMenuItem item = new JMenuItem(label);
 		item.addActionListener(l -> {
 			transferCard(dropped);

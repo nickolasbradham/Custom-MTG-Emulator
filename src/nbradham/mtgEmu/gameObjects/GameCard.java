@@ -5,7 +5,7 @@ import java.awt.Point;
 import java.awt.event.MouseEvent;
 
 import nbradham.mtgEmu.Main;
-import nbradham.mtgEmu.interfaces.Holder;
+import nbradham.mtgEmu.interfaces.GameCardHandler;
 import nbradham.mtgEmu.players.Player;
 
 /**
@@ -33,7 +33,7 @@ public final class GameCard extends GameObject {
 	private final int ownID, normW;
 	private final byte cID, iID;
 
-	private Holder hold;
+	private GameCardHandler hold;
 	private boolean tapped;
 
 	/**
@@ -91,7 +91,7 @@ public final class GameCard extends GameObject {
 	 * 
 	 * @param holder The new Holder of this GameCard.
 	 */
-	public void setHolder(Holder holder) {
+	public void setHolder(GameCardHandler holder) {
 		hold = holder;
 	}
 
@@ -138,7 +138,7 @@ public final class GameCard extends GameObject {
 		if (e.getButton() == MouseEvent.BUTTON1) {
 			control.startDragging(this);
 			if (hold != null) {
-				hold.remove(this);
+				hold.handle(this);
 				setHolder(null);
 			}
 		}
