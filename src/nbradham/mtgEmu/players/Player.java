@@ -15,9 +15,9 @@ import javax.swing.SwingUtilities;
 
 import nbradham.mtgEmu.GPanel;
 import nbradham.mtgEmu.Main;
+import nbradham.mtgEmu.Type;
 import nbradham.mtgEmu.gameObjects.CardZone;
 import nbradham.mtgEmu.gameObjects.GameCard;
-import nbradham.mtgEmu.gameObjects.GameCard.CardType;
 import nbradham.mtgEmu.gameObjects.GameObject;
 import nbradham.mtgEmu.gameObjects.Library;
 
@@ -257,13 +257,13 @@ public abstract class Player {
 		try {
 			for (GameCard c : Main.CARD_MANAGER.load(this, file))
 				switch (c.getType()) {
-				case COMMANDER:
+				case Commander:
 					commandZone.add(c);
 					break;
-				case LIBRARY:
+				case Library:
 					lib.putOnTop(c);
 					break;
-				case TOKEN:
+				case Token:
 					// TODO add to tokens.
 				}
 			lib.updateSize();
@@ -274,6 +274,9 @@ public abstract class Player {
 		}
 	}
 
+	/**
+	 * Resets all cards to all starting zones.
+	 */
 	protected final void reset() {
 		Stack<GameCard> tmp = new Stack<>();
 		tmp.addAll(commandZone.takeAll());
@@ -287,17 +290,17 @@ public abstract class Player {
 				--i;
 			}
 		GameCard c;
-		CardType t;
+		Type t;
 		while (!tmp.isEmpty())
-			if ((t = (c = tmp.pop()).getType()) == CardType.TOKEN || c.getOwnerID() != id)
+			if ((t = (c = tmp.pop()).getType()) == Type.Token || c.getOwnerID() != id)
 				continue;
 			else {
 				c.setTapped(false);
 				switch (t) {
-				case COMMANDER:
+				case Commander:
 					commandZone.add(c);
 					break;
-				case LIBRARY:
+				case Library:
 					lib.putOnTop(c);
 				default:
 					break;

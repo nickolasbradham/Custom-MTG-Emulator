@@ -10,6 +10,7 @@ import java.awt.event.ComponentEvent;
 import java.io.File;
 import java.util.ArrayList;
 
+import javax.swing.JComponent;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
@@ -29,7 +30,7 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 public final class DeckBuilder {
 
 	private final JFrame parent;
-	private final JFileChooser chooser = new JFileChooser();
+	private static final JFileChooser chooser = new JFileChooser();
 	private final ArrayList<BuilderCard> cards = new ArrayList<>();
 	private final JPanel pane = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 10));
 	private final JScrollPane jsp = new JScrollPane(pane, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
@@ -43,8 +44,13 @@ public final class DeckBuilder {
 	public DeckBuilder(JFrame parentFrame) {
 		parent = parentFrame;
 		chooser.setFileFilter(new FileNameExtensionFilter("Image Files", "jpg", "png"));
+		chooser.setDialogTitle("Select the fronts of all cards");
+		chooser.setMultiSelectionEnabled(true);
 	}
 
+	/**
+	 * Adjusts the {@code pane} size so that there is better margins.
+	 */
 	private void recalcPane() {
 		Component[] cs = pane.getComponents();
 		if (cs.length > 0) {
@@ -52,6 +58,21 @@ public final class DeckBuilder {
 			pane.setPreferredSize(new Dimension(-1,
 					c.getY() + c.getHeight() + ((FlowLayout) pane.getLayout()).getVgap() + pane.getInsets().bottom));
 		}
+	}
+
+	/**
+	 * Prompts the user to select card images and adds them to the builder.
+	 */
+	private void addBulk() {
+		if (chooser.showOpenDialog(parent) != JFileChooser.APPROVE_OPTION)
+			return;
+		BuilderCard bc;
+		for (File f : chooser.getSelectedFiles()) {
+			cards.add(bc = new BuilderCard(f));
+			pane.add(new CardEditor(bc));
+		}
+		recalcPane();
+		pane.revalidate();
 	}
 
 	/**
@@ -64,28 +85,13 @@ public final class DeckBuilder {
 			frame.setSize(1366, 750);
 			JMenuBar bar = new JMenuBar();
 			JMenu fileMenu = new JMenu("File");
-			JMenuItem newDeck = new JMenuItem("New");
-			newDeck.addActionListener(new ActionListener() {
-
-				@Override
-				public void actionPerformed(ActionEvent e) {
-					chooser.setDialogTitle("Select the fronts of all cards");
-					chooser.setMultiSelectionEnabled(true);
-					if (chooser.showOpenDialog(parent) != JFileChooser.APPROVE_OPTION)
-						return;
-					cards.clear();
-					pane.removeAll();
-					BuilderCard bc;
-					for (File f : chooser.getSelectedFiles()) {
-						cards.add(bc = new BuilderCard(f));
-						pane.add(new CardEditor(bc));
-					}
-					recalcPane();
-					pane.revalidate();
-				}
+			createItem(fileMenu, "New", () -> {
+				cards.clear();
+				pane.removeAll();
+				addBulk();
 			});
-			fileMenu.add(newDeck);
 			bar.add(fileMenu);
+			createItem(bar, "Add Cards", () -> addBulk());
 			frame.setJMenuBar(bar);
 			pane.setPreferredSize(new Dimension(-1, 700));
 			pane.addComponentListener(new ComponentAdapter() {
@@ -98,5 +104,16 @@ public final class DeckBuilder {
 			frame.setContentPane(jsp);
 			frame.setVisible(true);
 		});
+	}
+
+	private static void createItem(JComponent menu, String label, Runnable act) {
+		JMenuItem item = new JMenuItem(label);
+		item.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				act.run();
+			}
+		});
+		menu.add(item);
 	}
 }

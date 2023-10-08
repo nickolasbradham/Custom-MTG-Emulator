@@ -11,7 +11,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPopupMenu;
 
 import nbradham.mtgEmu.Main;
-import nbradham.mtgEmu.gameObjects.GameCard.CardType;
+import nbradham.mtgEmu.Type;
 import nbradham.mtgEmu.interfaces.GameCardHandler;
 import nbradham.mtgEmu.players.Player;
 
@@ -83,11 +83,11 @@ public final class Library extends GameObject implements GameCardHandler {
 	public ArrayList<GameCard> clean() {
 		ArrayList<GameCard> tmp = new ArrayList<>();
 		GameCard c;
-		CardType t;
+		Type t;
 		for (byte i = 0; i < stack.size(); ++i)
-			if ((t = (c = stack.get(i)).getType()) == CardType.TOKEN || c.getOwnerID() != play.getID())
+			if ((t = (c = stack.get(i)).getType()) == Type.Token || c.getOwnerID() != play.getID())
 				stack.remove(i--);
-			else if (t == CardType.COMMANDER) {
+			else if (t == Type.Commander) {
 				stack.remove(i--);
 				tmp.add(c);
 			}

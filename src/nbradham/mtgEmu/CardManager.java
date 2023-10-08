@@ -13,7 +13,6 @@ import java.util.zip.ZipFile;
 import javax.imageio.ImageIO;
 
 import nbradham.mtgEmu.gameObjects.GameCard;
-import nbradham.mtgEmu.gameObjects.GameCard.CardType;
 import nbradham.mtgEmu.players.Player;
 
 /**
@@ -65,7 +64,7 @@ public final class CardManager {
 		cardID = -1;
 		imgID = -1;
 
-		addCards(info, player, gameCards, uvOrigins, CardType.COMMANDER, scaleW);
+		addCards(info, player, gameCards, uvOrigins, Type.Commander, scaleW);
 		byte count = info.readByte();
 		for (byte i = 0; i < count; ++i) {
 			byte dupes = info.readByte();
@@ -73,10 +72,10 @@ public final class CardManager {
 			uvOrigins.add(tuv);
 			++imgID;
 			for (byte n = 0; n < dupes; ++n)
-				gameCards.add(new GameCard(player, ++cardID, CardType.LIBRARY, imgID, scaleW));
+				gameCards.add(new GameCard(player, ++cardID, Type.Library, imgID, scaleW));
 		}
-		addCards(info, player, gameCards, uvOrigins, CardType.LIBRARY, scaleW);
-		addCards(info, player, gameCards, uvOrigins, CardType.TOKEN, scaleW);
+		addCards(info, player, gameCards, uvOrigins, Type.Library, scaleW);
+		addCards(info, player, gameCards, uvOrigins, Type.Token, scaleW);
 
 		zFile.close();
 
@@ -128,7 +127,7 @@ public final class CardManager {
 	 *                     {@link DataInputStream#readShort()}.
 	 */
 	private void addCards(DataInputStream inStream, Player player, ArrayList<GameCard> gameCards,
-			ArrayList<short[]> uvOrigins, CardType cardType, int scaleW) throws IOException {
+			ArrayList<short[]> uvOrigins, Type cardType, int scaleW) throws IOException {
 		byte count = inStream.readByte();
 		for (byte i = 0; i < count; ++i) {
 			gameCards.add(new GameCard(player, ++cardID, cardType, ++imgID, scaleW));

@@ -5,6 +5,7 @@ import java.awt.Point;
 import java.awt.event.MouseEvent;
 
 import nbradham.mtgEmu.Main;
+import nbradham.mtgEmu.Type;
 import nbradham.mtgEmu.interfaces.GameCardHandler;
 import nbradham.mtgEmu.players.Player;
 
@@ -16,20 +17,10 @@ import nbradham.mtgEmu.players.Player;
  */
 public final class GameCard extends GameObject {
 
-	/**
-	 * Used to determine card return location.
-	 * 
-	 * @author Nickolas S. Bradham
-	 *
-	 */
-	public static enum CardType {
-		COMMANDER, LIBRARY, TOKEN
-	};
-
 	public static final short SM_HEIGHT = 200, LG_HEIGHT = 350;
 
 	private final Player control;
-	private final CardType type;
+	private final Type type;
 	private final int ownID, normW;
 	private final byte cID, iID;
 
@@ -45,7 +36,7 @@ public final class GameCard extends GameObject {
 	 * @param cardType The CardType of this card.
 	 * @param imageID  The image ID of this card.
 	 */
-	public GameCard(Player owner, byte cardID, CardType cardType, byte imageID, int objW) {
+	public GameCard(Player owner, byte cardID, Type cardType, byte imageID, int objW) {
 		this(owner.getID(), cardID, cardType, imageID, objW, owner);
 	}
 
@@ -59,7 +50,7 @@ public final class GameCard extends GameObject {
 	 * @param imageID    The image ID of this card.
 	 * @param controller The controller of this card.
 	 */
-	public GameCard(int ownerID, byte cardID, CardType cardType, byte imageID, int objW, Player controller) {
+	public GameCard(int ownerID, byte cardID, Type cardType, byte imageID, int objW, Player controller) {
 		control = controller;
 		ownID = ownerID;
 		cID = cardID;
@@ -73,7 +64,7 @@ public final class GameCard extends GameObject {
 	 * 
 	 * @return The CardType of the card.
 	 */
-	public CardType getType() {
+	public Type getType() {
 		return type;
 	}
 
