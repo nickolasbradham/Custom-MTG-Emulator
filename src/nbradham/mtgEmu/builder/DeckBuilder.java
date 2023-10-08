@@ -30,7 +30,7 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 public final class DeckBuilder {
 
 	private final JFrame parent;
-	private static final JFileChooser chooser = new JFileChooser();
+	private final JFileChooser chooser = new JFileChooser();
 	private final ArrayList<BuilderCard> cards = new ArrayList<>();
 	private final JPanel pane = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 10));
 	private final JScrollPane jsp = new JScrollPane(pane, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
