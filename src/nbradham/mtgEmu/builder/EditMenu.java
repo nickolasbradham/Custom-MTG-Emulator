@@ -1,7 +1,9 @@
 package nbradham.mtgEmu.builder;
 
+import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.image.BufferedImage;
 
 import javax.swing.JComponent;
 import javax.swing.JMenu;
@@ -23,11 +25,20 @@ final class EditMenu {
 	 * Constructs a new EditMenu.
 	 */
 	EditMenu() {
-		createMenuItem("Delete", () -> System.out.println("Delete"));
-		createMenuItem("Replace", () -> System.out.println("Replace"));
+		createMenuItem("Delete", () -> call.delete());
+		createMenuItem("Replace",
+				() -> call.getBuilder().getChooser().prompt("Select new card front", false, f -> call.replaceCard(f)));
 		JMenu bFig = new JMenu("Set 2nd Config");
-		createMenuItem(bFig, "Custom...", () -> System.out.println("Custom..."));
-		createMenuItem(bFig, "Rotate 180", () -> System.out.println("Rotate 180"));
+		createMenuItem(bFig, "Custom...",
+				() -> call.getBuilder().getChooser().prompt("Select 2nd config image", false, f -> call.setB(f)));
+		createMenuItem(bFig, "None", () -> call.setB(null));
+		createMenuItem(bFig, "Rotate 180", () -> {
+			Image i = call.getCard().getCfgA();
+			int w = i.getWidth(null), h = i.getHeight(null);
+			BufferedImage bi = new BufferedImage(w, h, BufferedImage.TYPE_INT_ARGB_PRE);
+			bi.getGraphics().drawImage(i, w, h, -w, -h, null);
+			call.setBimg(bi);
+		});
 		menu.add(bFig);
 	}
 

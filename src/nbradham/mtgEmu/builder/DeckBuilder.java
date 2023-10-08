@@ -11,7 +11,6 @@ import java.io.File;
 import java.util.ArrayList;
 
 import javax.swing.JComponent;
-import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
@@ -19,7 +18,6 @@ import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.SwingUtilities;
-import javax.swing.filechooser.FileNameExtensionFilter;
 
 /**
  * Handles the deck compilation process.
@@ -29,8 +27,7 @@ import javax.swing.filechooser.FileNameExtensionFilter;
  */
 public final class DeckBuilder {
 
-	private final JFrame parent;
-	private final JFileChooser chooser = new JFileChooser();
+	private final FileChooser chooser;
 	private final ArrayList<BuilderCard> cards = new ArrayList<>();
 	private final JPanel pane = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 10));
 	private final JScrollPane jsp = new JScrollPane(pane, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
@@ -42,10 +39,7 @@ public final class DeckBuilder {
 	 * @param parentFrame The parent JFrame this is linked to.
 	 */
 	public DeckBuilder(JFrame parentFrame) {
-		parent = parentFrame;
-		chooser.setFileFilter(new FileNameExtensionFilter("Image Files", "jpg", "png"));
-		chooser.setDialogTitle("Select the fronts of all cards");
-		chooser.setMultiSelectionEnabled(true);
+		chooser = new FileChooser(parentFrame);
 	}
 
 	/**
@@ -55,8 +49,9 @@ public final class DeckBuilder {
 		Component[] cs = pane.getComponents();
 		if (cs.length > 0) {
 			Component c = cs[cs.length - 1];
-			pane.setPreferredSize(new Dimension(-1,
-					c.getY() + c.getHeight() + ((FlowLayout) pane.getLayout()).getVgap() + pane.getInsets().bottom));
+			pane.setPreferredSize(new Dimension(-1, Math.max(
+					c.getY() + c.getHeight() + ((FlowLayout) pane.getLayout()).getVgap() + pane.getInsets().bottom,
+					750)));
 		}
 	}
 
@@ -64,12 +59,12 @@ public final class DeckBuilder {
 	 * Prompts the user to select card images and adds them to the builder.
 	 */
 	private void addBulk() {
-		if (chooser.showOpenDialog(parent) != JFileChooser.APPROVE_OPTION)
+		if (chooser.showOpenDialog("Select the fronts of all cards", true) != FileChooser.APPROVE_OPTION)
 			return;
 		BuilderCard bc;
 		for (File f : chooser.getSelectedFiles()) {
 			cards.add(bc = new BuilderCard(f));
-			pane.add(new CardEditor(bc));
+			pane.add(new CardEditor(bc, this));
 		}
 		recalcPane();
 		pane.revalidate();
@@ -115,5 +110,16 @@ public final class DeckBuilder {
 			}
 		});
 		menu.add(item);
+	}
+
+	void remove(CardEditor cardEditor) {
+		cards.remove(cardEditor.getCard());
+		pane.remove(cardEditor);
+		recalcPane();
+		pane.revalidate();
+	}
+
+	FileChooser getChooser() {
+		return chooser;
 	}
 }

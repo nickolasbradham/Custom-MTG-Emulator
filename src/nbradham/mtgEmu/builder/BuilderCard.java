@@ -17,7 +17,7 @@ import nbradham.mtgEmu.gameObjects.GameCard;
  */
 final class BuilderCard {
 
-	private Image cfgA, cfgB = null;
+	private Image cfgA, cfgB;
 	private Type type = Type.Library;
 	private byte count = 1;
 
@@ -27,13 +27,11 @@ final class BuilderCard {
 	 * @param f
 	 */
 	BuilderCard(File f) {
-		try {
-			cfgA = (cfgA = ImageIO.read(f)).getScaledInstance(
-					cfgA.getWidth(null) * GameCard.LG_HEIGHT / cfgA.getHeight(null), GameCard.LG_HEIGHT,
-					BufferedImage.SCALE_SMOOTH);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+		loadA(f);
+	}
+
+	void loadA(File f) {
+		cfgA = load(f);
 	}
 
 	/**
@@ -45,12 +43,27 @@ final class BuilderCard {
 		return cfgA;
 	}
 
-	/**
-	 * Sets the Config A of this card.
-	 * 
-	 * @param i The new image.
-	 */
-	void setCfgA(Image i) {
-		cfgA = i;
+	void loadB(File f) {
+		cfgB = load(f);
+	}
+
+	void setB(Image i) {
+		cfgB = i;
+	}
+
+	private static Image load(File f) {
+		if (f != null)
+			try {
+				Image i = ImageIO.read(f);
+				return i.getScaledInstance(i.getWidth(null) * GameCard.LG_HEIGHT / i.getHeight(null),
+						GameCard.LG_HEIGHT, BufferedImage.SCALE_SMOOTH);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		return null;
+	}
+
+	Image getCfgB() {
+		return cfgB;
 	}
 }
