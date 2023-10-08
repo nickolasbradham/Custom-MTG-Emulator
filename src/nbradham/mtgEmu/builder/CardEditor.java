@@ -56,28 +56,56 @@ final class CardEditor extends JPanel {
 		});
 	}
 
+	/**
+	 * Removes this CardEditor and related card.
+	 */
 	void delete() {
 		db.remove(this);
 	}
 
+	/**
+	 * Retrieves the BuilderCard of this CardEditor.
+	 * 
+	 * @return The BuilderCard
+	 */
 	BuilderCard getCard() {
 		return card;
 	}
 
+	/**
+	 * Retrieves the DeckBuilder.
+	 * 
+	 * @return The DeckBuilder.
+	 */
 	DeckBuilder getBuilder() {
 		return db;
 	}
 
+	/**
+	 * Replaces the card in this editor.
+	 * 
+	 * @param f The new image to load.
+	 */
 	void replaceCard(File f) {
 		card.loadA(f);
 		aLab.setIcon(new ImageIcon(card.getCfgA()));
 	}
 
+	/**
+	 * Sets the B config.
+	 * 
+	 * @param f The image to load.
+	 */
 	void setB(File f) {
 		card.loadB(f);
 		bLab.setIcon(f == null ? null : new ImageIcon(card.getCfgB()));
 	}
 
+	/**
+	 * Sets the B config.
+	 * 
+	 * @param img The image to use.
+	 */
 	void setBimg(Image img) {
 		card.setB(img);
 		bLab.setIcon(new ImageIcon(img));

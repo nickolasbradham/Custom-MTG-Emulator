@@ -71,12 +71,33 @@ public final class DeckBuilder {
 	}
 
 	/**
+	 * Removes the CardEditor and related card.
+	 * 
+	 * @param cardEditor The CardEditor to remove.
+	 */
+	void remove(CardEditor cardEditor) {
+		cards.remove(cardEditor.getCard());
+		pane.remove(cardEditor);
+		recalcPane();
+		pane.revalidate();
+	}
+
+	/**
+	 * Retrieves the FileChooser.
+	 * 
+	 * @return The FileChooser
+	 */
+	FileChooser getChooser() {
+		return chooser;
+	}
+
+	/**
 	 * Handles prompting the user for deck images and details and saves to a file.
 	 */
 	public void start() {
 		SwingUtilities.invokeLater(() -> {
 			JFrame frame = new JFrame("Deck Builder");
-			frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+			frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 			frame.setSize(1366, 750);
 			JMenuBar bar = new JMenuBar();
 			JMenu fileMenu = new JMenu("File");
@@ -101,6 +122,13 @@ public final class DeckBuilder {
 		});
 	}
 
+	/**
+	 * Creates a {@link JMenuItem} and adds it to {@code menu}.
+	 * 
+	 * @param menu  The JComponent to add the item to.
+	 * @param label The label of the item.
+	 * @param act   The action to perform when clicked.
+	 */
 	private static void createItem(JComponent menu, String label, Runnable act) {
 		JMenuItem item = new JMenuItem(label);
 		item.addActionListener(new ActionListener() {
@@ -110,16 +138,5 @@ public final class DeckBuilder {
 			}
 		});
 		menu.add(item);
-	}
-
-	void remove(CardEditor cardEditor) {
-		cards.remove(cardEditor.getCard());
-		pane.remove(cardEditor);
-		recalcPane();
-		pane.revalidate();
-	}
-
-	FileChooser getChooser() {
-		return chooser;
 	}
 }

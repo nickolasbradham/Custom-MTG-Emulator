@@ -30,6 +30,11 @@ final class BuilderCard {
 		loadA(f);
 	}
 
+	/**
+	 * Loads an image into config A.
+	 * 
+	 * @param f The image to load.
+	 */
 	void loadA(File f) {
 		cfgA = load(f);
 	}
@@ -43,14 +48,39 @@ final class BuilderCard {
 		return cfgA;
 	}
 
+	/**
+	 * Loads an image into config B.
+	 * 
+	 * @param f The image to load.
+	 */
 	void loadB(File f) {
 		cfgB = load(f);
 	}
 
+	/**
+	 * Sets an image into config B.
+	 * 
+	 * @param i The image to set.
+	 */
 	void setB(Image i) {
 		cfgB = i;
 	}
 
+	/**
+	 * Retrieves config B image,
+	 * 
+	 * @return The config B image.
+	 */
+	Image getCfgB() {
+		return cfgB;
+	}
+
+	/**
+	 * Reads an image file.
+	 * 
+	 * @param f The file to read.
+	 * @return The loaded image.
+	 */
 	private static Image load(File f) {
 		if (f != null)
 			try {
@@ -61,9 +91,5 @@ final class BuilderCard {
 				e.printStackTrace();
 			}
 		return null;
-	}
-
-	Image getCfgB() {
-		return cfgB;
 	}
 }
