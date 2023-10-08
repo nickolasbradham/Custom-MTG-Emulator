@@ -1,9 +1,11 @@
 package nbradham.mtgEmu.builder;
 
 import java.awt.Image;
+import java.awt.Point;
 
 final class CardImage {
 
+	private final Point loc = new Point();
 	private Image img;
 
 	void setImg(Image image) {
@@ -12,5 +14,9 @@ final class CardImage {
 
 	Image getImg() {
 		return img;
+	}
+
+	public Point getLoc() {
+		return loc;
 	}
 }

@@ -3,16 +3,22 @@ package nbradham.mtgEmu.builder;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
+import java.awt.Graphics2D;
+import java.awt.Point;
+import java.awt.RenderingHints;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
+import java.util.zip.ZipOutputStream;
 
 import javax.imageio.ImageIO;
 import javax.swing.JComponent;
@@ -25,6 +31,7 @@ import javax.swing.JScrollPane;
 import javax.swing.SwingUtilities;
 
 import nbradham.mtgEmu.Main;
+import nbradham.mtgEmu.gameObjects.GameCard;
 
 /**
  * Handles the deck compilation process.
@@ -130,10 +137,45 @@ public final class DeckBuilder {
 				CardImage ci;
 				for (Component ce : pane.getComponents()) {
 					images.add((bc = ((CardEditor) ce).getCard()).getCIa());
-					if (!bc.isBflip() && (ci = bc.getCIb()) != null)
+					if (!bc.isBflip() && (ci = bc.getCIb()).getImg() != null)
 						images.add(ci);
 				}
-				// TODO Finish.
+				int x = 0, y = GameCard.LG_HEIGHT;
+				byte moveID = 0;
+
+				while (moveID < images.size()) {
+					while (x + GameCard.LG_WIDTH <= y + GameCard.LG_HEIGHT && moveID < images.size()) {
+						for (short py = 0; py < y && moveID < images.size(); py += GameCard.LG_HEIGHT)
+							images.get(moveID++).getLoc().setLocation(x, py);
+						x += GameCard.LG_WIDTH;
+					}
+					while (y + GameCard.LG_HEIGHT <= x + GameCard.LG_WIDTH && moveID < images.size()) {
+						for (short px = 0; px < x && moveID < images.size(); px += GameCard.LG_WIDTH)
+							images.get(moveID++).getLoc().setLocation(px, y);
+						y += GameCard.LG_HEIGHT;
+					}
+				}
+				BufferedImage stitched = new BufferedImage(x, y, BufferedImage.TYPE_INT_ARGB);
+				Graphics2D stitchG = stitched.createGraphics();
+				stitchG.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
+				images.forEach(c -> {
+					Point loc = c.getLoc();
+					stitchG.drawImage(c.getImg(), loc.x, loc.y, loc.x + GameCard.LG_WIDTH, loc.y + GameCard.LG_HEIGHT,
+							0, 0, GameCard.LG_WIDTH, GameCard.LG_HEIGHT, null);
+				});
+				File out = chooser.getSelectedFile();
+				if (!out.getName().endsWith(Main.FNAME_EXT))
+					out = new File(out.getParent(), out.getName() + Main.FNAME_EXT);
+				try {
+					ZipOutputStream zipOut = new ZipOutputStream(new FileOutputStream(out));
+					zipOut.putNextEntry(new ZipEntry("cards.png"));
+					ImageIO.write(stitched, "png", zipOut);
+					zipOut.closeEntry();
+					zipOut.close();
+					// zipOut.putNextEntry(new ZipEntry("info.bin"));
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
 			});
 			bar.add(fileMenu);
 			createItem(bar, "Add Cards", () -> addBulk());

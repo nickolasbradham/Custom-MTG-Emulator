@@ -24,8 +24,9 @@ import nbradham.mtgEmu.players.LocalPlayer;
 public final class Main {
 
 	public static final CardManager CARD_MANAGER = new CardManager();
-	public static final FileNameExtensionFilter FILTER_DECK = new FileNameExtensionFilter("Custom Deck File", "cdf");
-	public static final String FNAME_CARDS = "cards.png", FNAME_DAT = "info.bin";
+	public static final String FNAME_CARDS = "cards.png", FNAME_DAT = "info.bin", FNAME_EXT = "cdf";
+	public static final FileNameExtensionFilter FILTER_DECK = new FileNameExtensionFilter("Custom Deck File",
+			FNAME_EXT);
 
 	private static final String R_VERSION = "v0.3";
 

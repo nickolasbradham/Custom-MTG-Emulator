@@ -102,8 +102,7 @@ final class BuilderCard {
 		if (f != null)
 			try {
 				Image i = ImageIO.read(f);
-				return i.getScaledInstance(i.getWidth(null) * GameCard.LG_HEIGHT / i.getHeight(null),
-						GameCard.LG_HEIGHT, BufferedImage.SCALE_SMOOTH);
+				return i.getScaledInstance(GameCard.LG_WIDTH, GameCard.LG_HEIGHT, BufferedImage.SCALE_SMOOTH);
 			} catch (IOException e) {
 				e.printStackTrace();
 			}

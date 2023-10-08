@@ -17,7 +17,7 @@ import nbradham.mtgEmu.players.Player;
  */
 public final class GameCard extends GameObject {
 
-	public static final short SM_HEIGHT = 200, LG_HEIGHT = 350;
+	public static final short SM_HEIGHT = 200, LG_HEIGHT = 350, LG_WIDTH = 250;
 
 	private final Player control;
 	private final Type type;
