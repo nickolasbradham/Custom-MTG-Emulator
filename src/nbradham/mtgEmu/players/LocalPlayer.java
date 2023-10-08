@@ -9,8 +9,6 @@ import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
-import javax.swing.filechooser.FileNameExtensionFilter;
-
 import nbradham.mtgEmu.Main;
 import nbradham.mtgEmu.gameObjects.GameObject;
 import nbradham.mtgEmu.interfaces.ObjectFoundHandler;
@@ -66,7 +64,7 @@ public final class LocalPlayer extends Player {
 		JMenuItem loadItem = new JMenuItem("Open Deck", KeyEvent.VK_O);
 
 		JFileChooser chooser = new JFileChooser();
-		chooser.setFileFilter(new FileNameExtensionFilter("Custom Deck File", "cdf"));
+		chooser.setFileFilter(Main.FILTER_DECK);
 		chooser.setDialogTitle("Select Deck File");
 
 		loadItem.addActionListener(e -> {

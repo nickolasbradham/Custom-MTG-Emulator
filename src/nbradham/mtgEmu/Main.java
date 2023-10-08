@@ -10,6 +10,7 @@ import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
+import javax.swing.filechooser.FileNameExtensionFilter;
 
 import nbradham.mtgEmu.builder.DeckBuilder;
 import nbradham.mtgEmu.players.LocalPlayer;
@@ -23,6 +24,8 @@ import nbradham.mtgEmu.players.LocalPlayer;
 public final class Main {
 
 	public static final CardManager CARD_MANAGER = new CardManager();
+	public static final FileNameExtensionFilter FILTER_DECK = new FileNameExtensionFilter("Custom Deck File", "cdf");
+	public static final String FNAME_CARDS = "cards.png", FNAME_DAT = "info.bin";
 
 	private static final String R_VERSION = "v0.3";
 

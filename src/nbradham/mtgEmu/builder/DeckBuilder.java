@@ -7,9 +7,14 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
+import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.zip.ZipFile;
 
+import javax.imageio.ImageIO;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
@@ -18,6 +23,8 @@ import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.SwingUtilities;
+
+import nbradham.mtgEmu.Main;
 
 /**
  * Handles the deck compilation process.
@@ -28,7 +35,6 @@ import javax.swing.SwingUtilities;
 public final class DeckBuilder {
 
 	private final FileChooser chooser;
-	private final ArrayList<BuilderCard> cards = new ArrayList<>();
 	private final JPanel pane = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 10));
 	private final JScrollPane jsp = new JScrollPane(pane, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
 			JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
@@ -59,13 +65,11 @@ public final class DeckBuilder {
 	 * Prompts the user to select card images and adds them to the builder.
 	 */
 	private void addBulk() {
-		if (chooser.showOpenDialog("Select the fronts of all cards", true) != FileChooser.APPROVE_OPTION)
+		if (chooser.showOpenDialog("Select the fronts of all cards", true,
+				FileChooser.FILTER_IMAGE) != FileChooser.APPROVE_OPTION)
 			return;
-		BuilderCard bc;
-		for (File f : chooser.getSelectedFiles()) {
-			cards.add(bc = new BuilderCard(f));
-			pane.add(new CardEditor(bc, this));
-		}
+		for (File f : chooser.getSelectedFiles())
+			pane.add(new CardEditor(new BuilderCard(f), this));
 		recalcPane();
 		pane.revalidate();
 	}
@@ -76,7 +80,6 @@ public final class DeckBuilder {
 	 * @param cardEditor The CardEditor to remove.
 	 */
 	void remove(CardEditor cardEditor) {
-		cards.remove(cardEditor.getCard());
 		pane.remove(cardEditor);
 		recalcPane();
 		pane.revalidate();
@@ -102,9 +105,35 @@ public final class DeckBuilder {
 			JMenuBar bar = new JMenuBar();
 			JMenu fileMenu = new JMenu("File");
 			createItem(fileMenu, "New", () -> {
-				cards.clear();
 				pane.removeAll();
 				addBulk();
+			});
+			createItem(fileMenu, "Open", () -> {
+				chooser.prompt("Select custom deck file", false, Main.FILTER_DECK, f -> {
+					try {
+						ZipFile zFile = new ZipFile(f);
+						BufferedImage img = ImageIO.read(zFile.getInputStream(zFile.getEntry(Main.FNAME_CARDS)));
+						InputStream is = zFile.getInputStream(zFile.getEntry(Main.FNAME_DAT));
+						// TODO Finish.
+						zFile.close();
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
+				});
+			});
+			createItem(fileMenu, "Save", () -> {
+				chooser.config("Select save location.", false, Main.FILTER_DECK);
+				if (chooser.showSaveDialog(frame) != FileChooser.APPROVE_OPTION)
+					return;
+				ArrayList<CardImage> images = new ArrayList<>();
+				BuilderCard bc;
+				CardImage ci;
+				for (Component ce : pane.getComponents()) {
+					images.add((bc = ((CardEditor) ce).getCard()).getCIa());
+					if (!bc.isBflip() && (ci = bc.getCIb()) != null)
+						images.add(ci);
+				}
+				// TODO Finish.
 			});
 			bar.add(fileMenu);
 			createItem(bar, "Add Cards", () -> addBulk());

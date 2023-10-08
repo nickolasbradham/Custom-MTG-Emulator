@@ -33,11 +33,7 @@ final class EditMenu {
 				() -> call.getBuilder().getChooser().prompt("Select 2nd config image", false, f -> call.setB(f)));
 		createMenuItem(bFig, "None", () -> call.setB(null));
 		createMenuItem(bFig, "Rotate 180", () -> {
-			Image i = call.getCard().getCfgA();
-			int w = i.getWidth(null), h = i.getHeight(null);
-			BufferedImage bi = new BufferedImage(w, h, BufferedImage.TYPE_INT_ARGB_PRE);
-			bi.getGraphics().drawImage(i, w, h, -w, -h, null);
-			call.setBimg(bi);
+			call.flipForB();
 		});
 		menu.add(bFig);
 	}

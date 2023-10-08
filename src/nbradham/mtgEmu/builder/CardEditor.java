@@ -11,6 +11,7 @@ import java.awt.BorderLayout;
 import java.awt.Image;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.image.BufferedImage;
 import java.io.File;
 
 import javax.swing.ImageIcon;
@@ -88,6 +89,7 @@ final class CardEditor extends JPanel {
 	 */
 	void replaceCard(File f) {
 		card.loadA(f);
+		setB(null);
 		aLab.setIcon(new ImageIcon(card.getCfgA()));
 	}
 
@@ -98,16 +100,20 @@ final class CardEditor extends JPanel {
 	 */
 	void setB(File f) {
 		card.loadB(f);
-		bLab.setIcon(f == null ? null : new ImageIcon(card.getCfgB()));
+		if (f == null) {
+			bLab.setIcon(null);
+			card.setFlipped(false);
+		} else
+			bLab.setIcon(new ImageIcon(card.getCfgB()));
 	}
 
-	/**
-	 * Sets the B config.
-	 * 
-	 * @param img The image to use.
-	 */
-	void setBimg(Image img) {
-		card.setB(img);
-		bLab.setIcon(new ImageIcon(img));
+	void flipForB() {
+		Image i = card.getCfgA();
+		int w = i.getWidth(null), h = i.getHeight(null);
+		BufferedImage bi = new BufferedImage(w, h, BufferedImage.TYPE_INT_ARGB_PRE);
+		bi.getGraphics().drawImage(i, w, h, -w, -h, null);
+		card.setB(bi);
+		card.setFlipped(true);
+		bLab.setIcon(new ImageIcon(bi));
 	}
 }

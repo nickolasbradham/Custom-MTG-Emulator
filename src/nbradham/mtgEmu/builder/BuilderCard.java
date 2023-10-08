@@ -17,9 +17,10 @@ import nbradham.mtgEmu.gameObjects.GameCard;
  */
 final class BuilderCard {
 
-	private Image cfgA, cfgB;
+	private CardImage cfgA = new CardImage(), cfgB = new CardImage();
 	private Type type = Type.Library;
 	private byte count = 1;
+	private boolean flip;
 
 	/**
 	 * Constructs a new BuilderCard with {@code f} as Card Config A.
@@ -36,7 +37,7 @@ final class BuilderCard {
 	 * @param f The image to load.
 	 */
 	void loadA(File f) {
-		cfgA = load(f);
+		cfgA.setImg(load(f));
 	}
 
 	/**
@@ -45,7 +46,7 @@ final class BuilderCard {
 	 * @return The image of this cards A config.
 	 */
 	Image getCfgA() {
-		return cfgA;
+		return cfgA.getImg();
 	}
 
 	/**
@@ -54,7 +55,7 @@ final class BuilderCard {
 	 * @param f The image to load.
 	 */
 	void loadB(File f) {
-		cfgB = load(f);
+		cfgB.setImg(load(f));
 	}
 
 	/**
@@ -63,7 +64,7 @@ final class BuilderCard {
 	 * @param i The image to set.
 	 */
 	void setB(Image i) {
-		cfgB = i;
+		cfgB.setImg(i);
 	}
 
 	/**
@@ -72,7 +73,23 @@ final class BuilderCard {
 	 * @return The config B image.
 	 */
 	Image getCfgB() {
+		return cfgB.getImg();
+	}
+
+	void setFlipped(boolean b) {
+		flip = b;
+	}
+
+	CardImage getCIa() {
+		return cfgA;
+	}
+
+	CardImage getCIb() {
 		return cfgB;
+	}
+
+	boolean isBflip() {
+		return flip;
 	}
 
 	/**

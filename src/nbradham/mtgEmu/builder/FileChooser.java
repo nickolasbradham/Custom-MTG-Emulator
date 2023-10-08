@@ -13,6 +13,7 @@ import javax.swing.filechooser.FileNameExtensionFilter;
  *
  */
 final class FileChooser extends JFileChooser {
+	static final FileNameExtensionFilter FILTER_IMAGE = new FileNameExtensionFilter("Image Files", "jpg", "png");
 	private static final long serialVersionUID = 1L;
 	private static final File NULL_FILE = new File("");
 
@@ -26,7 +27,6 @@ final class FileChooser extends JFileChooser {
 	FileChooser(Component parent) {
 		super();
 		par = parent;
-		setFileFilter(new FileNameExtensionFilter("Image Files", "jpg", "png"));
 	}
 
 	/**
@@ -36,9 +36,8 @@ final class FileChooser extends JFileChooser {
 	 * @param multi Allow multiple file selection?
 	 * @return the value returned by {@link #showOpenDialog(Component)}.
 	 */
-	int showOpenDialog(String title, boolean multi) {
-		setDialogTitle(title);
-		setMultiSelectionEnabled(multi);
+	int showOpenDialog(String title, boolean multi, FileNameExtensionFilter filter) {
+		config(title, multi, filter);
 		setSelectedFile(NULL_FILE);
 		return showOpenDialog(par);
 	}
@@ -51,8 +50,19 @@ final class FileChooser extends JFileChooser {
 	 * @param handler Handles file on successful selection.
 	 */
 	void prompt(String title, boolean multi, FileHandler handler) {
-		if (showOpenDialog(title, multi) != JFileChooser.APPROVE_OPTION)
+		prompt(title, multi, FILTER_IMAGE, handler);
+	}
+
+	void prompt(String title, boolean multi, FileNameExtensionFilter filter, FileHandler handler) {
+		if (showOpenDialog(title, multi, filter) != JFileChooser.APPROVE_OPTION)
 			return;
 		handler.hande(getSelectedFile());
+	}
+
+	void config(String title, boolean multi, FileNameExtensionFilter filter) {
+		setDialogTitle(title);
+		setMultiSelectionEnabled(multi);
+		setSelectedFile(NULL_FILE);
+		setFileFilter(filter);
 	}
 }

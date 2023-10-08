@@ -46,7 +46,7 @@ public final class CardManager {
 	public GameCard[] load(Player player, File deckFile) throws ZipException, IOException {
 		ZipFile zFile = new ZipFile(deckFile);
 
-		BufferedImage img = ImageIO.read(zFile.getInputStream(zFile.getEntry("cards.png")));
+		BufferedImage img = ImageIO.read(zFile.getInputStream(zFile.getEntry(Main.FNAME_CARDS)));
 		int w = img.getWidth(), h = img.getHeight(), mw = w + h, mh = Math.max(h, w);
 		BufferedImage loadedImages = new BufferedImage(mw, mh, BufferedImage.TYPE_INT_ARGB_PRE);
 		Graphics2D g = loadedImages.createGraphics();
@@ -56,7 +56,7 @@ public final class CardManager {
 		g.rotate(PI_2, w / 2, h / 2);
 		g.drawRenderedImage(img, null);
 
-		DataInputStream info = new DataInputStream(zFile.getInputStream(zFile.getEntry("info.bin")));
+		DataInputStream info = new DataInputStream(zFile.getInputStream(zFile.getEntry(Main.FNAME_DAT)));
 		short cw = info.readShort(), ch = info.readShort();
 		ArrayList<GameCard> gameCards = new ArrayList<>();
 		ArrayList<short[]> uvOrigins = new ArrayList<>();
