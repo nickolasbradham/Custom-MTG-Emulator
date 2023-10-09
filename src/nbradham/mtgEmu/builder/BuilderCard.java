@@ -27,6 +27,14 @@ final class BuilderCard {
 		setAimg(image);
 	}
 
+	BuilderCard(Zone setZone, Type setType, byte qty, BufferedImage imgA, BufferedImage imgB) {
+		zone = setZone;
+		type = setType;
+		count = qty;
+		cfgA.setImg(imgA);
+		cfgB.setImg(imgB);
+	}
+
 	void setAimg(Image i) {
 		cfgA.setImg(i);
 	}
@@ -85,5 +93,9 @@ final class BuilderCard {
 
 	byte getQty() {
 		return count;
+	}
+
+	Image getBimg() {
+		return cfgB.getImg();
 	}
 }

@@ -7,6 +7,7 @@ import javax.swing.SpinnerNumberModel;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
+import nbradham.mtgEmu.Type;
 import nbradham.mtgEmu.Zone;
 
 import java.awt.BorderLayout;
@@ -44,6 +45,8 @@ final class CardEditor extends JPanel {
 		card = builderCard;
 		db = deckBuilder;
 		add(aLab = new JLabel(new ImageIcon(card.getAimg())), BorderLayout.LINE_START);
+		if (card.getType() != Type.Simple)
+			setB(card.getType() == Type.Custom ? card.getBimg() : card.flipForB());
 		add(bLab, BorderLayout.LINE_END);
 		JPanel foot = new JPanel();
 		foot.add(new JLabel("Zone:"));
@@ -54,6 +57,7 @@ final class CardEditor extends JPanel {
 				card.setZone((Zone) zBox.getSelectedItem());
 			}
 		});
+		zBox.setSelectedItem(card.getZone());
 		foot.add(zBox);
 		foot.add(new JLabel("Qty:"));
 		JSpinner spin = new JSpinner(new SpinnerNumberModel(1, 1, 99, 1));
@@ -63,6 +67,7 @@ final class CardEditor extends JPanel {
 				card.setQty(((Integer) spin.getValue()).byteValue());
 			}
 		});
+		spin.setValue((int) card.getQty());
 		foot.add(spin);
 		add(foot, BorderLayout.PAGE_END);
 		addMouseListener(new MouseAdapter() {

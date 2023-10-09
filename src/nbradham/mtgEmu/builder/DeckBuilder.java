@@ -10,13 +10,17 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
+import java.awt.event.InputEvent;
+import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
+import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
 import java.util.zip.ZipOutputStream;
 
 import javax.imageio.ImageIO;
@@ -27,10 +31,12 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
 
 import nbradham.mtgEmu.Main;
 import nbradham.mtgEmu.Type;
+import nbradham.mtgEmu.Zone;
 import nbradham.mtgEmu.gameObjects.GameCard;
 
 /**
@@ -67,19 +73,23 @@ public final class DeckBuilder {
 					c.getY() + c.getHeight() + ((FlowLayout) pane.getLayout()).getVgap() + pane.getInsets().bottom,
 					750)));
 		}
+		pane.revalidate();
 	}
 
 	/**
 	 * Prompts the user to select card images and adds them to the builder.
+	 * 
+	 * @param reset
 	 */
-	private void addBulk() {
+	private void addBulk(boolean reset) {
 		if (chooser.showOpenDialog("Select the fronts of all cards", true,
 				FileChooser.FILTER_IMAGE) != FileChooser.APPROVE_OPTION)
 			return;
+		if (reset)
+			reset();
 		for (File f : chooser.getSelectedFiles())
 			pane.add(new CardEditor(new BuilderCard(BuilderCard.loadImg(f)), this));
 		recalcPane();
-		pane.revalidate();
 	}
 
 	/**
@@ -112,25 +122,42 @@ public final class DeckBuilder {
 			frame.setSize(1366, 750);
 			JMenuBar bar = new JMenuBar();
 			JMenu fileMenu = new JMenu("File");
-			createItem(fileMenu, "New", () -> {
-				pane.removeAll();
-				sleeve.setImg(null);
-				addBulk();
+			fileMenu.setMnemonic(KeyEvent.VK_F);
+			createItem(fileMenu, "New", KeyEvent.VK_N, () -> {
+				addBulk(true);
 			});
-//			createItem(fileMenu, "Open", () -> {
-//				chooser.prompt("Select custom deck file", false, Main.FILTER_DECK, f -> {
-//					try {
-//						ZipFile zFile = new ZipFile(f);
-//						BufferedImage img = ImageIO.read(zFile.getInputStream(zFile.getEntry(Main.FNAME_CARDS)));
-//						InputStream is = zFile.getInputStream(zFile.getEntry(Main.FNAME_DAT));
-//						// TODO Finish.
-//						zFile.close();
-//					} catch (IOException e) {
-//						e.printStackTrace();
-//					}
-//				});
-//			});
-			createItem(fileMenu, "Save", () -> {
+			createItem(fileMenu, "Open", KeyEvent.VK_O, () -> {
+				chooser.config("Select custom deck file", false, Main.FILTER_DECK);
+				if (chooser.showOpenDialog(frame) != FileChooser.APPROVE_OPTION)
+					return;
+				reset();
+				try {
+					ZipFile zFile = new ZipFile(chooser.getSelectedFile());
+					BufferedImage img = ImageIO.read(zFile.getInputStream(zFile.getEntry(Main.FNAME_CARDS)));
+					DataInputStream dis = new DataInputStream(zFile.getInputStream(zFile.getEntry(Main.FNAME_DAT)));
+					if (dis.readBoolean())
+						sleeve.setImg(img.getSubimage(0, 0, GameCard.LG_WIDTH, GameCard.LG_HEIGHT));
+					Zone[] zones = Zone.values();
+					Type[] types = Type.values();
+					Type t;
+					while (dis.available() > 0) {
+						pane.add(new CardEditor(
+								new BuilderCard(zones[dis.readByte()], t = types[dis.readByte()], dis.readByte(),
+										img.getSubimage(dis.readShort(), dis.readShort(), GameCard.LG_WIDTH,
+												GameCard.LG_HEIGHT),
+										t == Type.Custom
+												? img.getSubimage(dis.readShort(), dis.readShort(), GameCard.LG_WIDTH,
+														GameCard.LG_HEIGHT)
+												: null),
+								this));
+					}
+					zFile.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+				recalcPane();
+			});
+			createItem(fileMenu, "Save", KeyEvent.VK_S, () -> {
 				chooser.config("Select save location.", false, Main.FILTER_DECK);
 				if (chooser.showSaveDialog(frame) != FileChooser.APPROVE_OPTION)
 					return;
@@ -203,11 +230,12 @@ public final class DeckBuilder {
 			});
 			bar.add(fileMenu);
 			JMenu sleeveMenu = new JMenu("Sleeves");
-			createItem(sleeveMenu, "Set Sleeves",
+			sleeveMenu.setMnemonic(KeyEvent.VK_S);
+			createItem(sleeveMenu, "Set Sleeves", KeyEvent.VK_S,
 					() -> chooser.prompt("Select sleeve image", false, i -> sleeve.setImg(i)));
-			createItem(sleeveMenu, "Default Sleeves", () -> sleeve.setImg(null));
+			createItem(sleeveMenu, "Default Sleeves", KeyEvent.VK_D, () -> sleeve.setImg(null));
 			bar.add(sleeveMenu);
-			createItem(bar, "Add Cards", () -> addBulk());
+			createItem(bar, "Add Cards", KeyEvent.VK_A, () -> addBulk(false));
 			frame.setJMenuBar(bar);
 			pane.setPreferredSize(new Dimension(-1, 700));
 			pane.addComponentListener(new ComponentAdapter() {
@@ -220,6 +248,11 @@ public final class DeckBuilder {
 			frame.setContentPane(jsp);
 			frame.setVisible(true);
 		});
+	}
+
+	private void reset() {
+		pane.removeAll();
+		sleeve.setImg(null);
 	}
 
 	private void writeCI(DataOutputStream dos, CardImage ci) throws IOException {
@@ -235,7 +268,7 @@ public final class DeckBuilder {
 	 * @param label The label of the item.
 	 * @param act   The action to perform when clicked.
 	 */
-	private static void createItem(JComponent menu, String label, Runnable act) {
+	private static void createItem(JComponent menu, String label, int accel, Runnable act) {
 		JMenuItem item = new JMenuItem(label);
 		item.addActionListener(new ActionListener() {
 			@Override
@@ -243,6 +276,8 @@ public final class DeckBuilder {
 				act.run();
 			}
 		});
+		item.setAccelerator(KeyStroke.getKeyStroke(accel, InputEvent.CTRL_DOWN_MASK));
+		item.setMnemonic(KeyEvent.getExtendedKeyCodeForChar(label.charAt(0)));
 		menu.add(item);
 	}
 }
