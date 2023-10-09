@@ -1,6 +1,6 @@
 package nbradham.mtgEmu.builder;
 
-import java.io.File;
+import java.awt.Image;
 
 /**
  * Handles File operations.
@@ -14,7 +14,7 @@ interface FileHandler {
 	/**
 	 * Handles a file.
 	 * 
-	 * @param f The file to handle.
+	 * @param image The file to handle.
 	 */
-	void hande(File f);
+	void hande(Image image);
 }

@@ -5,15 +5,12 @@ import javax.swing.JPanel;
 import javax.swing.JSpinner;
 import javax.swing.SpinnerNumberModel;
 
-import nbradham.mtgEmu.Type;
+import nbradham.mtgEmu.Zone;
 
 import java.awt.BorderLayout;
 import java.awt.Image;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.image.BufferedImage;
-import java.io.File;
-
 import javax.swing.ImageIcon;
 import javax.swing.JComboBox;
 
@@ -42,10 +39,10 @@ final class CardEditor extends JPanel {
 		super(new BorderLayout());
 		card = builderCard;
 		db = deckBuilder;
-		add(aLab = new JLabel(new ImageIcon(card.getCfgA())), BorderLayout.LINE_START);
+		add(aLab = new JLabel(new ImageIcon(card.getAimg())), BorderLayout.LINE_START);
 		add(bLab, BorderLayout.LINE_END);
 		JPanel foot = new JPanel();
-		foot.add(new JComboBox<>(Type.values()));
+		foot.add(new JComboBox<>(Zone.values()));
 		foot.add(new JLabel("Qty:"));
 		foot.add(new JSpinner(new SpinnerNumberModel(1, 1, 99, 1)));
 		add(foot, BorderLayout.PAGE_END);
@@ -85,35 +82,20 @@ final class CardEditor extends JPanel {
 	/**
 	 * Replaces the card in this editor.
 	 * 
-	 * @param f The new image to load.
+	 * @param img The new image to load.
 	 */
-	void replaceCard(File f) {
-		card.loadA(f);
+	void replaceCard(Image img) {
 		setB(null);
-		aLab.setIcon(new ImageIcon(card.getCfgA()));
-	}
-
-	/**
-	 * Sets the B config.
-	 * 
-	 * @param f The image to load.
-	 */
-	void setB(File f) {
-		card.loadB(f);
-		if (f == null) {
-			bLab.setIcon(null);
-			card.setFlipped(false);
-		} else
-			bLab.setIcon(new ImageIcon(card.getCfgB()));
+		card.setAimg(img);
+		aLab.setIcon(new ImageIcon(card.getAimg()));
 	}
 
 	void flipForB() {
-		Image i = card.getCfgA();
-		int w = i.getWidth(null), h = i.getHeight(null);
-		BufferedImage bi = new BufferedImage(w, h, BufferedImage.TYPE_INT_ARGB_PRE);
-		bi.getGraphics().drawImage(i, w, h, -w, -h, null);
-		card.setB(bi);
-		card.setFlipped(true);
-		bLab.setIcon(new ImageIcon(bi));
+		bLab.setIcon(new ImageIcon(card.flipForB()));
+	}
+
+	void setB(Image img) {
+		card.setBimg(img);
+		bLab.setIcon(img == null ? null : new ImageIcon(img));
 	}
 }

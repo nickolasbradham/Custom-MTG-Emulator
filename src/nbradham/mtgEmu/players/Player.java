@@ -15,7 +15,7 @@ import javax.swing.SwingUtilities;
 
 import nbradham.mtgEmu.GPanel;
 import nbradham.mtgEmu.Main;
-import nbradham.mtgEmu.Type;
+import nbradham.mtgEmu.Zone;
 import nbradham.mtgEmu.gameObjects.CardZone;
 import nbradham.mtgEmu.gameObjects.GameCard;
 import nbradham.mtgEmu.gameObjects.GameObject;
@@ -290,9 +290,9 @@ public abstract class Player {
 				--i;
 			}
 		GameCard c;
-		Type t;
+		Zone t;
 		while (!tmp.isEmpty())
-			if ((t = (c = tmp.pop()).getType()) == Type.Token || c.getOwnerID() != id)
+			if ((t = (c = tmp.pop()).getType()) == Zone.Token || c.getOwnerID() != id)
 				continue;
 			else {
 				c.setTapped(false);

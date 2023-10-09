@@ -6,7 +6,9 @@ import java.io.File;
 import java.io.IOException;
 
 import javax.imageio.ImageIO;
+
 import nbradham.mtgEmu.Type;
+import nbradham.mtgEmu.Zone;
 import nbradham.mtgEmu.gameObjects.GameCard;
 
 /**
@@ -18,94 +20,59 @@ import nbradham.mtgEmu.gameObjects.GameCard;
 final class BuilderCard {
 
 	private CardImage cfgA = new CardImage(), cfgB = new CardImage();
-	private Type type = Type.Library;
+	private Zone zone = Zone.Library;
+	private Type type = Type.Simple;
 	private byte count = 1;
-	private boolean flip;
 
-	/**
-	 * Constructs a new BuilderCard with {@code f} as Card Config A.
-	 * 
-	 * @param f
-	 */
-	BuilderCard(File f) {
-		loadA(f);
+	BuilderCard(Image image) {
+		setAimg(image);
 	}
 
-	/**
-	 * Loads an image into config A.
-	 * 
-	 * @param f The image to load.
-	 */
-	void loadA(File f) {
-		cfgA.setImg(load(f));
+	void setAimg(Image i) {
+		cfgA.setImg(i);
 	}
 
-	/**
-	 * Retrieves Config A Image
-	 * 
-	 * @return The image of this cards A config.
-	 */
-	Image getCfgA() {
+	Image getAimg() {
 		return cfgA.getImg();
 	}
 
-	/**
-	 * Loads an image into config B.
-	 * 
-	 * @param f The image to load.
-	 */
-	void loadB(File f) {
-		cfgB.setImg(load(f));
-	}
-
-	/**
-	 * Sets an image into config B.
-	 * 
-	 * @param i The image to set.
-	 */
-	void setB(Image i) {
+	void setBimg(Image i) {
 		cfgB.setImg(i);
+		type = i == null ? Type.Simple : Type.Custom;
 	}
 
-	/**
-	 * Retrieves config B image,
-	 * 
-	 * @return The config B image.
-	 */
-	Image getCfgB() {
-		return cfgB.getImg();
-	}
-
-	void setFlipped(boolean b) {
-		flip = b;
+	Image flipForB() {
+		Image i = cfgA.getImg();
+		int w = i.getWidth(null), h = i.getHeight(null);
+		BufferedImage bi = new BufferedImage(w, h, BufferedImage.TYPE_INT_ARGB_PRE);
+		bi.getGraphics().drawImage(i, w, h, -w, -h, null);
+		cfgB.setImg(bi);
+		type = Type.Flipped;
+		return bi;
 	}
 
 	CardImage getCIa() {
 		return cfgA;
 	}
 
+	Type getType() {
+		return type;
+	}
+
 	CardImage getCIb() {
 		return cfgB;
 	}
 
-	boolean isBflip() {
-		return flip;
+	Zone getZone() {
+		return zone;
 	}
 
-	/**
-	 * Reads an image file.
-	 * 
-	 * @param f The file to read.
-	 * @return The loaded image.
-	 */
-	private static Image load(File f) {
-		if (f != null)
-			try {
-				Image i = ImageIO.read(f);
-				return i.getScaledInstance(GameCard.LG_WIDTH, GameCard.LG_HEIGHT, BufferedImage.SCALE_SMOOTH);
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
+	static Image loadImg(File f) {
+		try {
+			return ImageIO.read(f).getScaledInstance(GameCard.LG_WIDTH, GameCard.LG_HEIGHT, Image.SCALE_SMOOTH);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 		return null;
 	}
 }

@@ -11,13 +11,12 @@ import java.awt.event.ActionListener;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.image.BufferedImage;
+import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.zip.ZipEntry;
-import java.util.zip.ZipFile;
 import java.util.zip.ZipOutputStream;
 
 import javax.imageio.ImageIO;
@@ -31,6 +30,7 @@ import javax.swing.JScrollPane;
 import javax.swing.SwingUtilities;
 
 import nbradham.mtgEmu.Main;
+import nbradham.mtgEmu.Type;
 import nbradham.mtgEmu.gameObjects.GameCard;
 
 /**
@@ -76,7 +76,7 @@ public final class DeckBuilder {
 				FileChooser.FILTER_IMAGE) != FileChooser.APPROVE_OPTION)
 			return;
 		for (File f : chooser.getSelectedFiles())
-			pane.add(new CardEditor(new BuilderCard(f), this));
+			pane.add(new CardEditor(new BuilderCard(BuilderCard.loadImg(f)), this));
 		recalcPane();
 		pane.revalidate();
 	}
@@ -115,29 +115,31 @@ public final class DeckBuilder {
 				pane.removeAll();
 				addBulk();
 			});
-			createItem(fileMenu, "Open", () -> {
-				chooser.prompt("Select custom deck file", false, Main.FILTER_DECK, f -> {
-					try {
-						ZipFile zFile = new ZipFile(f);
-						BufferedImage img = ImageIO.read(zFile.getInputStream(zFile.getEntry(Main.FNAME_CARDS)));
-						InputStream is = zFile.getInputStream(zFile.getEntry(Main.FNAME_DAT));
-						// TODO Finish.
-						zFile.close();
-					} catch (IOException e) {
-						e.printStackTrace();
-					}
-				});
-			});
+//			createItem(fileMenu, "Open", () -> {
+//				chooser.prompt("Select custom deck file", false, Main.FILTER_DECK, f -> {
+//					try {
+//						ZipFile zFile = new ZipFile(f);
+//						BufferedImage img = ImageIO.read(zFile.getInputStream(zFile.getEntry(Main.FNAME_CARDS)));
+//						InputStream is = zFile.getInputStream(zFile.getEntry(Main.FNAME_DAT));
+//						// TODO Finish.
+//						zFile.close();
+//					} catch (IOException e) {
+//						e.printStackTrace();
+//					}
+//				});
+//			});
 			createItem(fileMenu, "Save", () -> {
 				chooser.config("Select save location.", false, Main.FILTER_DECK);
 				if (chooser.showSaveDialog(frame) != FileChooser.APPROVE_OPTION)
 					return;
 				ArrayList<CardImage> images = new ArrayList<>();
+				ArrayList<BuilderCard> cards = new ArrayList<>();
 				BuilderCard bc;
 				CardImage ci;
 				for (Component ce : pane.getComponents()) {
 					images.add((bc = ((CardEditor) ce).getCard()).getCIa());
-					if (!bc.isBflip() && (ci = bc.getCIb()).getImg() != null)
+					cards.add(bc);
+					if (bc.getType() != Type.Flipped && (ci = bc.getCIb()).getImg() != null)
 						images.add(ci);
 				}
 				int x = 0, y = GameCard.LG_HEIGHT;
@@ -172,7 +174,16 @@ public final class DeckBuilder {
 					ImageIO.write(stitched, "png", zipOut);
 					zipOut.closeEntry();
 					zipOut.close();
-					// zipOut.putNextEntry(new ZipEntry("info.bin"));
+					zipOut.putNextEntry(new ZipEntry("info.bin"));
+					DataOutputStream dos = new DataOutputStream(zipOut);
+					cards.forEach(c -> {
+						try {
+							dos.writeByte(c.getZone().ordinal());
+							dos.writeByte(c.getType().ordinal());
+						} catch (IOException e) {
+							e.printStackTrace();
+						}
+					});
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
