@@ -250,11 +250,21 @@ public final class DeckBuilder {
 		});
 	}
 
+	/**
+	 * Clears all card editors and the sleeve.
+	 */
 	private void reset() {
 		pane.removeAll();
 		sleeve.setImg(null);
 	}
 
+	/**
+	 * Writes a CardImage to {@code dos}.
+	 * 
+	 * @param dos The DataOutputStream to write to.
+	 * @param ci  The CardImage to write.
+	 * @throws IOException Thrown by {@link DataOutputStream#writeShort(int)}.
+	 */
 	private void writeCI(DataOutputStream dos, CardImage ci) throws IOException {
 		Point p = ci.getLoc();
 		dos.writeShort(p.x);

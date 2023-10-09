@@ -48,16 +48,31 @@ final class FileChooser extends JFileChooser {
 	 * @param multi   Allow multiple file selection?
 	 * @param handler Handles file on successful selection.
 	 */
-	void prompt(String title, boolean multi, FileHandler handler) {
+	void prompt(String title, boolean multi, ImageHandler handler) {
 		prompt(title, multi, FILTER_IMAGE, handler);
 	}
 
-	void prompt(String title, boolean multi, FileNameExtensionFilter filter, FileHandler handler) {
+	/**
+	 * Prompts for a file selection.
+	 * 
+	 * @param title   The title of the dialog.
+	 * @param multi   Allow multiple file selection?
+	 * @param filter  The file filter to use.
+	 * @param handler Handles file on successful selection.
+	 */
+	void prompt(String title, boolean multi, FileNameExtensionFilter filter, ImageHandler handler) {
 		if (showOpenDialog(title, multi, filter) != JFileChooser.APPROVE_OPTION)
 			return;
 		handler.hande(BuilderCard.loadImg(getSelectedFile()));
 	}
 
+	/**
+	 * Configures the dialog.
+	 * 
+	 * @param title  The title of the window.
+	 * @param multi  Allow multiple selection.
+	 * @param filter The file filter to use.
+	 */
 	void config(String title, boolean multi, FileNameExtensionFilter filter) {
 		setDialogTitle(title);
 		setMultiSelectionEnabled(multi);

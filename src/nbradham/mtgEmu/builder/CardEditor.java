@@ -114,10 +114,18 @@ final class CardEditor extends JPanel {
 		aLab.setIcon(new ImageIcon(card.getAimg()));
 	}
 
+	/**
+	 * Flips the card a config and sets for b.
+	 */
 	void flipForB() {
 		bLab.setIcon(new ImageIcon(card.flipForB()));
 	}
 
+	/**
+	 * Sets the b config and JLabel.
+	 * 
+	 * @param img the image to set for b config.
+	 */
 	void setB(Image img) {
 		card.setBimg(img);
 		bLab.setIcon(img == null ? null : new ImageIcon(img));
