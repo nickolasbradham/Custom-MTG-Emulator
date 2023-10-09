@@ -6,7 +6,6 @@ import java.io.File;
 import java.io.IOException;
 
 import javax.imageio.ImageIO;
-
 import nbradham.mtgEmu.Type;
 import nbradham.mtgEmu.Zone;
 import nbradham.mtgEmu.gameObjects.GameCard;
@@ -74,5 +73,17 @@ final class BuilderCard {
 			e.printStackTrace();
 		}
 		return null;
+	}
+
+	void setZone(Zone setZone) {
+		zone = setZone;
+	}
+
+	void setQty(byte value) {
+		count = value;
+	}
+
+	byte getQty() {
+		return count;
 	}
 }

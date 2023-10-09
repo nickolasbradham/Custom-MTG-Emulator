@@ -28,7 +28,7 @@ public final class Main {
 	public static final FileNameExtensionFilter FILTER_DECK = new FileNameExtensionFilter("Custom Deck File",
 			FNAME_EXT);
 
-	private static final String R_VERSION = "v0.3";
+	private static final String R_VERSION = "v0.4";
 
 	private final JFrame frame = new JFrame("Custom MTG Emulator");
 
@@ -56,7 +56,7 @@ public final class Main {
 				frame.dispose();
 			}).setEnabled(false);
 
-			addButton("Build Deck", e -> {
+			addButton("Deck Builder", e -> {
 				new DeckBuilder(frame).start();
 			});
 

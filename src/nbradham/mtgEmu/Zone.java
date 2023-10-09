@@ -7,5 +7,5 @@ package nbradham.mtgEmu;
  *
  */
 public enum Zone {
-	Library, Commander, Token
+	Library, Command, Token
 }

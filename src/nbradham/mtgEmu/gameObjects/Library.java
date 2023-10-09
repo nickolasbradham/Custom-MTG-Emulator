@@ -87,7 +87,7 @@ public final class Library extends GameObject implements GameCardHandler {
 		for (byte i = 0; i < stack.size(); ++i)
 			if ((t = (c = stack.get(i)).getType()) == Zone.Token || c.getOwnerID() != play.getID())
 				stack.remove(i--);
-			else if (t == Zone.Commander) {
+			else if (t == Zone.Command) {
 				stack.remove(i--);
 				tmp.add(c);
 			}

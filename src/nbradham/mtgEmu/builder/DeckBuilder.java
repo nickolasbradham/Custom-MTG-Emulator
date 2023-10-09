@@ -45,6 +45,7 @@ public final class DeckBuilder {
 	private final JPanel pane = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 10));
 	private final JScrollPane jsp = new JScrollPane(pane, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
 			JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+	private final CardImage sleeve = new CardImage();
 
 	/**
 	 * Constructs a new DeckBuilder instance.
@@ -113,6 +114,7 @@ public final class DeckBuilder {
 			JMenu fileMenu = new JMenu("File");
 			createItem(fileMenu, "New", () -> {
 				pane.removeAll();
+				sleeve.setImg(null);
 				addBulk();
 			});
 //			createItem(fileMenu, "Open", () -> {
@@ -133,6 +135,9 @@ public final class DeckBuilder {
 				if (chooser.showSaveDialog(frame) != FileChooser.APPROVE_OPTION)
 					return;
 				ArrayList<CardImage> images = new ArrayList<>();
+				boolean sleeved = sleeve.getImg() != null;
+				if (sleeved)
+					images.add(sleeve);
 				ArrayList<BuilderCard> cards = new ArrayList<>();
 				BuilderCard bc;
 				CardImage ci;
@@ -166,29 +171,42 @@ public final class DeckBuilder {
 							0, 0, GameCard.LG_WIDTH, GameCard.LG_HEIGHT, null);
 				});
 				File out = chooser.getSelectedFile();
-				if (!out.getName().endsWith(Main.FNAME_EXT))
-					out = new File(out.getParent(), out.getName() + Main.FNAME_EXT);
+				String ext = "." + Main.FNAME_EXT;
+				if (!out.getName().endsWith(ext))
+					out = new File(out.getParent(), out.getName() + ext);
 				try {
 					ZipOutputStream zipOut = new ZipOutputStream(new FileOutputStream(out));
 					zipOut.putNextEntry(new ZipEntry("cards.png"));
 					ImageIO.write(stitched, "png", zipOut);
 					zipOut.closeEntry();
-					zipOut.close();
 					zipOut.putNextEntry(new ZipEntry("info.bin"));
 					DataOutputStream dos = new DataOutputStream(zipOut);
+					dos.writeBoolean(sleeved);
 					cards.forEach(c -> {
+						Type t = c.getType();
 						try {
 							dos.writeByte(c.getZone().ordinal());
-							dos.writeByte(c.getType().ordinal());
+							dos.writeByte(t.ordinal());
+							dos.writeByte(c.getQty());
+							writeCI(dos, c.getCIa());
+							if (t == Type.Custom)
+								writeCI(dos, c.getCIb());
 						} catch (IOException e) {
 							e.printStackTrace();
 						}
 					});
+					zipOut.closeEntry();
+					zipOut.close();
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
 			});
 			bar.add(fileMenu);
+			JMenu sleeveMenu = new JMenu("Sleeves");
+			createItem(sleeveMenu, "Set Sleeves",
+					() -> chooser.prompt("Select sleeve image", false, i -> sleeve.setImg(i)));
+			createItem(sleeveMenu, "Default Sleeves", () -> sleeve.setImg(null));
+			bar.add(sleeveMenu);
 			createItem(bar, "Add Cards", () -> addBulk());
 			frame.setJMenuBar(bar);
 			pane.setPreferredSize(new Dimension(-1, 700));
@@ -202,6 +220,12 @@ public final class DeckBuilder {
 			frame.setContentPane(jsp);
 			frame.setVisible(true);
 		});
+	}
+
+	private void writeCI(DataOutputStream dos, CardImage ci) throws IOException {
+		Point p = ci.getLoc();
+		dos.writeShort(p.x);
+		dos.writeShort(p.y);
 	}
 
 	/**

@@ -4,11 +4,15 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JSpinner;
 import javax.swing.SpinnerNumberModel;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 
 import nbradham.mtgEmu.Zone;
 
 import java.awt.BorderLayout;
 import java.awt.Image;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import javax.swing.ImageIcon;
@@ -42,9 +46,24 @@ final class CardEditor extends JPanel {
 		add(aLab = new JLabel(new ImageIcon(card.getAimg())), BorderLayout.LINE_START);
 		add(bLab, BorderLayout.LINE_END);
 		JPanel foot = new JPanel();
-		foot.add(new JComboBox<>(Zone.values()));
+		foot.add(new JLabel("Zone:"));
+		JComboBox<Zone> zBox = new JComboBox<>(Zone.values());
+		zBox.addActionListener(new ActionListener() {
+			@Override
+			public final void actionPerformed(ActionEvent e) {
+				card.setZone((Zone) zBox.getSelectedItem());
+			}
+		});
+		foot.add(zBox);
 		foot.add(new JLabel("Qty:"));
-		foot.add(new JSpinner(new SpinnerNumberModel(1, 1, 99, 1)));
+		JSpinner spin = new JSpinner(new SpinnerNumberModel(1, 1, 99, 1));
+		spin.addChangeListener(new ChangeListener() {
+			@Override
+			public void stateChanged(ChangeEvent e) {
+				card.setQty(((Integer) spin.getValue()).byteValue());
+			}
+		});
+		foot.add(spin);
 		add(foot, BorderLayout.PAGE_END);
 		addMouseListener(new MouseAdapter() {
 			@Override

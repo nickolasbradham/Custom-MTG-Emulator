@@ -64,7 +64,7 @@ public final class CardManager {
 		cardID = -1;
 		imgID = -1;
 
-		addCards(info, player, gameCards, uvOrigins, Zone.Commander, scaleW);
+		addCards(info, player, gameCards, uvOrigins, Zone.Command, scaleW);
 		byte count = info.readByte();
 		for (byte i = 0; i < count; ++i) {
 			byte dupes = info.readByte();

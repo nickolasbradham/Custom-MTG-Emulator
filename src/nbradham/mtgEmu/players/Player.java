@@ -257,7 +257,7 @@ public abstract class Player {
 		try {
 			for (GameCard c : Main.CARD_MANAGER.load(this, file))
 				switch (c.getType()) {
-				case Commander:
+				case Command:
 					commandZone.add(c);
 					break;
 				case Library:
@@ -297,7 +297,7 @@ public abstract class Player {
 			else {
 				c.setTapped(false);
 				switch (t) {
-				case Commander:
+				case Command:
 					commandZone.add(c);
 					break;
 				case Library:
