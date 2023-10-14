@@ -135,8 +135,7 @@ public final class DeckBuilder {
 					ZipFile zFile = new ZipFile(chooser.getSelectedFile());
 					BufferedImage img = ImageIO.read(zFile.getInputStream(zFile.getEntry(Main.FNAME_CARDS)));
 					DataInputStream dis = new DataInputStream(zFile.getInputStream(zFile.getEntry(Main.FNAME_DAT)));
-					if (dis.readBoolean())
-						sleeve.setImg(img.getSubimage(0, 0, GameCard.LG_WIDTH, GameCard.LG_HEIGHT));
+					sleeve.setImg(img.getSubimage(0, 0, GameCard.LG_WIDTH, GameCard.LG_HEIGHT));
 					Zone[] zones = Zone.values();
 					Type[] types = Type.values();
 					Type t;
@@ -162,16 +161,14 @@ public final class DeckBuilder {
 				if (chooser.showSaveDialog(frame) != FileChooser.APPROVE_OPTION)
 					return;
 				ArrayList<CardImage> images = new ArrayList<>();
-				boolean sleeved = sleeve.getImg() != null;
-				if (sleeved)
-					images.add(sleeve);
+				images.add(sleeve);
 				ArrayList<BuilderCard> cards = new ArrayList<>();
 				BuilderCard bc;
 				CardImage ci;
 				for (Component ce : pane.getComponents()) {
 					images.add((bc = ((CardEditor) ce).getCard()).getCIa());
 					cards.add(bc);
-					if (bc.getType() != Type.Flipped && (ci = bc.getCIb()).getImg() != null)
+					if (bc.getType() != Type.Flipped && (ci = bc.getCIb()).getImg() != CardImage.DEFAULT_BACK)
 						images.add(ci);
 				}
 				int x = 0, y = GameCard.LG_HEIGHT;
@@ -208,7 +205,6 @@ public final class DeckBuilder {
 					zipOut.closeEntry();
 					zipOut.putNextEntry(new ZipEntry("info.bin"));
 					DataOutputStream dos = new DataOutputStream(zipOut);
-					dos.writeBoolean(sleeved);
 					cards.forEach(c -> {
 						Type t = c.getType();
 						try {
@@ -233,7 +229,7 @@ public final class DeckBuilder {
 			sleeveMenu.setMnemonic(KeyEvent.VK_S);
 			createItem(sleeveMenu, "Set Sleeves", KeyEvent.VK_S,
 					() -> chooser.prompt("Select sleeve image", false, i -> sleeve.setImg(i)));
-			createItem(sleeveMenu, "Default Sleeves", KeyEvent.VK_D, () -> sleeve.setImg(null));
+			createItem(sleeveMenu, "Default Sleeves", KeyEvent.VK_D, () -> sleeve.setImg(CardImage.DEFAULT_BACK));
 			bar.add(sleeveMenu);
 			createItem(bar, "Add Cards", KeyEvent.VK_A, () -> addBulk(false));
 			frame.setJMenuBar(bar);
