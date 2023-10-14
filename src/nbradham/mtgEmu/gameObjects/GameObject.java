@@ -74,7 +74,7 @@ public class GameObject {
 	}
 
 	/**
-	 * Handles when the mouse is leaves the area over this object and this object is
+	 * Handles when the mouse leaves the area over this object and this object is
 	 * top most.
 	 */
 	public void onMouseExitTop() {

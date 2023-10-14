@@ -20,7 +20,7 @@ public final class GameCard extends GameObject {
 	public static final short SM_HEIGHT = 200, LG_HEIGHT = 350, LG_WIDTH = 250;
 
 	private final Player control;
-	private final Zone type;
+	private final Zone zone;
 	private final int ownID, normW;
 	private final byte cID, iID;
 
@@ -33,11 +33,11 @@ public final class GameCard extends GameObject {
 	 * 
 	 * @param owner    The owner of this card.
 	 * @param cardID   The ID of this card.
-	 * @param cardType The CardType of this card.
+	 * @param cardZone The Zone of this card.
 	 * @param imageID  The image ID of this card.
 	 */
-	public GameCard(Player owner, byte cardID, Zone cardType, byte imageID, int objW) {
-		this(owner.getID(), cardID, cardType, imageID, objW, owner);
+	public GameCard(Player owner, byte cardID, Zone cardZone, byte imageID, int objW) {
+		this(owner.getID(), cardID, cardZone, imageID, objW, owner);
 	}
 
 	/**
@@ -46,15 +46,15 @@ public final class GameCard extends GameObject {
 	 * 
 	 * @param ownerID    The owner of this card.
 	 * @param cardID     The ID of this card.
-	 * @param cardType   The CardType of this card.
+	 * @param cardZone   The Zone of this card.
 	 * @param imageID    The image ID of this card.
 	 * @param controller The controller of this card.
 	 */
-	public GameCard(int ownerID, byte cardID, Zone cardType, byte imageID, int objW, Player controller) {
+	public GameCard(int ownerID, byte cardID, Zone cardZone, byte imageID, int objW, Player controller) {
 		control = controller;
 		ownID = ownerID;
 		cID = cardID;
-		type = cardType;
+		zone = cardZone;
 		iID = imageID;
 		setSize(normW = objW, SM_HEIGHT);
 	}
@@ -65,7 +65,7 @@ public final class GameCard extends GameObject {
 	 * @return The CardType of the card.
 	 */
 	public Zone getType() {
-		return type;
+		return zone;
 	}
 
 	/**
