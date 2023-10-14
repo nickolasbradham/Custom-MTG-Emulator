@@ -13,14 +13,12 @@ import java.awt.event.ComponentEvent;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
-import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.zip.ZipEntry;
-import java.util.zip.ZipFile;
 import java.util.zip.ZipOutputStream;
 
 import javax.imageio.ImageIO;
@@ -34,9 +32,10 @@ import javax.swing.JScrollPane;
 import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
 
+import nbradham.mtgEmu.CardMap;
+import nbradham.mtgEmu.DeckFile;
 import nbradham.mtgEmu.Main;
 import nbradham.mtgEmu.Type;
-import nbradham.mtgEmu.Zone;
 import nbradham.mtgEmu.gameObjects.GameCard;
 
 /**
@@ -132,25 +131,19 @@ public final class DeckBuilder {
 					return;
 				reset();
 				try {
-					ZipFile zFile = new ZipFile(chooser.getSelectedFile());
-					BufferedImage img = ImageIO.read(zFile.getInputStream(zFile.getEntry(Main.FNAME_CARDS)));
-					DataInputStream dis = new DataInputStream(zFile.getInputStream(zFile.getEntry(Main.FNAME_DAT)));
-					sleeve.setImg(img.getSubimage(0, 0, GameCard.LG_WIDTH, GameCard.LG_HEIGHT));
-					Zone[] zones = Zone.values();
-					Type[] types = Type.values();
+					DeckFile df = DeckFile.load(chooser.getSelectedFile());
+					BufferedImage img = df.image();
 					Type t;
-					while (dis.available() > 0) {
-						pane.add(new CardEditor(
-								new BuilderCard(zones[dis.readByte()], t = types[dis.readByte()], dis.readByte(),
-										img.getSubimage(dis.readShort(), dis.readShort(), GameCard.LG_WIDTH,
-												GameCard.LG_HEIGHT),
-										t == Type.Custom
-												? img.getSubimage(dis.readShort(), dis.readShort(), GameCard.LG_WIDTH,
-														GameCard.LG_HEIGHT)
-												: null),
+					short[] xys;
+					for (CardMap cmd : df.details()) {
+						pane.add(new CardEditor(new BuilderCard(cmd.zone(), t = cmd.type(), cmd.count(),
+								img.getSubimage((xys = cmd.origins())[0], xys[1], GameCard.LG_WIDTH,
+										GameCard.LG_HEIGHT),
+								t == Type.Custom
+										? img.getSubimage(xys[2], xys[3], GameCard.LG_WIDTH, GameCard.LG_HEIGHT)
+										: null),
 								this));
 					}
-					zFile.close();
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
