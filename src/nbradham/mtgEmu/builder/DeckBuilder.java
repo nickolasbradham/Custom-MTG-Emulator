@@ -193,11 +193,12 @@ public final class DeckBuilder {
 					out = new File(out.getParent(), out.getName() + ext);
 				try {
 					ZipOutputStream zipOut = new ZipOutputStream(new FileOutputStream(out));
-					zipOut.putNextEntry(new ZipEntry("cards.png"));
+					zipOut.putNextEntry(new ZipEntry(Main.FNAME_CARDS));
 					ImageIO.write(stitched, "png", zipOut);
 					zipOut.closeEntry();
-					zipOut.putNextEntry(new ZipEntry("info.bin"));
+					zipOut.putNextEntry(new ZipEntry(Main.FNAME_DAT));
 					DataOutputStream dos = new DataOutputStream(zipOut);
+					dos.writeBoolean(sleeve.getImg() == CardImage.DEFAULT_BACK);
 					cards.forEach(c -> {
 						Type t = c.getType();
 						try {

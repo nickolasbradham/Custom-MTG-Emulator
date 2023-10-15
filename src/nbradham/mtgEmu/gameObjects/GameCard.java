@@ -23,7 +23,7 @@ public final class GameCard extends GameObject {
 	private final Player control;
 	private final CardMap iID;
 	private final Zone zone;
-	private final int ownID, normW;
+	private final int ownID;
 	private final byte cID;
 
 	private GameCardHandler hold;
@@ -39,7 +39,7 @@ public final class GameCard extends GameObject {
 	 * @param cm       The image ID of this card.
 	 */
 	public GameCard(Player owner, byte cardID, Zone cardZone, CardMap cm, int objW) {
-		this(owner.getID(), cardID, cardZone, cm, objW, owner);
+		this(owner.getID(), cardID, cardZone, cm, owner);
 	}
 
 	/**
@@ -52,13 +52,13 @@ public final class GameCard extends GameObject {
 	 * @param cm         The image ID of this card.
 	 * @param controller The controller of this card.
 	 */
-	public GameCard(int ownerID, byte cardID, Zone cardZone, CardMap cm, int objW, Player controller) {
+	public GameCard(int ownerID, byte cardID, Zone cardZone, CardMap cm, Player controller) {
 		control = controller;
 		ownID = ownerID;
 		cID = cardID;
 		zone = cardZone;
 		iID = cm;
-		setSize(normW = objW, SM_HEIGHT);
+		setSize(SM_WIDTH, SM_HEIGHT);
 	}
 
 	/**
@@ -95,7 +95,7 @@ public final class GameCard extends GameObject {
 	 */
 	public void setTapped(boolean tap) {
 		tapped = tap;
-		setSize(tap ? SM_HEIGHT : normW, tap ? normW : SM_HEIGHT);
+		setSize(tap ? SM_HEIGHT : SM_WIDTH, tap ? SM_WIDTH : SM_HEIGHT);
 		control.redrawBuffer();
 	}
 
