@@ -1,7 +1,5 @@
 package nbradham.mtgEmu;
 
-import nbradham.mtgEmu.gameObjects.GameCard;
-
 /**
  * Holds card UV information.
  * 
@@ -10,8 +8,7 @@ import nbradham.mtgEmu.gameObjects.GameCard;
  */
 final class CardUVs {
 
-	private final int mapW, mapH, smallW, largeW;
-	private final short w, h;
+	private final int mapW, mapH;
 	private final short[][] uvs;
 	private int offset = 0;
 
@@ -20,17 +17,11 @@ final class CardUVs {
 	 * 
 	 * @param mapWidth  The image map width of this set of cards.
 	 * @param mapHeight The image map height of this set of cards.
-	 * @param width     The width of each card.
-	 * @param height    The height of each card.
 	 * @param cardUVs   A 2D array containing all the origin points of cards.
 	 */
-	CardUVs(int mapWidth, int mapHeight, short width, short height, short[][] cardUVs, int scaleW) {
+	CardUVs(int mapWidth, int mapHeight, short[][] cardUVs) {
 		mapW = mapWidth;
 		mapH = mapHeight;
-		w = width;
-		h = height;
-		smallW = scaleW;
-		largeW = scaleWidth(w, GameCard.LG_HEIGHT, h);
 		uvs = cardUVs;
 	}
 
@@ -68,42 +59,6 @@ final class CardUVs {
 	 */
 	int getMapHeight() {
 		return mapH;
-	}
-
-	/**
-	 * Gets the width of cards in this map.
-	 * 
-	 * @return The pixel width of cards in this map.
-	 */
-	short getWidth() {
-		return w;
-	}
-
-	/**
-	 * Retrieves the width of the small card form.
-	 * 
-	 * @return The small width of cards.
-	 */
-	int getSmallWidth() {
-		return smallW;
-	}
-
-	/**
-	 * Retrieves the width of the large card form.
-	 * 
-	 * @return The large width of cards.
-	 */
-	int getLargeWidth() {
-		return largeW;
-	}
-
-	/**
-	 * Gets the height of cards in this map.
-	 * 
-	 * @return The pixel height of cards in this map.
-	 */
-	short getHeight() {
-		return h;
 	}
 
 	/**

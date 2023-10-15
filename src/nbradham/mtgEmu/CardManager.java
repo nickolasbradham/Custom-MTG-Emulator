@@ -27,7 +27,7 @@ public final class CardManager {
 
 	private ArrayList<CardUVs> cardUVs = new ArrayList<>();
 	private BufferedImage imageMap;
-	private byte cardID, imgID;
+	private byte cardID;
 
 	/**
 	 * Loads a deck file into the texture map and generates the game deck.
@@ -44,9 +44,8 @@ public final class CardManager {
 	 *                      and {@link DataInputStream#readByte()}.
 	 */
 	public GameCard[] load(Player player, File deckFile) throws ZipException, IOException {
-		ZipFile zFile = new ZipFile(deckFile);
-
-		BufferedImage img = ImageIO.read(zFile.getInputStream(zFile.getEntry(Main.FNAME_CARDS)));
+		DeckFile df = DeckFile.load(deckFile);
+		BufferedImage img = df.image();
 		int w = img.getWidth(), h = img.getHeight(), mw = w + h, mh = Math.max(h, w);
 		BufferedImage loadedImages = new BufferedImage(mw, mh, BufferedImage.TYPE_INT_ARGB_PRE);
 		Graphics2D g = loadedImages.createGraphics();
@@ -56,31 +55,19 @@ public final class CardManager {
 		g.rotate(PI_2, w / 2, h / 2);
 		g.drawRenderedImage(img, null);
 
-		DataInputStream info = new DataInputStream(zFile.getInputStream(zFile.getEntry(Main.FNAME_DAT)));
-		short cw = info.readShort(), ch = info.readShort();
 		ArrayList<GameCard> gameCards = new ArrayList<>();
 		ArrayList<short[]> uvOrigins = new ArrayList<>();
-		int scaleW = CardUVs.scaleWidth(cw, GameCard.SM_HEIGHT, ch), pID = player.getID();
+		int pID = player.getID();
 		cardID = -1;
-		imgID = -1;
-
-		addCards(info, player, gameCards, uvOrigins, Zone.Command, scaleW);
-		byte count = info.readByte();
-		for (byte i = 0; i < count; ++i) {
-			byte dupes = info.readByte();
-			short[] tuv = new short[] { info.readShort(), info.readShort() };
-			uvOrigins.add(tuv);
-			++imgID;
-			for (byte n = 0; n < dupes; ++n)
-				gameCards.add(new GameCard(player, ++cardID, Zone.Library, imgID, scaleW));
+		byte c;
+		for (CardMap cm : df.details()) {
+			c = cm.count();
+			for (byte i = 0; i < c; ++i)
+				gameCards.add(new GameCard(player, ++cardID, cm.zone(), cm, pID));
 		}
-		addCards(info, player, gameCards, uvOrigins, Zone.Library, scaleW);
-		addCards(info, player, gameCards, uvOrigins, Zone.Token, scaleW);
-
-		zFile.close();
 
 		ArrayList<CardUVs> newCardUVs = new ArrayList<>(cardUVs);
-		CardUVs newSet = new CardUVs(mw, mh, cw, ch, uvOrigins.toArray(new short[0][]), scaleW);
+		CardUVs newSet = new CardUVs(mw, mh, uvOrigins.toArray(new short[0][]));
 		if (pID < newCardUVs.size())
 			newCardUVs.set(pID, newSet);
 		else
@@ -115,43 +102,6 @@ public final class CardManager {
 	}
 
 	/**
-	 * Reads the next category of cards from {@code inStream}. Stores game info in
-	 * {@code gameCards} and UV info in {@code uvOrigins}.
-	 * 
-	 * @param inStream  The DataInputStream to read from.
-	 * @param player    The player to assign the cards to.
-	 * @param gameCards The ArrayList to add the {@link GameCard}s to.
-	 * @param uvOrigins The ArrayList to add the UV origins to.
-	 * @param cardType  The type of card to assign.
-	 * @throws IOException Thrown by {@link DataInputStream#readByte()} and
-	 *                     {@link DataInputStream#readShort()}.
-	 */
-	private void addCards(DataInputStream inStream, Player player, ArrayList<GameCard> gameCards,
-			ArrayList<short[]> uvOrigins, Zone cardType, int scaleW) throws IOException {
-		byte count = inStream.readByte();
-		for (byte i = 0; i < count; ++i) {
-			gameCards.add(new GameCard(player, ++cardID, cardType, ++imgID, scaleW));
-			uvOrigins.add(new short[] { inStream.readShort(), inStream.readShort() });
-		}
-	}
-
-	/**
-	 * Draws card image {@code iID} from player {@code pID} to Graphics {@code g} at
-	 * point ({@code x},{@code y}).
-	 * 
-	 * @param g         The Graphics to draw to.
-	 * @param pID       The player ID of the card.
-	 * @param iID       The image ID of the card.
-	 * @param x         The x coordinate of the card.
-	 * @param y         The y coordinate of the card.
-	 * @param fullClamp If the image should be large and clamped to the screen
-	 *                  dimensions.
-	 */
-	public void drawCard(Graphics g, int pID, byte iID, int x, int y, boolean fullClamp) {
-		drawCard(g, pID, iID, x, y, fullClamp, false);
-	}
-
-	/**
 	 * Draws card image {@code iID} from player {@code pID} to Graphics {@code g} at
 	 * point ({@code x},{@code y}).
 	 * 
@@ -164,17 +114,17 @@ public final class CardManager {
 	 *                  dimensions.
 	 * @param tapped    If the card is tapped.
 	 */
-	public void drawCard(Graphics g, int pID, byte iID, int x, int y, boolean fullClamp, boolean tapped) {
+	public void drawCard(Graphics g, int pID, CardMap iID, int x, int y, boolean fullClamp, boolean tapped) {
 		CardUVs uvs = cardUVs.get(pID);
-		short[] uvxy = uvs.getUV(iID);
-		short uvch = uvs.getHeight(), uvcw = uvs.getWidth(), sy1 = tapped ? uvxy[0] : uvxy[1],
-				dch = fullClamp ? GameCard.LG_HEIGHT : GameCard.SM_HEIGHT;
-		int sx1 = tapped ? uvs.getMapWidth() - uvxy[1] - uvch : uvxy[0],
-				dcw = fullClamp ? uvs.getLargeWidth() : uvs.getSmallWidth(),
+		short[] uvxy = iID.origins();
+		short sy1 = tapped ? uvxy[0] : uvxy[1], dch = fullClamp ? GameCard.LG_HEIGHT : GameCard.SM_HEIGHT;
+		int sx1 = tapped ? uvs.getMapWidth() - uvxy[1] - GameCard.LG_HEIGHT : uvxy[0],
+				dcw = fullClamp ? GameCard.LG_WIDTH : GameCard.SM_WIDTH,
 				dx1 = fullClamp ? clamp(0, GPanel.WIDTH - (tapped ? dch : dcw), x) : x,
 				dy1 = fullClamp ? clamp(0, GPanel.HEIGHT - (tapped ? dcw : dch), y) : y;
 		g.drawImage(imageMap, dx1, dy1, dx1 + (tapped ? dch : dcw), dy1 + (tapped ? dcw : dch), sx1, sy1,
-				sx1 + (tapped ? uvch : uvcw), sy1 + (tapped ? uvcw : uvch), null);
+				sx1 + (tapped ? GameCard.LG_HEIGHT : GameCard.LG_WIDTH),
+				sy1 + (tapped ? GameCard.LG_WIDTH : GameCard.LG_HEIGHT), null);
 	}
 
 	/**
@@ -188,9 +138,9 @@ public final class CardManager {
 	 */
 	public void drawBack(Graphics g, int pID, int x, int y) {
 		if (pID < cardUVs.size()) {
-			CardUVs uvs = cardUVs.get(pID);
-			g.drawImage(imageMap, x, y, x + uvs.getSmallWidth(), y + GameCard.SM_HEIGHT, 0, 0, uvs.getWidth(),
-					uvs.getHeight(), null);
+			cardUVs.get(pID);
+			g.drawImage(imageMap, x, y, x + GameCard.SM_WIDTH, y + GameCard.SM_HEIGHT, 0, 0, GameCard.LG_WIDTH,
+					GameCard.LG_HEIGHT, null);
 		}
 	}
 

@@ -33,6 +33,7 @@ public final record DeckFile(BufferedImage image, CardMap[] details) {
 		ZipFile zFile = new ZipFile(file);
 		BufferedImage img = ImageIO.read(zFile.getInputStream(zFile.getEntry(Main.FNAME_CARDS)));
 		DataInputStream dis = new DataInputStream(zFile.getInputStream(zFile.getEntry(Main.FNAME_DAT)));
+		dis.readBoolean();
 		Zone[] zones = Zone.values();
 		Type[] types = Type.values();
 		Zone z;

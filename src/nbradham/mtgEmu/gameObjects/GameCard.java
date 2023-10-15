@@ -4,6 +4,7 @@ import java.awt.Graphics;
 import java.awt.Point;
 import java.awt.event.MouseEvent;
 
+import nbradham.mtgEmu.CardMap;
 import nbradham.mtgEmu.Main;
 import nbradham.mtgEmu.Zone;
 import nbradham.mtgEmu.interfaces.GameCardHandler;
@@ -17,12 +18,13 @@ import nbradham.mtgEmu.players.Player;
  */
 public final class GameCard extends GameObject {
 
-	public static final short SM_HEIGHT = 200, LG_HEIGHT = 350, LG_WIDTH = 250;
+	public static final short SM_HEIGHT = 200, SM_WIDTH = 143, LG_HEIGHT = 350, LG_WIDTH = 250;
 
 	private final Player control;
+	private final CardMap iID;
 	private final Zone zone;
 	private final int ownID, normW;
-	private final byte cID, iID;
+	private final byte cID;
 
 	private GameCardHandler hold;
 	private boolean tapped;
@@ -34,10 +36,10 @@ public final class GameCard extends GameObject {
 	 * @param owner    The owner of this card.
 	 * @param cardID   The ID of this card.
 	 * @param cardZone The Zone of this card.
-	 * @param imageID  The image ID of this card.
+	 * @param cm       The image ID of this card.
 	 */
-	public GameCard(Player owner, byte cardID, Zone cardZone, byte imageID, int objW) {
-		this(owner.getID(), cardID, cardZone, imageID, objW, owner);
+	public GameCard(Player owner, byte cardID, Zone cardZone, CardMap cm, int objW) {
+		this(owner.getID(), cardID, cardZone, cm, objW, owner);
 	}
 
 	/**
@@ -47,15 +49,15 @@ public final class GameCard extends GameObject {
 	 * @param ownerID    The owner of this card.
 	 * @param cardID     The ID of this card.
 	 * @param cardZone   The Zone of this card.
-	 * @param imageID    The image ID of this card.
+	 * @param cm         The image ID of this card.
 	 * @param controller The controller of this card.
 	 */
-	public GameCard(int ownerID, byte cardID, Zone cardZone, byte imageID, int objW, Player controller) {
+	public GameCard(int ownerID, byte cardID, Zone cardZone, CardMap cm, int objW, Player controller) {
 		control = controller;
 		ownID = ownerID;
 		cID = cardID;
 		zone = cardZone;
-		iID = imageID;
+		iID = cm;
 		setSize(normW = objW, SM_HEIGHT);
 	}
 
