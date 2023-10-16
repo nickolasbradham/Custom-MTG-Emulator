@@ -2,9 +2,9 @@ package nbradham.mtgEmu.gameObjects;
 
 import java.awt.Graphics;
 import java.awt.Point;
+import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 
-import nbradham.mtgEmu.CardMap;
 import nbradham.mtgEmu.Main;
 import nbradham.mtgEmu.Zone;
 import nbradham.mtgEmu.interfaces.GameCardHandler;
@@ -21,13 +21,11 @@ public final class GameCard extends GameObject {
 	public static final short SM_HEIGHT = 200, SM_WIDTH = 143, LG_HEIGHT = 350, LG_WIDTH = 250;
 
 	private final Player control;
-	private final CardMap iID;
 	private final Zone zone;
 	private final int ownID;
-	private final byte cID;
 
 	private GameCardHandler hold;
-	private boolean tapped;
+	private boolean tapped, flipped = false;
 
 	/**
 	 * Constructs a new GameCard assigned to player {@code playerID} with id
@@ -36,10 +34,9 @@ public final class GameCard extends GameObject {
 	 * @param owner    The owner of this card.
 	 * @param cardID   The ID of this card.
 	 * @param cardZone The Zone of this card.
-	 * @param cm       The image ID of this card.
 	 */
-	public GameCard(Player owner, byte cardID, Zone cardZone, CardMap cm, int objW) {
-		this(owner.getID(), cardID, cardZone, cm, owner);
+	public GameCard(Player owner, Zone cardZone, int objW) {
+		this(owner.getID(), cardZone, owner);
 	}
 
 	/**
@@ -49,15 +46,12 @@ public final class GameCard extends GameObject {
 	 * @param ownerID    The owner of this card.
 	 * @param cardID     The ID of this card.
 	 * @param cardZone   The Zone of this card.
-	 * @param cm         The image ID of this card.
 	 * @param controller The controller of this card.
 	 */
-	public GameCard(int ownerID, byte cardID, Zone cardZone, CardMap cm, Player controller) {
+	public GameCard(int ownerID, Zone cardZone, Player controller) {
 		control = controller;
 		ownID = ownerID;
-		cID = cardID;
 		zone = cardZone;
-		iID = cm;
 		setSize(SM_WIDTH, SM_HEIGHT);
 	}
 
@@ -103,14 +97,14 @@ public final class GameCard extends GameObject {
 	public void draw(Graphics g) {
 		super.draw(g);
 		if (!(isTopHovering() && control.getDragging() != this))
-			Main.CARD_MANAGER.drawCard(g, ownID, iID, getX(), getY(), false, tapped);
+			Main.CARD_MANAGER.drawCard(g, this);
 	}
 
 	@Override
 	public void drawLate(Graphics g) {
 		super.drawLate(g);
 		if (isTopHovering() && control.getDragging() != this)
-			Main.CARD_MANAGER.drawCard(g, ownID, iID, getX(), getY(), true, tapped);
+			Main.CARD_MANAGER.drawCard(g, this);
 	}
 
 	@Override
@@ -157,5 +151,12 @@ public final class GameCard extends GameObject {
 			setTapped(!tapped);
 			control.mouseMoved(e.getPoint());
 		}
+	}
+
+	@Override
+	public void onTyped(KeyEvent e) {
+		if (e.getKeyCode() == KeyEvent.VK_F)
+			flipped = !flipped;
+		control.redrawBuffer();
 	}
 }

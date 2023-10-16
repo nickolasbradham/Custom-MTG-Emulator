@@ -157,12 +157,11 @@ public final class DeckBuilder {
 				images.add(sleeve);
 				ArrayList<BuilderCard> cards = new ArrayList<>();
 				BuilderCard bc;
-				CardImage ci;
 				for (Component ce : pane.getComponents()) {
 					images.add((bc = ((CardEditor) ce).getCard()).getCIa());
 					cards.add(bc);
-					if (bc.getType() != Type.Flipped && (ci = bc.getCIb()).getImg() != CardImage.DEFAULT_BACK)
-						images.add(ci);
+					if (bc.getType() == Type.Custom)
+						images.add(bc.getCIb());
 				}
 				int x = 0, y = GameCard.LG_HEIGHT;
 				byte moveID = 0;

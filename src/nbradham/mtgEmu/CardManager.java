@@ -2,11 +2,13 @@ package nbradham.mtgEmu;
 
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import java.io.DataInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.zip.ZipException;
 import java.util.zip.ZipFile;
 
@@ -24,10 +26,8 @@ import nbradham.mtgEmu.players.Player;
 public final class CardManager {
 
 	private static final double PI_2 = Math.PI / 2;
-
-	private ArrayList<CardUVs> cardUVs = new ArrayList<>();
+	private final HashMap<Byte, Rectangle> maps = new HashMap<>();
 	private BufferedImage imageMap;
-	private byte cardID;
 
 	/**
 	 * Loads a deck file into the texture map and generates the game deck.
@@ -49,55 +49,19 @@ public final class CardManager {
 		int w = img.getWidth(), h = img.getHeight(), mw = w + h, mh = Math.max(h, w);
 		BufferedImage loadedImages = new BufferedImage(mw, mh, BufferedImage.TYPE_INT_ARGB_PRE);
 		Graphics2D g = loadedImages.createGraphics();
-
 		g.drawImage(img, 0, 0, null);
 		g.translate(w + (h - w) / 2, (w - h) / 2);
 		g.rotate(PI_2, w / 2, h / 2);
 		g.drawRenderedImage(img, null);
 
 		ArrayList<GameCard> gameCards = new ArrayList<>();
-		ArrayList<short[]> uvOrigins = new ArrayList<>();
 		int pID = player.getID();
-		cardID = -1;
 		byte c;
 		for (CardMap cm : df.details()) {
 			c = cm.count();
 			for (byte i = 0; i < c; ++i)
-				gameCards.add(new GameCard(player, ++cardID, cm.zone(), cm, pID));
+				gameCards.add(new GameCard(player, cm.zone(), pID));
 		}
-
-		ArrayList<CardUVs> newCardUVs = new ArrayList<>(cardUVs);
-		CardUVs newSet = new CardUVs(mw, mh, uvOrigins.toArray(new short[0][]));
-		if (pID < newCardUVs.size())
-			newCardUVs.set(pID, newSet);
-		else
-			newCardUVs.add(newSet);
-
-		int widest = -1;
-		for (CardUVs uv : newCardUVs)
-			widest = Math.max(widest, uv.getMapWidth());
-
-		CardUVs last = newCardUVs.get(0), cur;
-		int end = newCardUVs.size();
-		for (byte i = 1; i < end; ++i) {
-			(cur = newCardUVs.get(i)).setMapOffset(last.getMapOffset() + last.getMapHeight());
-			last = cur;
-		}
-
-		BufferedImage newImageMap = new BufferedImage(widest, last.getMapOffset() + last.getMapHeight(),
-				BufferedImage.TYPE_4BYTE_ABGR_PRE);
-		Graphics newG = newImageMap.createGraphics();
-
-		int newOff, lastOff;
-		for (byte i = 0; i < end; i++)
-			if (i == pID)
-				newG.drawImage(loadedImages, 0, newSet.getMapOffset(), null);
-			else
-				newG.drawImage(imageMap, 0, newOff = (cur = newCardUVs.get(i)).getMapOffset(), cur.getMapWidth(),
-						newOff + cur.getMapHeight(), 0, lastOff = (last = newCardUVs.get(i)).getMapOffset(),
-						last.getMapWidth(), lastOff + last.getMapHeight(), null);
-		imageMap = newImageMap;
-		cardUVs = newCardUVs;
 		return gameCards.toArray(new GameCard[0]);
 	}
 
@@ -113,18 +77,10 @@ public final class CardManager {
 	 * @param fullClamp If the image should be large and clamped to the screen
 	 *                  dimensions.
 	 * @param tapped    If the card is tapped.
+	 * @param flipped   If the card is in the second config.
 	 */
-	public void drawCard(Graphics g, int pID, CardMap iID, int x, int y, boolean fullClamp, boolean tapped) {
-		CardUVs uvs = cardUVs.get(pID);
-		short[] uvxy = iID.origins();
-		short sy1 = tapped ? uvxy[0] : uvxy[1], dch = fullClamp ? GameCard.LG_HEIGHT : GameCard.SM_HEIGHT;
-		int sx1 = tapped ? uvs.getMapWidth() - uvxy[1] - GameCard.LG_HEIGHT : uvxy[0],
-				dcw = fullClamp ? GameCard.LG_WIDTH : GameCard.SM_WIDTH,
-				dx1 = fullClamp ? clamp(0, GPanel.WIDTH - (tapped ? dch : dcw), x) : x,
-				dy1 = fullClamp ? clamp(0, GPanel.HEIGHT - (tapped ? dcw : dch), y) : y;
-		g.drawImage(imageMap, dx1, dy1, dx1 + (tapped ? dch : dcw), dy1 + (tapped ? dcw : dch), sx1, sy1,
-				sx1 + (tapped ? GameCard.LG_HEIGHT : GameCard.LG_WIDTH),
-				sy1 + (tapped ? GameCard.LG_WIDTH : GameCard.LG_HEIGHT), null);
+	public void drawCard(Graphics g, GameCard c) {
+		// TODO Do.
 	}
 
 	/**
@@ -137,22 +93,6 @@ public final class CardManager {
 	 * @param y   The y coordinate of the card.
 	 */
 	public void drawBack(Graphics g, int pID, int x, int y) {
-		if (pID < cardUVs.size()) {
-			cardUVs.get(pID);
-			g.drawImage(imageMap, x, y, x + GameCard.SM_WIDTH, y + GameCard.SM_HEIGHT, 0, 0, GameCard.LG_WIDTH,
-					GameCard.LG_HEIGHT, null);
-		}
-	}
-
-	/**
-	 * Clamps {@code val} between {@code min} and {@code max} inclusive.
-	 * 
-	 * @param min The minimum value.
-	 * @param max The maximum value.
-	 * @param val The value to clamp.
-	 * @return The value closest to {@code val} in range [{@code min}, {@code max}].
-	 */
-	private static final int clamp(int min, int max, int val) {
-		return Math.max(min, Math.min(max, val));
+		// TODO Do.
 	}
 }

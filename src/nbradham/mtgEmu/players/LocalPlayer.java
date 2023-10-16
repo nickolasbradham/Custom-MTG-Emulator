@@ -118,4 +118,9 @@ public final class LocalPlayer extends Player {
 		super.mouseClicked(e);
 		handleFirstUnder(e.getPoint(), o -> o.onClicked(e));
 	}
+
+	@Override
+	public final void keyTyped(KeyEvent e) {
+		handleFirstUnder(gameView.getMousePosition(), o -> o.onTyped(e));
+	}
 }

@@ -2,6 +2,7 @@ package nbradham.mtgEmu.players;
 
 import java.awt.Graphics;
 import java.awt.Point;
+import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -235,6 +236,9 @@ public abstract class Player {
 	 * @param e The MouseEvent to process.
 	 */
 	public void mouseClicked(MouseEvent e) {
+	}
+	
+	public void keyTyped(KeyEvent e) {
 	}
 
 	/**

@@ -3,6 +3,7 @@ package nbradham.mtgEmu.gameObjects;
 import java.awt.Graphics;
 import java.awt.Point;
 import java.awt.Rectangle;
+import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 
@@ -137,6 +138,9 @@ public class GameObject {
 	public void onClicked(MouseEvent e) {
 	}
 
+	public void onTyped(KeyEvent e) {
+	}
+
 	/**
 	 * Retrieves the X coordinate of this object.
 	 * 
@@ -227,5 +231,4 @@ public class GameObject {
 		space.translate(dx, dy);
 		children.forEach(c -> c.translate(dx, dy));
 	}
-
 }
