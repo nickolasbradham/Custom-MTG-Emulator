@@ -10,7 +10,6 @@ import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPopupMenu;
 
-import nbradham.mtgEmu.Main;
 import nbradham.mtgEmu.Zone;
 import nbradham.mtgEmu.interfaces.GameCardHandler;
 import nbradham.mtgEmu.players.Player;
@@ -103,7 +102,7 @@ public final class Library extends GameObject implements GameCardHandler {
 
 	@Override
 	public void draw(Graphics g) {
-		Main.CARD_MANAGER.drawBack(g, play.getID(), getX(), getY());
+		// TODO Draw card back.
 	}
 
 	@Override

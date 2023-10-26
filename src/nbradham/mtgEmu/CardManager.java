@@ -53,7 +53,6 @@ public final class CardManager {
 		g.translate(w + (h - w) / 2, (w - h) / 2);
 		g.rotate(PI_2, w / 2, h / 2);
 		g.drawRenderedImage(img, null);
-
 		ArrayList<GameCard> gameCards = new ArrayList<>();
 		int pID = player.getID();
 		byte c;
@@ -80,19 +79,6 @@ public final class CardManager {
 	 * @param flipped   If the card is in the second config.
 	 */
 	public void drawCard(Graphics g, GameCard c) {
-		// TODO Do.
-	}
-
-	/**
-	 * Draws card back from player {@code pID} to Graphics {@code g} at point
-	 * ({@code x},{@code y}).
-	 * 
-	 * @param g   The Graphics to draw to.
-	 * @param pID The player ID of the card back.
-	 * @param x   The x coordinate of the card.
-	 * @param y   The y coordinate of the card.
-	 */
-	public void drawBack(Graphics g, int pID, int x, int y) {
 		// TODO Do.
 	}
 }
