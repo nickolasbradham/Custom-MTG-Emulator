@@ -81,6 +81,97 @@ public class GameObject {
 	public void onMouseExitTop() {
 		topHovering = false;
 	}
+	
+	/**
+	 * Retrieves the X coordinate of this object.
+	 * 
+	 * @return The X coordinate of this object.
+	 */
+	public final int getX() {
+		return space.x;
+	}
+
+	/**
+	 * Retrieves the Y coordinate of this object.
+	 * 
+	 * @return The Y coordinate of this object.
+	 */
+	public final int getY() {
+		return space.y;
+	}
+
+	/**
+	 * Retrieves the width of this object.
+	 * 
+	 * @return The width of this object.
+	 */
+	public final int getWidth() {
+		return space.width;
+	}
+
+	/**
+	 * Retrieves the height of this object.
+	 * 
+	 * @return The height of this object.
+	 */
+	public final int getHeight() {
+		return space.height;
+	}
+
+	/**
+	 * Adds a child to this object.
+	 * 
+	 * @param child The child to add.
+	 */
+	protected final void addChild(GameObject child) {
+		children.add(child);
+	}
+
+	/**
+	 * Removes a child from this object.
+	 * 
+	 * @param child The child to remove.
+	 */
+	protected final void removeChild(GameObject child) {
+		children.remove(child);
+	}
+
+	/**
+	 * Removes all children from this instance.
+	 */
+	protected final void clearChildren() {
+		children.clear();
+	}
+
+	/**
+	 * Retrieves if the cursor is hovering over this object.
+	 * 
+	 * @return True if the cursor is over this object.
+	 */
+	protected final boolean isHovering() {
+		return hovering;
+	}
+
+	/**
+	 * Retrieves if the cursor is hovering over this object and it is the top-most
+	 * object.
+	 * 
+	 * @return True if the cursor is over this object and it is the top-most object.
+	 */
+	protected final boolean isTopHovering() {
+		return topHovering;
+	}
+
+	/**
+	 * Translates this object by ({@code dx}, {@code dy}).
+	 * 
+	 * @param dx The difference in X.
+	 * @param dy The difference in Y.
+	 */
+	private void translate(int dx, int dy) {
+		space.translate(dx, dy);
+		children.forEach(c -> c.translate(dx, dy));
+	}
 
 	/**
 	 * Handles the main draw phase for this object.
@@ -139,96 +230,5 @@ public class GameObject {
 	}
 
 	public void onTyped(KeyEvent e) {
-	}
-
-	/**
-	 * Retrieves the X coordinate of this object.
-	 * 
-	 * @return The X coordinate of this object.
-	 */
-	protected final int getX() {
-		return space.x;
-	}
-
-	/**
-	 * Retrieves the Y coordinate of this object.
-	 * 
-	 * @return The Y coordinate of this object.
-	 */
-	protected final int getY() {
-		return space.y;
-	}
-
-	/**
-	 * Retrieves the width of this object.
-	 * 
-	 * @return The width of this object.
-	 */
-	protected final int getWidth() {
-		return space.width;
-	}
-
-	/**
-	 * Retrieves the height of this object.
-	 * 
-	 * @return The height of this object.
-	 */
-	protected final int getHeight() {
-		return space.height;
-	}
-
-	/**
-	 * Adds a child to this object.
-	 * 
-	 * @param child The child to add.
-	 */
-	protected final void addChild(GameObject child) {
-		children.add(child);
-	}
-
-	/**
-	 * Removes a child from this object.
-	 * 
-	 * @param child The child to remove.
-	 */
-	protected final void removeChild(GameObject child) {
-		children.remove(child);
-	}
-
-	/**
-	 * Removes all children from this instance.
-	 */
-	protected final void clearChildren() {
-		children.clear();
-	}
-
-	/**
-	 * Retrieves if the cursor is hovering over this object.
-	 * 
-	 * @return True if the cursor is over this object.
-	 */
-	protected final boolean isHovering() {
-		return hovering;
-	}
-
-	/**
-	 * Retrieves if the cursor is hovering over this object and it is the top-most
-	 * object.
-	 * 
-	 * @return True if the cursor is over this object and it is the top-most object.
-	 */
-	protected final boolean isTopHovering() {
-		return topHovering;
-	}
-
-	/**
-	 * Translates this object by ({@code dx}, {@code dy}).
-	 * 
-	 * @param dx The difference in X.
-	 * @param dy The difference in Y.
-	 */
-	private void translate(int dx, int dy) {
-		space.translate(dx, dy);
-		children.forEach(c -> c.translate(dx, dy));
 	}
 }
