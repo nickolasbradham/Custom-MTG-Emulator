@@ -6,7 +6,6 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Stack;
 
@@ -15,7 +14,6 @@ import javax.swing.JMenuBar;
 import javax.swing.SwingUtilities;
 
 import nbradham.mtgEmu.GPanel;
-import nbradham.mtgEmu.Main;
 import nbradham.mtgEmu.Zone;
 import nbradham.mtgEmu.gameObjects.CardZone;
 import nbradham.mtgEmu.gameObjects.GameCard;
@@ -237,7 +235,7 @@ public abstract class Player {
 	 */
 	public void mouseClicked(MouseEvent e) {
 	}
-	
+
 	public void keyTyped(KeyEvent e) {
 	}
 
@@ -257,25 +255,10 @@ public abstract class Player {
 				remove(o);
 				--i;
 			}
-
-		try {
-			for (GameCard c : Main.CARD_MANAGER.load(this, file))
-				switch (c.getType()) {
-				case Command:
-					commandZone.add(c);
-					break;
-				case Library:
-					lib.putOnTop(c);
-					break;
-				case Token:
-					// TODO add to tokens.
-				}
-			lib.updateSize();
-			lib.shuffle();
-			redrawBuffer();
-		} catch (IOException e1) {
-			e1.printStackTrace();
-		}
+		// TODO Load cards.
+		lib.updateSize();
+		lib.shuffle();
+		redrawBuffer();
 	}
 
 	/**

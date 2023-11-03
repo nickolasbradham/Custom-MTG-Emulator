@@ -5,7 +5,6 @@ import java.awt.Point;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 
-import nbradham.mtgEmu.Main;
 import nbradham.mtgEmu.Zone;
 import nbradham.mtgEmu.interfaces.GameCardHandler;
 import nbradham.mtgEmu.players.Player;
@@ -97,14 +96,16 @@ public final class GameCard extends GameObject {
 	public void draw(Graphics g) {
 		super.draw(g);
 		if (!(isTopHovering() && control.getDragging() != this))
-			Main.CARD_MANAGER.drawCard(g, this);
+			// TODO do.
+			;
 	}
 
 	@Override
 	public void drawLate(Graphics g) {
 		super.drawLate(g);
 		if (isTopHovering() && control.getDragging() != this)
-			Main.CARD_MANAGER.drawCard(g, this);
+			// TODO do.
+			;
 	}
 
 	@Override
